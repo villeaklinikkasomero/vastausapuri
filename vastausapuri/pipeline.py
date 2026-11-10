@@ -21,6 +21,7 @@ from .pseudonymize import Pseudonymized, pseudonymize
 from .safety import Signal, detect_signals
 
 MODES = ("linkit", "luonnos")
+_SEP = "\n\n\u27e6JATKOKYSYMYS\u27e7\n\n"
 _REF = re.compile(r"\[\[([^\[\]\s]+)\]\]")
 
 
@@ -39,6 +40,7 @@ class LinkSuggestion:
 class Result:
     hanke: str
     mode: str
+    followup: bool
     pseudonymized_question: str
     pseudonym_counts: dict[str, int]
     topics: list[str]
@@ -79,19 +81,25 @@ class Assistant:
         return found + crisis  # kriisipalvelut ovat aina tarjolla
 
     def run(self, question: str, mode: str = "linkit", vastaaja: str | None = None,
-            own_style: bool = False) -> tuple[Result, Pseudonymized]:
+            own_style: bool = False, thread: str | None = None) -> tuple[Result, Pseudonymized]:
+        """thread: aiempi keskustelu (kysymys, vastaus, ...) jatkokysymystä varten."""
         if mode not in MODES:
             raise ValueError(f"Tuntematon tila: {mode}")
         draft_mode = mode == "luonnos"
         t0 = time.perf_counter()
-        ps = pseudonymize(question, self.h.safe_domains)
+        thread = (thread or "").strip() or None
+        followup = thread is not None
+        # Keskustelu ja kysymys pseudonymisoidaan yhdessä, jotta sama nimi saa saman paikkamerkin
+        ps = pseudonymize(f"{thread}{_SEP}{question}" if followup else question, self.h.safe_domains)
+        p_thread, p_question = ps.text.split(_SEP, 1) if followup else (None, ps.text)
         signals = detect_signals(question, self.h.signal_patterns)  # paikallinen, alkuperäisestä
-        candidates = self._candidates(ps.text)
+        query = f"{p_question}\n{p_question}\n{p_thread[-1000:]}" if followup else p_question
+        candidates = self._candidates(query)
         cand_by_id = {c.id: c for c in candidates}
         sources = [c for c in candidates if c.type != "kriisi"][: self.s.sources]
         examples = []
         if draft_mode:
-            examples = self.h.answers.similar(ps.text, k=self.s.examples,
+            examples = self.h.answers.similar(query, k=self.s.examples,
                                               vastaaja=vastaaja if own_style else None)
         own = vastaaja if (own_style and any(e.vastaaja == vastaaja for e in examples)) else None
         t1 = time.perf_counter()
@@ -102,8 +110,9 @@ class Assistant:
         if draft_mode:
             raw = self.llm.complete(
                 model=self.s.drafter_model,
-                system=prompts.draft_system(self.h, self.s.max_links, own_style=own is not None),
-                user=prompts.draft_user(ps.text, candidates, sources, examples, own),
+                system=prompts.draft_system(self.h, self.s.max_links, own_style=own is not None,
+                                            followup=followup),
+                user=prompts.draft_user(p_question, candidates, sources, examples, own, p_thread),
                 max_tokens=3000,
             )
             meta, draft_text = parse_draft(raw)
@@ -113,7 +122,7 @@ class Assistant:
             raw = self.llm.complete(
                 model=self.s.drafter_model,
                 system=prompts.links_system(self.h, self.s.max_links),
-                user=prompts.links_user(ps.text, candidates),
+                user=prompts.links_user(p_question, candidates, p_thread),
             )
             meta = parse_json(raw)
         notes += list(meta.get("huomiot", []))
@@ -124,9 +133,9 @@ class Assistant:
             raw_c = self.llm.complete(
                 model=self.s.checker_model,
                 system=prompts.checker_system(self.h, draft_mode),
-                user=prompts.checker_user(ps.text, candidates, meta,
+                user=prompts.checker_user(p_question, candidates, meta,
                                           sources if draft_mode else None,
-                                          draft_text if draft_mode else None),
+                                          draft_text if draft_mode else None, p_thread),
             )
             check = parse_json(raw_c)
         except Exception as e:  # noqa: BLE001
@@ -193,6 +202,9 @@ class Assistant:
             return item.url
 
         draft_out = _REF.sub(link_sub, draft_text)
+        feedback = self.h.vastaus.get("palaute", "").strip()
+        if draft_out and feedback and not followup:
+            draft_out = f"{draft_out.rstrip()}\n\n{feedback}"
 
         issues = [i for i in check.get("ongelmat", []) if isinstance(i, dict)]
         order = {"korkea": 0, "keski": 1, "matala": 2}
@@ -204,7 +216,8 @@ class Assistant:
         result = Result(
             hanke=self.h.id,
             mode=mode,
-            pseudonymized_question=ps.text,
+            pseudonymized_question=ps.text.replace(_SEP, "\n\n--- JATKOKYSYMYS ---\n\n"),
+            followup=followup,
             pseudonym_counts=ps.counts,
             topics=meta.get("aiheet", []),
             asker=meta.get("kysyja", "ei tiedossa"),

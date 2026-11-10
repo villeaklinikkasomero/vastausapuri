@@ -177,6 +177,7 @@ class Ask(BaseModel):
     hanke: str
     mode: str = "luonnos"
     own_style: bool = False
+    thread: str | None = Field(default=None, max_length=40000)  # aiempi keskustelu jatkokysymykselle
 
 
 @app.get("/")
@@ -204,7 +205,8 @@ def suggest(body: Ask, request: Request) -> dict:
     # Kysymystä tai vastausta ei lokiteta eikä tallenneta.
     try:
         result, ps = assistants()[body.hanke].run(body.question, mode=body.mode,
-                                                 vastaaja=user, own_style=body.own_style)
+                                                 vastaaja=user, own_style=body.own_style,
+                                                 thread=body.thread)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {_explain(e)}") from None
     return result.to_dict(restore=ps)

@@ -41,7 +41,7 @@ Vastaa VAIN JSON-oliona:
 
 # --- Luonnostila (vaihe 2) -------------------------------------------------------
 
-def draft_system(h: Hanke, max_links: int, own_style: bool) -> str:
+def draft_system(h: Hanke, max_links: int, own_style: bool, followup: bool = False) -> str:
     v = h.vastaus
     style = (
         "Esimerkeistä osa on merkitty OMA: ne ovat tämän vastaajan omia vastauksia. Jäljittele niiden "
@@ -49,24 +49,35 @@ def draft_system(h: Hanke, max_links: int, own_style: bool) -> str:
         if own_style
         else "Ota esimerkeistä mallia palvelun yleiseen sävyyn ja tapaan ohjata, mutta älä kopioi niitä."
     )
+    greeting = v.get("jatko_tervehdys", h.tervehdys) if followup else h.tervehdys
+    closing = "" if followup else v.get("lopetus", "")
+    task = (
+        "Tämä on JATKOKYSYMYS. Aiempi keskustelu on annettu kontekstiksi. Kirjoita vastaus vain "
+        "jatkokysymykseen: älä toista aiemmassa vastauksessa jo kerrottua, vaan viittaa siihen tarvittaessa."
+        if followup else "Kirjoita vastaus kysymykseen."
+    )
     return f"""Olet LUONNOSTELIJA, joka kirjoittaa vastausluonnoksen neuvontapalvelun vastaajalle.
 
 {_context(h)}
 
 Vastaaja on ammattilainen: hän tarkistaa, muokkaa ja lähettää vastauksen omissa nimissään.
-Kirjoita luonnos, joka on valmis mutta jonka vastaaja voi helposti muokata.
+Kirjoita luonnos, joka on valmis mutta jonka vastaaja voi helposti muokata. {task}
 
 KIRJOITUSOHJEET:
-- Suomeksi, {v.get("puhuttelu", "sinuttelu")}, {v.get("pituus", "noin 150–350 sanaa")}. Selkeää yleiskieltä,
-  lyhyitä kappaleita. Vastaa siihen, mitä kysyttiin.
-- Aloita tervehdyksellä "{h.tervehdys}" ja lopeta allekirjoitukseen:
+- Suomeksi; {v.get("puhuttelu", "sinuttelu")}; {v.get("pituus", "noin 150–350 sanaa")}. Selkeää yleiskieltä,
+  kappaleina ilman otsikoita. Vastaa siihen, mitä kysyttiin.
+- Aloita tervehdyksellä "{greeting}"{f' ja päätä ennen allekirjoitusta lauseeseen: "{closing}"' if closing else ""}.
+- Allekirjoitus:
 {h.allekirjoitus or "(ei allekirjoitusta)"}
-- Perusta tieto LÄHDEOTTEISIIN ja ehdokkaiden kuvauksiin. Jos jokin väite ei perustu niihin,
-  merkitse se tekstiin muodossa [TARKISTA: lyhyt syy], jotta vastaaja tarkistaa sen.
+- Perusta tieto LÄHDEOTTEISIIN ja ehdokkaiden kuvauksiin. Yleisesti tunnettu lääketieteellinen perustieto
+  on sallittu. Merkitse muodossa [TARKISTA: lyhyt syy] erityisesti luvut, ajat, annokset, lakiasiat ja
+  muut täsmälliset väitteet, jotka eivät perustu lähteisiin, jotta vastaaja tarkistaa ne.
 - Linkitä enintään {max_links} ehdokasta kirjoittamalla tekstiin [[id]] siihen kohtaan, jossa sisältöön viitataan
-  (esim. "Lue lisää turvallisemmasta pistämisestä: [[turvallisempi-pistaminen]]").
+  (esim. "Lue lisää turvallisemmasta pistämisestä: [[turvallisempi-pistaminen]]"). Linkki ei ole pakollinen,
+  jos mikään ehdokas ei aidosti auta kysyjää.
 - {style}
 - Älä toista esimerkkien henkilöihin liittyviä yksityiskohtia.
+- Älä kirjoita palautepyyntöä: se lisätään automaattisesti.
 
 {_COMMON}
 
@@ -109,7 +120,8 @@ Tarkista:
 3. Turvallisuus: jos kysymyksessä on akuutteja oireita tai kriisisignaaleja, kehotetaanko
    hakeutumaan hoitoon? kriisi.havaittu = true, jos niitä on.
 4. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?
-5. Vastaako luonnos varsinaiseen kysymykseen?
+5. Vastaako luonnos varsinaiseen kysymykseen? Jatkokysymyksessä: vastataanko kaikkiin uusiin
+   kysymyksiin, ja vältetäänkö aiemmin kerrotun toistamista?
 
 Ole tarkka mutta älä keksi ongelmia. Jos luonnos on kunnossa, palauta tyhjä ongelmalista.
 
@@ -156,14 +168,18 @@ def format_examples(examples: list[Answer], own: str | None) -> str:
     return "\n\n---\n\n".join(out)
 
 
-def links_user(question: str, candidates: list[CatalogItem]) -> str:
-    return f"KYSYMYS (pseudonymisoitu):\n{question}\n\nEHDOKKAAT:\n{format_candidates(candidates)}"
+def links_user(question: str, candidates: list[CatalogItem], thread: str | None = None) -> str:
+    head = f"AIEMPI KESKUSTELU (pseudonymisoitu):\n{thread}\n\nJATKOKYSYMYS" if thread else "KYSYMYS"
+    return f"{head} (pseudonymisoitu):\n{question}\n\nEHDOKKAAT:\n{format_candidates(candidates)}"
 
 
 def draft_user(question: str, candidates: list[CatalogItem], sources: list[CatalogItem],
-               examples: list[Answer], own: str | None) -> str:
-    parts = [
-        f"KYSYMYS (pseudonymisoitu):\n{question}",
+               examples: list[Answer], own: str | None, thread: str | None = None) -> str:
+    parts = []
+    if thread:
+        parts.append(f"AIEMPI KESKUSTELU (pseudonymisoitu, vanhin ensin):\n{thread}")
+    parts += [
+        f"{'JATKOKYSYMYS' if thread else 'KYSYMYS'} (pseudonymisoitu):\n{question}",
         f"EHDOKKAAT:\n{format_candidates(candidates)}",
         f"LÄHDEOTTEET (palvelun omista sisällöistä):\n{format_sources(sources)}",
     ]
@@ -173,8 +189,11 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
 
 
 def checker_user(question: str, candidates: list[CatalogItem], draft: dict,
-                 sources: list[CatalogItem] | None = None, draft_text: str | None = None) -> str:
-    parts = [f"KYSYMYS (pseudonymisoitu):\n{question}", f"EHDOKKAAT:\n{format_candidates(candidates)}"]
+                 sources: list[CatalogItem] | None = None, draft_text: str | None = None,
+                 thread: str | None = None) -> str:
+    parts = [f"AIEMPI KESKUSTELU:\n{thread}"] if thread else []
+    parts += [f"{'JATKOKYSYMYS' if thread else 'KYSYMYS'} (pseudonymisoitu):\n{question}",
+              f"EHDOKKAAT:\n{format_candidates(candidates)}"]
     if sources is not None:
         parts.append(f"LÄHDEOTTEET:\n{format_sources(sources)}")
     parts.append(f"LUONNOS:\n{json.dumps(draft, ensure_ascii=False, indent=1)}")

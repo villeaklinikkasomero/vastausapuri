@@ -30,7 +30,11 @@
    "haittavaikutukset",
    "AAS",
    "testo",
-   "steroidikuuri"
+   "steroidikuuri",
+   "akne",
+   "iho",
+   "talirauhaset",
+   "DHT"
   ],
   "audience": [
    "itse",
@@ -570,7 +574,9 @@
    "seuranta",
    "terveystarkastus",
    "lääkärille kertominen",
-   "vaitiolovelvollisuus"
+   "vaitiolovelvollisuus",
+   "potilastiedot",
+   "ihotautilääkäri"
   ],
   "audience": [
    "itse",
@@ -1359,6 +1365,26 @@
   ],
   "audience": [
    "nuori"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kanta",
+  "title": "Kanta-palvelut ja OmaKanta",
+  "url": "https://www.kanta.fi/",
+  "type": "palvelu",
+  "description": "OmaKannasta voi tarkistaa omat potilastiedot ja kirjaukset sekä pyytää virheellisten tietojen korjaamista.",
+  "topics": [
+   "potilastiedot",
+   "kirjaukset",
+   "OmaKanta",
+   "potilasasiakirjat",
+   "tietojen korjaaminen",
+   "vakuutukset"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
   ],
   "description_source": "käsin"
  }

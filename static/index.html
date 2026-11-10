@@ -86,7 +86,11 @@
       </div>
     </div>
     <label class="check"><input type="checkbox" id="own"> <span id="ownLabel">Kirjoita minun tyylilläni</span></label>
-    <h2 style="margin-top:16px">Kysymys</h2>
+    <details id="threadBox" style="margin-top:16px">
+      <summary>Jatkokysymys? Liitä aiempi keskustelu</summary>
+      <textarea id="thread" style="min-height:160px;margin-top:8px" placeholder="Liitä tähän alkuperäinen kysymys ja siihen annettu vastaus (ja mahdolliset aiemmat jatkokysymykset). Kirjoita itse jatkokysymys alla olevaan kenttään."></textarea>
+    </details>
+    <h2 style="margin-top:16px" id="qTitle">Kysymys</h2>
     <textarea id="q" placeholder="Liitä kysyjän viesti tähän. Nimet ja yhteystiedot korvataan paikkamerkeillä ennen kuin teksti lähtee mallille."></textarea>
     <div class="row">
       <button id="go">Tee luonnos</button>
@@ -141,7 +145,8 @@ async function run() {
   $("#out").innerHTML = `<p class="empty">${state.mode === "luonnos" ? "Kirjoitetaan luonnosta ja tarkistetaan sitä… (noin 20–60 s)" : "Haetaan ehdotuksia…"}</p>`;
   try {
     const r = await fetch("/api/suggest", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked})});
+      body: JSON.stringify({question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked,
+        thread: $("#thread").value.trim() || null})});
     const d = await r.json();
     if (r.status === 401) { location.href = "/login"; return; }
     if (!r.ok) throw new Error(d.detail || r.status);
@@ -163,7 +168,8 @@ function render(d) {
     h += `<div class="banner">Huomio: mahdollinen kriisisignaali${kinds.length ? " (" + esc(kinds.join(", ")) + ")" : ""}
       <span>${esc(d.crisis?.kuvaus || "Arvioi tilanne ja tarvittaessa ohjaa kiireelliseen apuun.")}</span></div>`;
   }
-  h += d.topics.map(t => `<span class="tag">${esc(t)}</span>`).join("") + `<span class="tag">kysyjä: ${esc(d.asker)}</span>`;
+  h += (d.followup ? `<span class="tag">jatkokysymys</span>` : "") +
+    d.topics.map(t => `<span class="tag">${esc(t)}</span>`).join("") + `<span class="tag">kysyjä: ${esc(d.asker)}</span>`;
 
   if (d.mode === "luonnos") {
     const checks = d.draft.match(/\[TARKISTA:[^\]]*\]/g) || [];
@@ -206,6 +212,10 @@ function render(d) {
     copy(sel.map(l => `${l.title}: ${l.url}`).join("\n"), $("#copyLinksMsg"));
   };
 }
+$("#thread").addEventListener("input", () => {
+  const on = $("#thread").value.trim().length > 0;
+  $("#qTitle").textContent = on ? "Jatkokysymys" : "Kysymys";
+});
 $("#go").onclick = run;
 $("#q").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
 </script>

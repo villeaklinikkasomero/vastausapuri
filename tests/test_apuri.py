@@ -255,3 +255,26 @@ def test_api_draft(monkeypatch):
 def test_bedrock_closed_without_users(monkeypatch):
     c = client(monkeypatch, None, provider="bedrock")
     assert c.get("/").status_code == 503
+
+
+# --- Jatkokysymykset ja Dopinglinkin tyyli ------------------------------------------
+
+def test_followup_shared_placeholders_and_no_feedback(doping):
+    thread = "Kysymys: Olen Pekka, aknea testosteronin jälkeen.\nVastaus: Hei Pekka, kerro lääkärille."
+    res, ps = make(doping).run("Pekka taas: mitä potilastietoihin kirjataan?", mode="luonnos", thread=thread)
+    assert res.followup
+    assert "Pekka" not in res.pseudonymized_question
+    assert res.pseudonymized_question.count("[NIMI_1]") == 3  # sama nimi, sama merkki
+    assert "palautelomakkeen" not in res.draft
+    assert {"kanta"} & {it.id for it, _ in doping.index.search("mitä potilastietoihin kirjataan vakuutus", k=5)}
+
+
+def test_first_answer_gets_feedback_link(doping):
+    res, _ = make(doping).run("Milloin anabolisten käytön voi aloittaa isotretinoiinikuurin jälkeen?", mode="luonnos")
+    assert not res.followup and "webropolsurveys" in res.draft
+
+
+def test_acne_question_finds_steroid_article(doping):
+    top = {it.id for it, _ in doping.index.search(
+        "Selkäakne paheni testosteronin ja masteronin käytön jälkeen, isotretinoiini", k=5)}
+    assert "steroidit-testosteroni" in top
