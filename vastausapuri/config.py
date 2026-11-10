@@ -18,7 +18,7 @@ class Settings:
         default_factory=lambda: os.getenv("APURI_DRAFTER_MODEL", "eu.anthropic.claude-opus-4-6-v1")
     )
     checker_model: str = field(
-        default_factory=lambda: os.getenv("APURI_CHECKER_MODEL", "eu.anthropic.claude-sonnet-4-5-20250929-v1:0")
+        default_factory=lambda: os.getenv("APURI_CHECKER_MODEL", "eu.anthropic.claude-sonnet-4-6")
     )
     hankkeet_dir: Path = field(
         default_factory=lambda: Path(os.getenv("APURI_HANKKEET", ROOT / "hankkeet"))

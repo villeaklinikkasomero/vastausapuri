@@ -29,7 +29,7 @@ services:
       - key: APURI_DRAFTER_MODEL
         value: eu.anthropic.claude-opus-4-6-v1     # sama kuin Lähde.AI:n BEDROCK_MODEL_DRAFT
       - key: APURI_CHECKER_MODEL
-        value: eu.anthropic.claude-sonnet-4-5-20250929-v1:0   # sama kuin Lähde.AI:n BEDROCK_MODEL_LIGHT
+        value: eu.anthropic.claude-sonnet-4-6   # tarkastaja ja hakulause
       # Vanhat vastaukset (vastaukset.jsonl) eivät ole repossa. Kun ne tuodaan, ota käyttöön levy:
       # lisää alla oleva disk-lohko (palvelun tasolle) ja aseta APURI_DATA_DIR=/var/data
       #   disk:

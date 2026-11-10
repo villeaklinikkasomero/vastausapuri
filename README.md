@@ -26,7 +26,7 @@ luonnostelija saa esimerkeiksi ensisijaisesti hänen omiaan ja jäljittelee hän
    samankaltaiset vanhat vastaukset esimerkeiksi.
 4. **Luonnostelija** (Claude Opus 4.6) kirjoittaa luonnoksen hankkeen ohjeiden mukaan ja viittaa
    sisältöihin merkinnällä `[[id]]`.
-5. **Tarkastaja** (Claude Sonnet 4.5) etsii asiavirheet, periaatteiden vastaiset kohdat (esim.
+5. **Tarkastaja** (Claude Sonnet 4.6) etsii asiavirheet, periaatteiden vastaiset kohdat (esim.
    annosteluohjeet, diagnoosit, moralisointi), puuttuvat hoitoon ohjaukset ja sopimattomat linkit.
 6. **Koodin tarkistukset** (`pipeline.py`): `[[id]]`-viittaukset muutetaan katalogin osoitteiksi. Malli ei voi
    keksiä osoitteita: tuntematon viittaus muuttuu `[TARKISTA]`-merkinnäksi. Kriisipalvelut nostetaan ensimmäisiksi.
@@ -116,7 +116,7 @@ Huomioita:
 | `APURI_PROVIDER` | `mock` | `bedrock` tai `mock` |
 | `AWS_REGION` | `eu-north-1` | EU-lähdealue Bedrock-kutsuille |
 | `APURI_DRAFTER_MODEL` | `eu.anthropic.claude-opus-4-6-v1` | Luonnostelija |
-| `APURI_CHECKER_MODEL` | `eu.anthropic.claude-sonnet-4-5-20250929-v1:0` | Tarkastaja |
+| `APURI_CHECKER_MODEL` | `eu.anthropic.claude-sonnet-4-6` | Tarkastaja |
 | `APURI_USERS` | – | `nimi:salasana[:hanke1\|hanke2],...`; ilman hankeosaa kaikki hankkeet. Pakollinen Bedrock-tilassa |
 | `APURI_SECRET` | arvottu | Istuntojen allekirjoitusavain (Render arpoo) |
 | `APURI_DATA_DIR` | – | Vanhojen vastausten kansio (`<kansio>/<hanke>/vastaukset.jsonl`) |
