@@ -140,17 +140,24 @@ def test_api(monkeypatch):
     assert r.status_code == 200 and r.json()["links"]
 
 
-def test_auth_required_when_users_set(monkeypatch):
+def test_login_flow(monkeypatch):
     monkeypatch.setenv("APURI_PROVIDER", "mock")
     monkeypatch.setenv("APURI_USERS", "vastaaja:salainen")
     from vastausapuri import app as appmod
     appmod.assistant.cache_clear()
     c = TestClient(appmod.app)
     assert c.get("/healthz").status_code == 200
+    r = c.get("/", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/login"
+    assert "Kirjaudu" in c.get("/login").text
     assert c.get("/api/status").status_code == 401
-    assert c.get("/api/status", auth=("vastaaja", "väärä")).status_code == 401
-    r = c.get("/api/status", auth=("vastaaja", "salainen"))
+    assert c.post("/login", data={"username": "vastaaja", "password": "väärä"}).status_code == 401
+    r = c.post("/login", data={"username": "vastaaja", "password": "salainen"}, follow_redirects=False)
+    assert r.status_code == 303
+    r = c.get("/api/status")
     assert r.status_code == 200 and r.headers["X-Robots-Tag"].startswith("noindex")
+    c.cookies.set("apuri_session", "vastaaja|9999999999|vaarennetty")
+    assert c.get("/api/status").status_code == 401
 
 
 def test_bedrock_closed_without_users(monkeypatch):

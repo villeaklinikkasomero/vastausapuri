@@ -26,5 +26,7 @@ services:
         value: eu.anthropic.claude-opus-5-5
       - key: APURI_CHECKER_MODEL
         value: eu.anthropic.claude-sonnet-5-5
+      - key: APURI_SECRET      # istuntojen allekirjoitusavain, Render arpoo sen itse
+        generateValue: true
       - key: APURI_USERS       # "nimi:salasana,nimi2:salasana2" – asetetaan Renderin hallintapaneelissa
         sync: false
