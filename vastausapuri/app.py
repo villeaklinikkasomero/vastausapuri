@@ -4,6 +4,9 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import hmac
+import json
+import queue
+import threading
 import os
 import secrets
 import time
@@ -12,7 +15,8 @@ from pathlib import Path
 from urllib.parse import parse_qs
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
+from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse,
+                               StreamingResponse)
 from pydantic import BaseModel, Field
 
 from .config import get_settings
@@ -213,6 +217,50 @@ def suggest(body: Ask, request: Request) -> dict:
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {_explain(e)}") from None
     return result.to_dict(restore=ps)
+
+
+@app.post("/api/suggest/stream")
+def suggest_stream(body: Ask, request: Request):
+    """Sama kuin /api/suggest, mutta lähettää vaiheet sitä mukaa kuin ne alkavat (NDJSON).
+
+    Rivit: {"type":"steps","steps":[...]}, {"type":"step","id":...}, lopuksi
+    {"type":"result","data":{...}} tai {"type":"error","detail":"..."}.
+    """
+    user, allowed = _allowed(request)
+    if body.hanke not in allowed:
+        raise HTTPException(status_code=403, detail="Ei oikeutta tähän hankkeeseen.")
+    if body.mode not in MODES:
+        raise HTTPException(status_code=400, detail="Tuntematon tila.")
+    assistant = assistants()[body.hanke]
+    events: queue.Queue = queue.Queue()
+
+    def work() -> None:
+        try:
+            result, ps = assistant.run(body.question, mode=body.mode, vastaaja=user,
+                                       own_style=body.own_style, thread=body.thread,
+                                       use_research=body.research,
+                                       progress=lambda sid: events.put({"type": "step", "id": sid}))
+            events.put({"type": "result", "data": result.to_dict(restore=ps)})
+        except Exception as e:  # noqa: BLE001
+            events.put({"type": "error", "detail": f"Ehdotusta ei saatu: {_explain(e)}"})
+        finally:
+            events.put(None)
+
+    def stream():
+        yield json.dumps({"type": "steps", "steps": assistant.steps(body.mode, body.research)}) + "\n"
+        threading.Thread(target=work, daemon=True).start()
+        while True:
+            try:
+                ev = events.get(timeout=10)
+            except queue.Empty:
+                yield json.dumps({"type": "ping"}) + "\n"  # pitää yhteyden auki pitkissä vaiheissa
+                continue
+            if ev is None:
+                break
+            yield json.dumps(ev, ensure_ascii=False) + "\n"
+
+    return StreamingResponse(stream(), media_type="application/x-ndjson",
+                             headers={"X-Accel-Buffering": "no", "Cache-Control": "no-store"})
 
 
 def _explain(e: Exception) -> str:

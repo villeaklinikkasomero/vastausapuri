@@ -67,6 +67,20 @@
   details { margin-top: 16px; } summary { cursor: pointer; color: var(--muted); }
   footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
   .err { color: var(--warn); }
+  .progress { padding: 8px 0; }
+  .progress h2 { display: flex; align-items: center; gap: 10px; }
+  .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line);
+    border-top-color: var(--accent); animation: spin .8s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+  .steps { list-style: none; padding: 0; margin: 12px 0 0; }
+  .steps li { display: flex; align-items: center; gap: 10px; padding: 6px 0; color: var(--muted); }
+  .steps li .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); flex: none;
+    display: grid; place-items: center; font-size: 11px; line-height: 1; }
+  .steps li.active { color: var(--ink); font-weight: 600; }
+  .steps li.active .dot { border-color: var(--accent); border-top-color: transparent; animation: spin .8s linear infinite; }
+  .steps li.done .dot { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .steps li .t { margin-left: auto; font-weight: 400; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -143,20 +157,75 @@ function setMode(m) {
 document.querySelectorAll("#mode button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 $("#hanke").onchange = () => { store("apuri.hanke", $("#hanke").value); refreshOwn(); };
 
+function showProgress(steps) {
+  state.steps = steps.map(x => ({...x, state: "wait", t0: null, t1: null}));
+  state.started = performance.now();
+  $("#out").innerHTML = `<div class="progress" role="status" aria-live="polite">
+    <h2><span class="spinner"></span><span>${state.mode === "luonnos" ? "Luonnosta tehdään" : "Ehdotuksia haetaan"}</span>
+      <span class="hint" id="elapsed" style="margin-left:auto;font-weight:400">0 s</span></h2>
+    <p class="hint">${state.mode === "luonnos" ? "Tavallisesti 20–60 sekuntia." : "Tavallisesti 5–15 sekuntia."} Voit jatkaa muita töitä sillä välin.</p>
+    <ol class="steps" id="steps"></ol></div>`;
+  drawSteps();
+  clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    const el = $("#elapsed"); if (!el) return clearInterval(state.timer);
+    el.textContent = `${Math.round((performance.now() - state.started) / 1000)} s`;
+    drawSteps();
+  }, 500);
+}
+function markStep(id) {
+  const now = performance.now();
+  let reached = false;
+  for (const st of state.steps) {
+    if (st.id === id) { reached = true; if (st.state !== "active") { st.state = "active"; st.t0 = now; } continue; }
+    if (!reached && st.state !== "done") { st.state = "done"; st.t1 = now; st.t0 = st.t0 || now; }
+  }
+  drawSteps();
+}
+function drawSteps() {
+  const ol = $("#steps"); if (!ol) return;
+  const now = performance.now();
+  ol.innerHTML = state.steps.map(st => {
+    const secs = st.t0 ? Math.max(0, Math.round(((st.t1 || now) - st.t0) / 1000)) : null;
+    return `<li class="${st.state}"><span class="dot">${st.state === "done" ? "✓" : ""}</span>${esc(st.label)}
+      ${st.state !== "wait" && secs !== null && (st.state === "active" || secs > 0) ? `<span class="t">${secs} s</span>` : ""}</li>`;
+  }).join("");
+}
+
 async function run() {
   const q = $("#q").value.trim();
   if (q.length < 5 || !$("#hanke").value) return;
   $("#go").disabled = true;
-  $("#out").innerHTML = `<p class="empty">${state.mode === "luonnos" ? "Kirjoitetaan luonnosta ja tarkistetaan sitä… (noin 20–60 s)" : "Haetaan ehdotuksia…"}</p>`;
+  showProgress([{id: "suojaus", label: "Poistetaan tunnistetiedot"}]);
+  const payload = {question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked,
+    thread: $("#thread").value.trim() || null, research: $("#research").checked};
   try {
-    const r = await fetch("/api/suggest", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked,
-        thread: $("#thread").value.trim() || null, research: $("#research").checked})});
-    const d = await r.json();
+    const r = await fetch("/api/suggest/stream", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)});
     if (r.status === 401) { location.href = "/login"; return; }
-    if (!r.ok) throw new Error(d.detail || r.status);
-    render(d);
+    if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.detail || r.status); }
+    const reader = r.body.getReader(), dec = new TextDecoder();
+    let buf = "", done = false, result = null;
+    while (!done) {
+      const chunk = await reader.read();
+      done = chunk.done;
+      buf += dec.decode(chunk.value || new Uint8Array(), {stream: !done});
+      let i;
+      while ((i = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+        if (!line) continue;
+        const ev = JSON.parse(line);
+        if (ev.type === "steps") showProgress(ev.steps);
+        else if (ev.type === "step") markStep(ev.id);
+        else if (ev.type === "error") throw new Error(ev.detail);
+        else if (ev.type === "result") result = ev.data;
+      }
+    }
+    if (!result) throw new Error("Yhteys katkesi ennen kuin luonnos valmistui. Yritä uudelleen.");
+    clearInterval(state.timer);
+    render(result);
   } catch (e) {
+    clearInterval(state.timer);
     $("#out").innerHTML = `<p class="err">Virhe: ${esc(e.message)}</p>`;
   } finally { $("#go").disabled = false; }
 }

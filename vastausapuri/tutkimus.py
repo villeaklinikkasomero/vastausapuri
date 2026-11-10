@@ -10,6 +10,7 @@ import html
 import json
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
@@ -60,20 +61,38 @@ def _short_authors(s: str) -> str:
 
 
 class EuropePMC:
-    def __init__(self, timeout: float = 8.0):
-        self.timeout = timeout
+    """Yksi haku (ei erillisiä katsaushakuja), katsaukset järjestetään kärkeen omassa koodissa.
 
-    def _query(self, q: str) -> list[dict]:
+    Europe PMC on välillä hidas, kun vastaukseen pyydetään tiivistelmät. Siksi aikaraja on
+    väljempi ja aikakatkaisun jälkeen yritetään kerran uudelleen pienemmällä tulosmäärällä.
+    """
+
+    def __init__(self, timeout: float = 12.0, retry_timeout: float = 8.0):
+        self.timeout = timeout
+        self.retry_timeout = retry_timeout
+
+    def _query(self, q: str, page_size: int = 12, timeout: float | None = None) -> list[dict]:
         params = urllib.parse.urlencode(
-            {"query": q, "format": "json", "resultType": "core", "pageSize": 10}
+            {"query": q, "format": "json", "resultType": "core", "pageSize": page_size}
         )
         req = urllib.request.Request(f"{API}?{params}", headers={"User-Agent": UA})
-        with urllib.request.urlopen(req, timeout=self.timeout) as r:  # noqa: S310 (kiinteä osoite)
+        with urllib.request.urlopen(req, timeout=timeout or self.timeout) as r:  # noqa: S310 (kiinteä osoite)
             data = json.loads(r.read().decode("utf-8"))
         return data.get("resultList", {}).get("result", [])
 
+    def fetch(self, q: str, n: int) -> list[dict]:
+        try:
+            return self._query(q, page_size=max(8, n * 3))
+        except (TimeoutError, urllib.error.URLError, OSError):
+            return self._query(q, page_size=max(5, n + 1), timeout=self.retry_timeout)
+
     def search(self, query: str, n: int = 4, years: int = 12) -> list[Paper]:
         return list(_cached_search(self, sanitize_query(query), n, years))
+
+
+def _is_review(r: dict) -> bool:
+    types = [t.lower() for t in (r.get("pubTypeList") or {}).get("pubType", [])]
+    return any("review" in t or "meta-analysis" in t for t in types)
 
 
 @lru_cache(maxsize=256)
@@ -81,22 +100,18 @@ def _cached_search(client: EuropePMC, query: str, n: int, years: int) -> tuple[P
     if not query:
         return ()
     y = time.gmtime().tm_year
-    base = f"({query}) AND PUB_YEAR:[{y - years} TO {y}] AND HAS_ABSTRACT:y"
-    reviews = '(PUB_TYPE:"review" OR PUB_TYPE:"systematic-review" OR PUB_TYPE:"meta-analysis")'
+    q = f"({query}) AND PUB_YEAR:[{y - years} TO {y}] AND HAS_ABSTRACT:y"
     rows: list[dict] = []
     seen: set[str] = set()
-    # Ensin katsaukset, sitten muut tutkimukset
-    for q in (f"{base} AND {reviews}", base):
-        for r in client._query(q):
-            key = r.get("doi") or r.get("id")
-            if key and key not in seen:
-                seen.add(key)
-                rows.append(r)
-        if len(rows) >= n:
-            break
+    for r in client.fetch(q, n):
+        key = r.get("doi") or r.get("id")
+        if key and key not in seen:
+            seen.add(key)
+            rows.append(r)
+    # Katsaukset ja meta-analyysit ensin, muuten osuvuusjärjestys säilyy
+    rows.sort(key=lambda r: not _is_review(r))
     papers = []
     for i, r in enumerate(rows[:n], 1):
-        types = [t.lower() for t in (r.get("pubTypeList") or {}).get("pubType", [])]
         if r.get("pmid"):
             url = f"https://europepmc.org/article/MED/{r['pmid']}"
         elif r.get("doi"):
@@ -112,7 +127,7 @@ def _cached_search(client: EuropePMC, query: str, n: int, years: int) -> tuple[P
                 year=str(r.get("pubYear", "")),
                 url=url,
                 abstract=_clean(r.get("abstractText", ""))[:2000],
-                review=any("review" in t or "meta-analysis" in t for t in types),
+                review=_is_review(r),
             )
         )
     return tuple(papers)

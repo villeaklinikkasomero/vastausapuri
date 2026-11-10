@@ -80,6 +80,18 @@ class Assistant:
         self.research = research
         self._checker_down = False  # asetetaan, jos tarkastajan malli ei vastaa (esim. vanhentunut)
 
+    def steps(self, mode: str, use_research: bool = True) -> list[dict]:
+        """Vaiheet edistymisnäkymää varten, siinä järjestyksessä kuin run() ne käy läpi."""
+        draft = mode == "luonnos"
+        out = [("suojaus", "Poistetaan tunnistetiedot"),
+               ("haku", f"Haetaan sopivat sisällöt ({self.h.nimi})")]
+        if draft and use_research and self.research is not None and self.h.research.get("kaytossa"):
+            out.append(("tutkimus", "Haetaan tutkimustietoa (Europe PMC)"))
+        out += [("luonnos", "Kirjoitetaan luonnosta" if draft else "Valitaan linkit"),
+                ("tarkastus", "Tarkistetaan luonnosta" if draft else "Tarkistetaan linkit"),
+                ("viimeistely", "Viimeistellään")]
+        return [{"id": i, "label": l} for i, l in out]
+
     def _light(self, *, system: str, user: str, notes: list[str], max_tokens: int = 1500) -> str:
         """Tarkastajan malli; jos se ei ole käytettävissä, varalla luonnostelijan malli."""
         if not self._checker_down:
@@ -110,7 +122,10 @@ class Assistant:
                 notes.append(f"Tutkimushaku ei löytänyt tiivistelmiä hakulauseella: {query}")
             return query, papers
         except Exception as e:  # noqa: BLE001
-            notes.append(f"Tutkimushaku epäonnistui ({describe_error(e)}); luonnos tehtiin ilman sitä.")
+            why = ("Europe PMC ei vastannut ajoissa" if isinstance(e, (TimeoutError, OSError))
+                   and not hasattr(e, "response") else describe_error(e))
+            notes.append(f"Tutkimushaku epäonnistui ({why}); luonnos tehtiin ilman sitä. "
+                         "Voit yrittää uudelleen hetken päästä.")
             return "", []
 
     def _candidates(self, text: str) -> list[CatalogItem]:
@@ -120,8 +135,10 @@ class Assistant:
 
     def run(self, question: str, mode: str = "linkit", vastaaja: str | None = None,
             own_style: bool = False, thread: str | None = None,
-            use_research: bool = True) -> tuple[Result, Pseudonymized]:
-        """thread: aiempi keskustelu (kysymys, vastaus, ...) jatkokysymystä varten."""
+            use_research: bool = True, progress=None) -> tuple[Result, Pseudonymized]:
+        """thread: aiempi keskustelu (kysymys, vastaus, ...) jatkokysymystä varten.
+        progress: valinnainen funktio, jota kutsutaan vaiheen alkaessa (ks. steps())."""
+        step = progress or (lambda _id: None)
         if mode not in MODES:
             raise ValueError(f"Tuntematon tila: {mode}")
         draft_mode = mode == "luonnos"
@@ -130,10 +147,12 @@ class Assistant:
         thread = (thread or "").strip() or None
         followup = thread is not None
         # Keskustelu ja kysymys pseudonymisoidaan yhdessä, jotta sama nimi saa saman paikkamerkin
+        step("suojaus")
         ps = pseudonymize(f"{thread}{_SEP}{question}" if followup else question, self.h.safe_domains)
         p_thread, p_question = ps.text.split(_SEP, 1) if followup else (None, ps.text)
         signals = detect_signals(question, self.h.signal_patterns)  # paikallinen, alkuperäisestä
         query = f"{p_question}\n{p_question}\n{p_thread[-1000:]}" if followup else p_question
+        step("haku")
         candidates = self._candidates(query)
         cand_by_id = {c.id: c for c in candidates}
         sources = [c for c in candidates if c.type != "kriisi"][: self.s.sources]
@@ -147,11 +166,13 @@ class Assistant:
         notes: list[str] = []
         research_query, papers = "", []
         if draft_mode and use_research and self.research is not None and self.h.research.get("kaytossa"):
+            step("tutkimus")
             research_query, papers = self._research(p_question, notes)
         research_text = format_papers(papers) if papers else None
         t_r = time.perf_counter()
 
         # 1) Luonnostelija
+        step("luonnos")
         draft_text = ""
         if draft_mode:
             raw = self.llm.complete(
@@ -176,6 +197,7 @@ class Assistant:
         t2 = time.perf_counter()
 
         # 2) Tarkastaja (virhe ei kaada putkea, mutta näkyy vastaajalle)
+        step("tarkastus")
         try:
             raw_c = self._light(
                 notes=notes,
@@ -192,6 +214,7 @@ class Assistant:
         t3 = time.perf_counter()
 
         # 3) Koodin tarkistukset: vain katalogin id:t kelpaavat
+        step("viimeistely")
         invalid: list[str] = []
         verdicts = {v.get("id"): v for v in check.get("linkit", [])}
         links: list[LinkSuggestion] = []

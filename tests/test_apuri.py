@@ -334,7 +334,7 @@ def test_europepmc_parsing(monkeypatch):
              "authorString": "Smith J, Doe A.", "journalInfo": {"journal": {"title": "Derm"}}, "pubYear": "2024",
              "abstractText": "<h4>Background</h4>Text &amp; more.", "pubTypeList": {"pubType": ["Review"]}}]
     client = EuropePMC()
-    monkeypatch.setattr(client, "_query", lambda q: rows)
+    monkeypatch.setattr(client, "_query", lambda q, page_size=12, timeout=None: rows)
     _cached_search.cache_clear()
     papers = client.search("acne steroids", n=3, years=10)
     assert len(papers) == 1 and papers[0].title == "Acne vulgaris" and papers[0].review
@@ -361,3 +361,42 @@ def test_checker_falls_back_to_drafter_model(doping):
     assert res.research, "tutkimushaku toimii varamallilla"
     assert not any("Tarkastus epäonnistui" in n for n in res.notes)
     assert sum("ei ole käytettävissä" in n and "end of its life" in n for n in res.notes) == 1
+
+
+def test_europepmc_retries_after_timeout(monkeypatch):
+    calls = []
+
+    def flaky(q, page_size=12, timeout=None):
+        calls.append(page_size)
+        if len(calls) == 1:
+            raise TimeoutError()
+        return [{"id": "2", "pmid": "2", "title": "T", "abstractText": "A", "pubYear": "2022",
+                 "pubTypeList": {"pubType": ["Journal Article"]}},
+                {"id": "3", "pmid": "3", "title": "R", "abstractText": "B", "pubYear": "2021",
+                 "pubTypeList": {"pubType": ["Review"]}}]
+
+    client = EuropePMC()
+    monkeypatch.setattr(client, "_query", flaky)
+    _cached_search.cache_clear()
+    papers = client.search("steroids timeout", n=2, years=10)
+    assert len(calls) == 2 and calls[1] < calls[0]
+    assert papers[0].review and papers[0].title == "R"  # katsaus ensin
+
+
+def test_stream_reports_steps_then_result(monkeypatch):
+    c = client(monkeypatch, "ville:pw:dopinglinkki")
+    login(c, "ville", "pw")
+    r = c.post("/api/suggest/stream", json={"question": "Mistä saan neuloja?", "hanke": "dopinglinkki",
+                                            "mode": "luonnos"})
+    events = [json.loads(l) for l in r.text.splitlines() if l.strip()]
+    assert events[0]["type"] == "steps"
+    planned = [s["id"] for s in events[0]["steps"]]
+    seen = [e["id"] for e in events if e["type"] == "step"]
+    assert seen == planned  # vaiheet tulevat ilmoitetussa järjestyksessä
+    assert events[-1]["type"] == "result" and events[-1]["data"]["draft"]
+
+
+def test_stream_denies_other_projects(monkeypatch):
+    c = client(monkeypatch, "rajattu:pw:toinen")
+    login(c, "rajattu", "pw")
+    assert c.post("/api/suggest/stream", json={"question": "Testi kysymys", "hanke": "dopinglinkki"}).status_code == 403
