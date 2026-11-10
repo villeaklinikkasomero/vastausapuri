@@ -164,7 +164,7 @@ Tarkista:
    kriisi.havaittu = true, jos akuutteja oireita tai kriisisignaaleja on.
    Selitetäänkö oireita pelkillä dopingaineilla, vaikka muut syyt (sairaudet, lääkitys, ylikuormitus)
    ovat mahdollisia? Ehdotetaanko jotain, mitä kysyjä kertoo jo kokeilleensa, ilman perustelua?
-   Mainitaanko nimeltä lääkäri, joka ei ole ASIANTUNTIJALISTALLA? (vakavuus korkea)
+   Mainitaanko nimeltä lääkäri, joka ei ole asiantuntijalistalla? (vakavuus korkea)
 6. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?
 7. Vastaako luonnos varsinaiseen kysymykseen? Jatkokysymyksessä: vastataanko kaikkiin uusiin
    kysymyksiin, ja vältetäänkö aiemmin kerrotun toistamista?
@@ -247,7 +247,7 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
         f"LÄHDEOTTEET (palvelun omista sisällöistä):\n{format_sources(sources)}",
     ]
     if experts:
-        parts.append("ASIANTUNTIJALISTA (työryhmän ylläpitämä; nimeltä saa mainita vain nämä):\n"
+        parts.append("Asiantuntijalista (työryhmän ylläpitämä; nimeltä saa mainita vain nämä):\n"
                      + format_experts(experts))
     if research:
         parts.append(f"TUTKIMUSLÄHTEET (Europe PMC, englanninkieliset tiivistelmät):\n{research}")
@@ -268,7 +268,7 @@ def checker_user(question: str, candidates: list[CatalogItem], draft: dict,
     if research:
         parts.append(f"TUTKIMUSLÄHTEET:\n{research}")
     if experts:
-        parts.append(f"ASIANTUNTIJALISTA:\n{format_experts(experts)}")
+        parts.append(f"Asiantuntijalista:\n{format_experts(experts)}")
     parts.append(f"LUONNOS:\n{json.dumps(draft, ensure_ascii=False, indent=1)}")
     if draft_text is not None:
         parts.append(f"LUONNOKSEN TEKSTI:\n{draft_text}")

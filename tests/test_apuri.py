@@ -474,8 +474,8 @@ def test_expert_list_and_rules_reach_models_and_greeting_is_added(doping):
     llm = CapturingLLM()
     res, _ = make(doping, llm).run(CARDIAC, mode="luonnos")
     draft_sys, draft_user = next(c for c in llm.calls if "<luonnos>" in c[0])
-    assert "ASIANTUNTIJALISTA" in draft_user and "Roman Rusman" in draft_user
+    assert "Asiantuntijalista" in draft_user and "Roman Rusman" in draft_user
     assert "SAMANA PÄIVÄNÄ" in draft_sys and "Hoitohistoria" in draft_sys
     checker_sys, checker_user = next(c for c in llm.calls if "TARKASTAJA" in c[0] and "ongelmat" in c[0])
-    assert "aikarajan" in checker_sys and "ASIANTUNTIJALISTA" in checker_user
+    assert "aikarajan" in checker_sys and "Asiantuntijalista" in checker_user
     assert res.draft.startswith("Hei, kiitos kysymyksestäsi.")
