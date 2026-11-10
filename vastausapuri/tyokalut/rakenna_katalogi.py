@@ -156,6 +156,7 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
     site_host = urlparse(site).netloc.lower().removeprefix("www.")
     site_name = h.get("nimi", "")
     skip = h.get("ohita", [])
+    types = cfg.get("haku", {}).get("tyypit", {})
     cat_path = d / "katalogi.json"
     existing = json.loads(cat_path.read_text(encoding="utf-8")) if cat_path.exists() else []
     by_url = {norm(it["url"]): it for it in existing}
@@ -203,6 +204,10 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
             if it.get("description_source") == "käsin" and page["description"]:
                 it["description"] = page["description"]
                 it["description_source"] = "sivusto"
+            if it.get("title_source") == "slug" and page["title"]:
+                prefix = "Tutkimustiivistelmä: " if it.get("type") == "tutkimus" else ""
+                it["title"] = prefix + page["title"]
+                it["title_source"] = "sivusto"
             it["content"] = page["content"]
             stats["päivitetty"] += 1
         else:
@@ -210,7 +215,7 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
                 "id": slug_id(url, taken),
                 "title": page["title"] or url,
                 "url": url,
-                "type": "artikkeli",
+                "type": next((t for frag, t in types.items() if frag in url), "artikkeli"),
                 "description": page["description"],
                 "topics": [],
                 "audience": [],

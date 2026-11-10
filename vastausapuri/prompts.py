@@ -18,6 +18,22 @@ def _context(h: Hanke) -> str:
     return out
 
 
+# --- Tutkimushaun hakulause ------------------------------------------------------
+
+def research_query_system(h: Hanke) -> str:
+    aihe = h.research.get("aihe", "")
+    return f"""Muodostat HAKULAUSEEN lääketieteelliseen tietokantaan (Europe PMC / PubMed).
+
+Palvelu: {h.nimi}. Aihepiiri: {aihe}
+
+Saat neuvontapalveluun tulleen kysymyksen. Muodosta lyhyt englanninkielinen hakulause
+(2–6 lääketieteellistä termiä, voit käyttää AND/OR ja lainausmerkkejä), joka löytää tutkimustiedon
+kysymyksen ydinasiaan. ÄLÄ sisällytä henkilötietoja, ikiä, paikkoja, päivämääriä tai annoksia.
+Jos kysymys ei kaipaa tutkimustietoa (esim. pelkkä palvelu- tai lakiasia), aseta "tarpeen": false.
+
+Vastaa VAIN JSON-oliona: {{"tarpeen": true, "haku": "..."}}"""
+
+
 # --- Linkkitila (vaihe 1) -------------------------------------------------------
 
 def links_system(h: Hanke, max_links: int) -> str:
@@ -78,13 +94,18 @@ KIRJOITUSOHJEET:
 - {style}
 - Älä toista esimerkkien henkilöihin liittyviä yksityiskohtia.
 - Älä kirjoita palautepyyntöä: se lisätään automaattisesti.
+- Jos mukana on TUTKIMUSLÄHTEITÄ (englanninkielisiä tiivistelmiä), voit käyttää niitä tukemaan
+  väitteitä. Kirjoita silti suomeksi yleistajuisesti, älä lisää viitteitä tai tutkimusten nimiä
+  vastaustekstiin, äläkä yleistä yksittäisen tutkimuksen tulosta liikaa. Kirjaa metatietoihin,
+  mitä lähteitä käytit ja mihin väitteeseen (kenttä "tutkimukset").
 
 {_COMMON}
 
 Vastaa kahdessa osassa täsmälleen tässä muodossa:
 <meta>
 {{"aiheet": ["..."], "kysyja": "itse|läheinen|ammattilainen|ei tiedossa",
- "linkit": [{{"id": "...", "perustelu": "..."}}], "huomiot": ["..."]}}
+ "linkit": [{{"id": "...", "perustelu": "..."}}], "huomiot": ["..."],
+ "tutkimukset": [{{"id": "T1", "kaytto": "mihin väitteeseen"}}]}}
 </meta>
 <luonnos>
 (vastausluonnos)
@@ -113,8 +134,9 @@ vastausluonnoksen, jonka ihmisvastaaja vielä tarkistaa. Etsi asiat, jotka vasta
 {context}
 
 Tarkista:
-1. Asiavirheet: onko luonnoksessa väitteitä, jotka ovat ristiriidassa LÄHDEOTTEIDEN kanssa tai
-   joita ei voi perustella? Lainaa kohta.
+1. Asiavirheet: onko luonnoksessa väitteitä, jotka ovat ristiriidassa LÄHDEOTTEIDEN tai
+   TUTKIMUSLÄHTEIDEN kanssa, yleistävät yksittäistä tutkimusta liikaa tai joita ei voi perustella?
+   Lainaa kohta.
 2. Periaatteet: annostelu- tai kuuriohjeita, hankintaohjeita, diagnooseja, moralisointia tai
    syyllistämistä, liian varmoja lupauksia.
 3. Turvallisuus: jos kysymyksessä on akuutteja oireita tai kriisisignaaleja, kehotetaanko
@@ -174,7 +196,8 @@ def links_user(question: str, candidates: list[CatalogItem], thread: str | None 
 
 
 def draft_user(question: str, candidates: list[CatalogItem], sources: list[CatalogItem],
-               examples: list[Answer], own: str | None, thread: str | None = None) -> str:
+               examples: list[Answer], own: str | None, thread: str | None = None,
+               research: str | None = None) -> str:
     parts = []
     if thread:
         parts.append(f"AIEMPI KESKUSTELU (pseudonymisoitu, vanhin ensin):\n{thread}")
@@ -183,6 +206,8 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
         f"EHDOKKAAT:\n{format_candidates(candidates)}",
         f"LÄHDEOTTEET (palvelun omista sisällöistä):\n{format_sources(sources)}",
     ]
+    if research:
+        parts.append(f"TUTKIMUSLÄHTEET (Europe PMC, englanninkieliset tiivistelmät):\n{research}")
     if examples:
         parts.append(f"ESIMERKKIVASTAUKSIA (pseudonymisoituja):\n{format_examples(examples, own)}")
     return "\n\n".join(parts)
@@ -190,12 +215,14 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
 
 def checker_user(question: str, candidates: list[CatalogItem], draft: dict,
                  sources: list[CatalogItem] | None = None, draft_text: str | None = None,
-                 thread: str | None = None) -> str:
+                 thread: str | None = None, research: str | None = None) -> str:
     parts = [f"AIEMPI KESKUSTELU:\n{thread}"] if thread else []
     parts += [f"{'JATKOKYSYMYS' if thread else 'KYSYMYS'} (pseudonymisoitu):\n{question}",
               f"EHDOKKAAT:\n{format_candidates(candidates)}"]
     if sources is not None:
         parts.append(f"LÄHDEOTTEET:\n{format_sources(sources)}")
+    if research:
+        parts.append(f"TUTKIMUSLÄHTEET:\n{research}")
     parts.append(f"LUONNOS:\n{json.dumps(draft, ensure_ascii=False, indent=1)}")
     if draft_text is not None:
         parts.append(f"LUONNOKSEN TEKSTI:\n{draft_text}")

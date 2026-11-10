@@ -7,13 +7,21 @@ nimi = "Dopinglinkki"
 kuvaus = "Kuntodopingia eli dopingaineiden käyttöä kilpaurheilun ulkopuolella käsittelevä neuvontapalvelu."
 sivusto = "https://dopinglinkki.fi"
 # Katalogin rakennustyökalu hakee nämä sivukartat (ks. vastausapuri/tyokalut/rakenna_katalogi.py)
-sivukartat = ["https://dopinglinkki.fi/page-sitemap1.xml"]
+sivukartat = [
+  "https://dopinglinkki.fi/page-sitemap1.xml",
+  "https://dopinglinkki.fi/research_summary-sitemap1.xml",
+]
 # Sivut, joita ei oteta katalogiin
 ohita = ["/info/", "/plp", "/sv/", "/en/", "/ru/", "/ajankohtaista/"]
 
 [haku]
 # Yhteiset katalogit, jotka liitetään tämän hankkeen katalogiin (kriisipalvelut ym.)
 sisallyta = ["yhteiset"]
+
+[haku.tyypit]
+# Katalogityökalu antaa uusille sivuille tyypin osoitteen perusteella
+"/tutkimustiivistelma/" = "tutkimus"
+"/riippuvuustestit/" = "testi"
 
 [vastaus]
 # Perustuu Dopinglinkin työryhmän vastausesimerkkiin (marraskuu 2026). Tarkista vastaajien kanssa.
@@ -33,11 +41,11 @@ Dopinglinkin neuvonta on anonyymiä, maksutonta ja perustuu tutkittuun tietoon. 
 dopingaineita käyttäviä tai käyttöä harkitsevia kuntoilijoita, heidän läheisiään ja ammattilaisia.
 
 Vastauksen tyypillinen rakenne (kappaleina, ei otsikoita eikä luettelomerkkejä):
-1. Tunnista kysyjän tilanne lyhyesti ja empaattisesti omin sanoin (esim. "Kuvaamasi perusteella...").
-2. Selitä ilmiön mekanismi ymmärrettävästi ja tutkimustietoon perustuen (esim. miten androgeenit
-   vaikuttavat talirauhasiin).
+1. Tunnista kysyjän tilanne lyhyesti ja empaattisesti omin sanoin.
+2. Selitä ilmiön mekanismi ymmärrettävästi ja tutkimustietoon perustuen: miksi aine aiheuttaa
+   kuvatun vaikutuksen.
 3. Vastaa suoraan siihen, mitä kysyttiin. Ota terveyden kannalta perusteltu, selkeä kanta
-   ("Emme suosittelisi...", "Mitään tutkimukseen perustuvaa turvallista odotusaikaa ei ole."),
+   (esim. "Emme suosittelisi..."). Jos tutkimustietoa ei ole, sano se suoraan.
    mutta älä syyllistä tai moralisoi.
 4. Nosta esiin mahdolliset vakavammat tilat tai yhteisvaikutukset lääkärin arvioitaviksi
    (ei diagnoosia: "herättää kysymyksen...", "kannattaa arvioida").
@@ -65,6 +73,13 @@ Jatkokysymykset: aiempi keskustelu annetaan kontekstiksi. Älä toista jo kerrot
 uusiin kysymyksiin ja viittaa tarvittaessa aiempaan ("Kuten aiemmin totesimme..."). Jos kysyjä
 kysyy useita numeroituja kysymyksiä, vastaa niihin samassa järjestyksessä.
 """
+
+[tutkimus]
+# Kansainvälinen tutkimushaku (Europe PMC). Hakuun lähtee vain yleinen englanninkielinen hakulause.
+kaytossa = true
+maara = 4      # tiivistelmiä luonnokselle
+vuodet = 12    # julkaisut viimeisen N vuoden ajalta, katsaukset ensin
+aihe = "anabolic androgenic steroids, performance and image enhancing drugs, doping in recreational sport"
 
 [kriisi]
 # Hankekohtaiset lisäsignaalit (säännölliset lausekkeet), yhteisten kriisisignaalien lisäksi

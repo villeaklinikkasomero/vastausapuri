@@ -19,6 +19,7 @@ from .hanke import Hanke
 from .llm import LLM, parse_draft, parse_json
 from .pseudonymize import Pseudonymized, pseudonymize
 from .safety import Signal, detect_signals
+from .tutkimus import Paper, ResearchClient, format_papers
 
 MODES = ("linkit", "luonnos")
 _SEP = "\n\n\u27e6JATKOKYSYMYS\u27e7\n\n"
@@ -56,6 +57,8 @@ class Result:
     draft: str = ""
     issues: list[dict] = field(default_factory=list)
     examples_used: list[dict] = field(default_factory=list)
+    research_query: str = ""
+    research: list[dict] = field(default_factory=list)
     sources_used: list[str] = field(default_factory=list)
     timings_ms: dict[str, int] = field(default_factory=dict)
 
@@ -69,11 +72,31 @@ class Result:
 
 
 class Assistant:
-    def __init__(self, settings: Settings, hanke: Hanke, llm: LLM):
+    def __init__(self, settings: Settings, hanke: Hanke, llm: LLM, research: ResearchClient | None = None):
         self.s = settings
         self.h = hanke
         self.index = hanke.index
         self.llm = llm
+        self.research = research
+
+    def _research(self, question: str, notes: list[str]) -> tuple[str, list[Paper]]:
+        """Hakulause mallilta (vain yleiset termit) ja tiivistelmät Europe PMC:stä."""
+        cfg = self.h.research
+        try:
+            raw = self.llm.complete(model=self.s.checker_model,
+                                    system=prompts.research_query_system(self.h),
+                                    user=f"KYSYMYS (pseudonymisoitu):\n{question}", max_tokens=200)
+            q = parse_json(raw)
+            if not q.get("tarpeen", True) or not q.get("haku"):
+                return "", []
+            query = str(q["haku"])
+            papers = self.research.search(query, n=int(cfg.get("maara", 4)), years=int(cfg.get("vuodet", 12)))
+            if not papers:
+                notes.append(f"Tutkimushaku ei löytänyt tiivistelmiä hakulauseella: {query}")
+            return query, papers
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"Tutkimushaku epäonnistui ({type(e).__name__}); luonnos tehtiin ilman sitä.")
+            return "", []
 
     def _candidates(self, text: str) -> list[CatalogItem]:
         found = [it for it, score in self.index.search(text, k=self.s.candidates) if score > 0]
@@ -81,7 +104,8 @@ class Assistant:
         return found + crisis  # kriisipalvelut ovat aina tarjolla
 
     def run(self, question: str, mode: str = "linkit", vastaaja: str | None = None,
-            own_style: bool = False, thread: str | None = None) -> tuple[Result, Pseudonymized]:
+            own_style: bool = False, thread: str | None = None,
+            use_research: bool = True) -> tuple[Result, Pseudonymized]:
         """thread: aiempi keskustelu (kysymys, vastaus, ...) jatkokysymystä varten."""
         if mode not in MODES:
             raise ValueError(f"Tuntematon tila: {mode}")
@@ -104,15 +128,22 @@ class Assistant:
         own = vastaaja if (own_style and any(e.vastaaja == vastaaja for e in examples)) else None
         t1 = time.perf_counter()
 
-        # 1) Luonnostelija
         notes: list[str] = []
+        research_query, papers = "", []
+        if draft_mode and use_research and self.research is not None and self.h.research.get("kaytossa"):
+            research_query, papers = self._research(p_question, notes)
+        research_text = format_papers(papers) if papers else None
+        t_r = time.perf_counter()
+
+        # 1) Luonnostelija
         draft_text = ""
         if draft_mode:
             raw = self.llm.complete(
                 model=self.s.drafter_model,
                 system=prompts.draft_system(self.h, self.s.max_links, own_style=own is not None,
                                             followup=followup),
-                user=prompts.draft_user(p_question, candidates, sources, examples, own, p_thread),
+                user=prompts.draft_user(p_question, candidates, sources, examples, own, p_thread,
+                                        research_text),
                 max_tokens=3000,
             )
             meta, draft_text = parse_draft(raw)
@@ -135,7 +166,7 @@ class Assistant:
                 system=prompts.checker_system(self.h, draft_mode),
                 user=prompts.checker_user(p_question, candidates, meta,
                                           sources if draft_mode else None,
-                                          draft_text if draft_mode else None, p_thread),
+                                          draft_text if draft_mode else None, p_thread, research_text),
             )
             check = parse_json(raw_c)
         except Exception as e:  # noqa: BLE001
@@ -213,6 +244,8 @@ class Assistant:
         if invalid:
             notes.append(f"Mallin ehdottamia tuntemattomia sisältöjä poistettiin: {', '.join(invalid)}")
 
+        used_research = {str(r.get("id")): str(r.get("kaytto", "")) for r in meta.get("tutkimukset", [])
+                         if isinstance(r, dict)}
         result = Result(
             hanke=self.h.id,
             mode=mode,
@@ -234,9 +267,13 @@ class Assistant:
             issues=issues,
             examples_used=[{"id": e.id, "oma": bool(own and e.vastaaja == own)} for e in examples],
             sources_used=[s.id for s in sources] if draft_mode else [],
+            research_query=research_query,
+            research=[{**p.to_dict(), "abstract": p.abstract[:800], "used": p.id in used_research,
+                       "kaytto": used_research.get(p.id, "")} for p in papers],
             timings_ms={
                 "esikasittely": int((t1 - t0) * 1000),
-                "luonnostelija": int((t2 - t1) * 1000),
+                "tutkimushaku": int((t_r - t1) * 1000),
+                "luonnostelija": int((t2 - t_r) * 1000),
                 "tarkastaja": int((t3 - t2) * 1000),
             },
         )

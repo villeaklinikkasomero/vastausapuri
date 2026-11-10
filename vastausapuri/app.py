@@ -19,6 +19,7 @@ from .config import get_settings
 from .llm import get_llm
 from .hanke import load_all
 from .pipeline import MODES, Assistant
+from .tutkimus import EuropePMC
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 COOKIE = "apuri_session"
@@ -160,7 +161,8 @@ def healthz() -> dict:
 def assistants() -> dict[str, Assistant]:
     s = get_settings()
     llm = get_llm(s)
-    return {hid: Assistant(s, h, llm) for hid, h in load_all(s.hankkeet_dir, s.data_dir).items()}
+    research = EuropePMC() if s.research == "europepmc" else None
+    return {hid: Assistant(s, h, llm, research) for hid, h in load_all(s.hankkeet_dir, s.data_dir).items()}
 
 
 def _allowed(request: Request) -> tuple[str | None, list[str]]:
@@ -178,6 +180,7 @@ class Ask(BaseModel):
     mode: str = "luonnos"
     own_style: bool = False
     thread: str | None = Field(default=None, max_length=40000)  # aiempi keskustelu jatkokysymykselle
+    research: bool = True  # hae tutkimustietoa (jos hankkeella käytössä)
 
 
 @app.get("/")
@@ -191,7 +194,7 @@ def status(request: Request) -> dict:
     a = assistants()
     s = get_settings()
     return {"provider": s.provider, "drafter": s.drafter_model, "checker": s.checker_model,
-            "user": user, "modes": list(MODES),
+            "user": user, "modes": list(MODES), "research": s.research,
             "hankkeet": [a[h].h.summary() for h in allowed]}
 
 
@@ -206,7 +209,7 @@ def suggest(body: Ask, request: Request) -> dict:
     try:
         result, ps = assistants()[body.hanke].run(body.question, mode=body.mode,
                                                  vastaaja=user, own_style=body.own_style,
-                                                 thread=body.thread)
+                                                 thread=body.thread, use_research=body.research)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {_explain(e)}") from None
     return result.to_dict(restore=ps)

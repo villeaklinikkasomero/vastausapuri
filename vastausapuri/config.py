@@ -27,6 +27,12 @@ class Settings:
     data_dir: Path | None = field(
         default_factory=lambda: Path(os.environ["APURI_DATA_DIR"]) if os.getenv("APURI_DATA_DIR") else None
     )
+    # Tutkimushaku: "europepmc" tai "pois". Oletuksena päällä Bedrock-tilassa, pois mock-tilassa.
+    research: str = field(
+        default_factory=lambda: os.getenv(
+            "APURI_TUTKIMUS", "europepmc" if os.getenv("APURI_PROVIDER", "mock") == "bedrock" else "pois"
+        )
+    )
     # Montako ehdokasta haku antaa luonnostelijalle ja montako linkkiä enintään ehdotetaan
     candidates: int = field(default_factory=lambda: int(os.getenv("APURI_CANDIDATES", "12")))
     max_links: int = field(default_factory=lambda: int(os.getenv("APURI_MAX_LINKS", "5")))

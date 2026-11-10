@@ -45,6 +45,10 @@ class Hanke:
         return frozenset(_domain(u) for u in urls if u)
 
     @property
+    def research(self) -> dict:
+        return self.config.get("tutkimus", {})
+
+    @property
     def tervehdys(self) -> str:
         return self.vastaus.get("tervehdys", "Hei,")
 
@@ -59,6 +63,7 @@ class Hanke:
             "sisaltoja": len(self.index.items),
             "vastauksia": len(self.answers.answers),
             "vastaajat": sorted(self.answers.respondents()),
+            "tutkimus": bool(self.research.get("kaytossa")),
         }
 
 

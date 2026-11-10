@@ -86,6 +86,7 @@
       </div>
     </div>
     <label class="check"><input type="checkbox" id="own"> <span id="ownLabel">Kirjoita minun tyylilläni</span></label>
+    <label class="check"><input type="checkbox" id="research" checked> <span id="researchLabel">Hae tutkimustietoa (Europe PMC)</span></label>
     <details id="threadBox" style="margin-top:16px">
       <summary>Jatkokysymys? Liitä aiempi keskustelu</summary>
       <textarea id="thread" style="min-height:160px;margin-top:8px" placeholder="Liitä tähän alkuperäinen kysymys ja siihen annettu vastaus (ja mahdolliset aiemmat jatkokysymykset). Kirjoita itse jatkokysymys alla olevaan kenttään."></textarea>
@@ -128,6 +129,10 @@ function refreshOwn() {
   if (!has) $("#own").checked = false;
   $("#ownLabel").textContent = has ? "Kirjoita minun tyylilläni"
     : "Kirjoita minun tyylilläni (ei käytössä: omia vastauksia ei ole indeksissä)";
+  const res = s.research === "europepmc" && h && h.tutkimus;
+  $("#research").disabled = !res || state.mode !== "luonnos";
+  if (!res) $("#research").checked = false;
+  $("#researchLabel").textContent = res ? "Hae tutkimustietoa (Europe PMC)" : "Hae tutkimustietoa (ei käytössä tässä ympäristössä)";
 }
 function setMode(m) {
   state.mode = m; store("apuri.mode", m);
@@ -146,7 +151,7 @@ async function run() {
   try {
     const r = await fetch("/api/suggest", {method: "POST", headers: {"Content-Type": "application/json"},
       body: JSON.stringify({question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked,
-        thread: $("#thread").value.trim() || null})});
+        thread: $("#thread").value.trim() || null, research: $("#research").checked})});
     const d = await r.json();
     if (r.status === 401) { location.href = "/login"; return; }
     if (!r.ok) throw new Error(d.detail || r.status);
@@ -182,6 +187,17 @@ function render(d) {
       : `<p class="hint">Tarkastaja ei löytänyt korjattavaa.</p>`;
   }
 
+  if (d.research && d.research.length) {
+    h += `<h3>Tutkimuslähteet</h3><p class="hint">Hakulause: ${esc(d.research_query)} · tarkista väitteet tarvittaessa alkuperäisestä</p>`;
+    h += d.research.map(r => `<div class="link" style="grid-template-columns:1fr">
+      <div><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></div>
+      <div class="meta" style="grid-column:1">${esc(r.authors)} · ${esc(r.journal)} ${esc(r.year)}${r.review ? " · katsaus" : ""}
+        ${r.used ? ` · <strong>käytetty luonnoksessa</strong>${r.kaytto ? ": " + esc(r.kaytto) : ""}` : " · ei käytetty"}</div>
+      ${r.abstract ? `<details style="margin-top:4px;grid-column:1"><summary>Tiivistelmä</summary><p class="hint">${esc(r.abstract)}…</p></details>` : ""}
+    </div>`).join("");
+  } else if (d.research_query) {
+    h += `<h3>Tutkimuslähteet</h3><p class="hint">Ei osumia hakulauseella: ${esc(d.research_query)}</p>`;
+  }
   h += `<h3>${d.mode === "luonnos" ? "Luonnoksen linkit" : "Linkkiehdotukset"}</h3>`;
   if (!d.links.length) h += `<p class="hint">Katalogista ei löytynyt sopivaa sisältöä.</p>`;
   d.links.forEach((l, i) => {
@@ -204,7 +220,7 @@ function render(d) {
     h += `<details><summary>Luonnoksen pohjana</summary><p class="hint">Lähdeotteet: ${esc(d.sources_used.join(", ") || "–")}<br>
       Esimerkkivastauksia: ${d.examples_used.length}${own ? ` (omia ${own})` : ""}</p></details>`;
   }
-  h += `<footer>${esc(d.models.provider)} · luonnostelija ${(d.timings_ms.luonnostelija / 1000).toFixed(1)} s · tarkastaja ${(d.timings_ms.tarkastaja / 1000).toFixed(1)} s</footer>`;
+  h += `<footer>${esc(d.models.provider)} · ${d.timings_ms.tutkimushaku ? `tutkimushaku ${(d.timings_ms.tutkimushaku / 1000).toFixed(1)} s · ` : ""}luonnostelija ${(d.timings_ms.luonnostelija / 1000).toFixed(1)} s · tarkastaja ${(d.timings_ms.tarkastaja / 1000).toFixed(1)} s</footer>`;
   $("#out").innerHTML = h;
   if ($("#copyDraft")) $("#copyDraft").onclick = () => copy($("#draft").value, $("#copyDraftMsg"));
   $("#copyLinks").onclick = () => {

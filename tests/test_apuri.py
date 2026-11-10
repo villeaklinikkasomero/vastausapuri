@@ -278,3 +278,65 @@ def test_acne_question_finds_steroid_article(doping):
     top = {it.id for it, _ in doping.index.search(
         "Selkäakne paheni testosteronin ja masteronin käytön jälkeen, isotretinoiini", k=5)}
     assert "steroidit-testosteroni" in top
+
+
+# --- Tutkimushaku -------------------------------------------------------------------
+
+from vastausapuri.tutkimus import EuropePMC, Paper, _cached_search, sanitize_query  # noqa: E402
+
+
+class FakeResearch:
+    def __init__(self):
+        self.queries = []
+
+    def search(self, query, n, years):
+        self.queries.append(query)
+        return [Paper("T1", "Acne and anabolic steroids", "Smith J et al.", "J Derm", "2023",
+                      "https://europepmc.org/article/MED/1", "Androgens increase sebum production.", True)]
+
+
+def test_research_query_is_sanitized():
+    q = sanitize_query('[NIMI_1] isotretinoin AND "anabolic steroids" 60mg/pv; DROP')
+    assert "[NIMI_1]" not in q and "/" not in q and ";" not in q
+    assert q.startswith("isotretinoin AND")
+
+
+def test_research_used_in_draft(doping):
+    fr = FakeResearch()
+    a = Assistant(Settings(provider="mock"), doping, MockLLM(), fr)
+    res, _ = a.run("Olen Pekka. Pahentaako testosteroni aknea?", mode="luonnos")
+    assert fr.queries and "Pekka" not in fr.queries[0]
+    assert res.research and res.research[0]["url"].startswith("https://europepmc.org/")
+    assert res.research_query
+
+
+def test_research_off_in_links_mode_and_on_request(doping):
+    fr = FakeResearch()
+    a = Assistant(Settings(provider="mock"), doping, MockLLM(), fr)
+    a.run("Testosteroni ja akne?", mode="linkit")
+    a.run("Testosteroni ja akne?", mode="luonnos", use_research=False)
+    assert fr.queries == []
+
+
+class FailingResearch:
+    def search(self, query, n, years):
+        raise TimeoutError()
+
+
+def test_research_failure_does_not_break_draft(doping):
+    a = Assistant(Settings(provider="mock"), doping, MockLLM(), FailingResearch())
+    res, _ = a.run("Testosteroni ja akne?", mode="luonnos")
+    assert res.draft and any("Tutkimushaku epäonnistui" in n for n in res.notes)
+
+
+def test_europepmc_parsing(monkeypatch):
+    rows = [{"id": "1", "source": "MED", "pmid": "1", "doi": "10.1/x", "title": "Acne <i>vulgaris</i>",
+             "authorString": "Smith J, Doe A.", "journalInfo": {"journal": {"title": "Derm"}}, "pubYear": "2024",
+             "abstractText": "<h4>Background</h4>Text &amp; more.", "pubTypeList": {"pubType": ["Review"]}}]
+    client = EuropePMC()
+    monkeypatch.setattr(client, "_query", lambda q: rows)
+    _cached_search.cache_clear()
+    papers = client.search("acne steroids", n=3, years=10)
+    assert len(papers) == 1 and papers[0].title == "Acne vulgaris" and papers[0].review
+    assert papers[0].abstract == "Background Text & more." and papers[0].authors == "Smith J et al."
+    assert papers[0].url == "https://europepmc.org/article/MED/1"

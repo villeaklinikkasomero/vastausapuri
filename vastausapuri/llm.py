@@ -55,6 +55,8 @@ class MockLLM:
                 },
                 ensure_ascii=False,
             )
+        if "HAKULAUSE" in system:
+            return json.dumps({"tarpeen": True, "haku": "anabolic androgenic steroids adverse effects"})
         ids = re.findall(r"^- id: (\S+)", user, flags=re.M)[:3]
         meta = {
             "aiheet": ["(mock) aihe"],

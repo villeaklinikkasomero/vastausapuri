@@ -31,6 +31,20 @@ luonnostelija saa esimerkeiksi ensisijaisesti hänen omiaan ja jäljittelee hän
 6. **Koodin tarkistukset** (`pipeline.py`): `[[id]]`-viittaukset muutetaan katalogin osoitteiksi. Malli ei voi
    keksiä osoitteita: tuntematon viittaus muuttuu `[TARKISTA]`-merkinnäksi. Kriisipalvelut nostetaan ensimmäisiksi.
 
+## Tutkimustieto
+
+Luonnokselle haetaan tutkimustietoa kahdesta lähteestä:
+
+- **Hankkeen omat tutkimustiivistelmät.** Dopinglinkin suomenkieliset tiivistelmät ovat katalogissa
+  tyyppinä `tutkimus`, ja ne päivittyvät sivukartasta (`research_summary-sitemap1.xml`).
+- **Europe PMC** (sisältää PubMedin). Malli muodostaa kysymyksestä lyhyen englanninkielisen hakulauseen,
+  ja haku tuo 3–5 tiivistelmää. Katsaukset tulevat ensin, ja julkaisut rajataan viimeiseen 12 vuoteen.
+  Luonnostelija käyttää niitä tukemaan väitteitä ilman viitteitä vastaustekstissä. Tarkastaja vertaa
+  luonnosta niihin, ja vastaaja näkee lähteet linkkeineen ja tiedon siitä, mitä luonnoksessa käytettiin.
+  Hakuun lähtee vain yleinen hakulause, josta poistetaan paikkamerkit ja erikoismerkit, ei kysyjän tekstiä.
+  Hankekohtaiset asetukset ovat `hanke.toml`-tiedoston `[tutkimus]`-osiossa. Vastaaja voi kytkeä haun
+  pois kysymyskohtaisesti.
+
 ## Hankkeet
 
 ```
@@ -106,6 +120,7 @@ Huomioita:
 | `APURI_USERS` | – | `nimi:salasana[:hanke1\|hanke2],...`; ilman hankeosaa kaikki hankkeet. Pakollinen Bedrock-tilassa |
 | `APURI_SECRET` | arvottu | Istuntojen allekirjoitusavain (Render arpoo) |
 | `APURI_DATA_DIR` | – | Vanhojen vastausten kansio (`<kansio>/<hanke>/vastaukset.jsonl`) |
+| `APURI_TUTKIMUS` | `europepmc` (Bedrock), `pois` (mock) | Tutkimushaku päälle/pois koko palvelussa |
 | `APURI_HANKKEET` | `hankkeet` | Hankekansio |
 | `APURI_MAX_LINKS` | `5` | Linkkien enimmäismäärä (kriisipalvelut tulevat lisäksi) |
 | `APURI_CANDIDATES` | `12` | Hakuehdokkaita mallille |
@@ -130,6 +145,7 @@ vastausapuri/
   hanke.py          hankkeiden lataus
   catalog.py        katalogi ja n-grammihaku
   answers.py        vanhojen vastausten indeksi
+  tutkimus.py       Europe PMC -tutkimushaku
   pseudonymize.py   paikkamerkit
   safety.py         kriisisignaalit
   llm.py            Bedrock- ja mock-mallit
