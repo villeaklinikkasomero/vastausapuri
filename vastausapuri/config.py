@@ -15,10 +15,10 @@ class Settings:
     aws_region: str = field(default_factory=lambda: os.getenv("AWS_REGION", "eu-north-1"))
     # Vain eu.-profiilit sallitaan, jotta käsittely pysyy EU:ssa
     drafter_model: str = field(
-        default_factory=lambda: os.getenv("APURI_DRAFTER_MODEL", "eu.anthropic.claude-opus-5-5")
+        default_factory=lambda: os.getenv("APURI_DRAFTER_MODEL", "eu.anthropic.claude-opus-4-6-v1")
     )
     checker_model: str = field(
-        default_factory=lambda: os.getenv("APURI_CHECKER_MODEL", "eu.anthropic.claude-sonnet-5-5")
+        default_factory=lambda: os.getenv("APURI_CHECKER_MODEL", "eu.anthropic.claude-sonnet-4-5-20250929-v1:0")
     )
     hankkeet_dir: Path = field(
         default_factory=lambda: Path(os.getenv("APURI_HANKKEET", ROOT / "hankkeet"))

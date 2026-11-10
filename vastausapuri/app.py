@@ -206,5 +206,22 @@ def suggest(body: Ask, request: Request) -> dict:
         result, ps = assistants()[body.hanke].run(body.question, mode=body.mode,
                                                  vastaaja=user, own_style=body.own_style)
     except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {type(e).__name__}") from None
+        raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {_explain(e)}") from None
     return result.to_dict(restore=ps)
+
+
+def _explain(e: Exception) -> str:
+    """AWS:n virheviesti näytetään (se ei sisällä kysymyksen tekstiä), muut vain tyyppinä."""
+    resp = getattr(e, "response", None)
+    if isinstance(resp, dict) and "Error" in resp:
+        err = resp["Error"]
+        code, msg = err.get("Code", type(e).__name__), err.get("Message", "")
+        hint = {
+            "AccessDeniedException": "Tarkista IAM-oikeudet (bedrock:InvokeModel) ja mallin käyttöoikeus Bedrockissa.",
+            "ValidationException": "Tarkista mallitunniste (APURI_DRAFTER_MODEL / APURI_CHECKER_MODEL) ja AWS_REGION.",
+            "ResourceNotFoundException": "Mallia ei löydy tältä alueelta. Tarkista mallitunniste ja AWS_REGION.",
+            "ThrottlingException": "Bedrockin käyttöraja täyttyi. Yritä hetken päästä uudelleen.",
+        }.get(code, "")
+        model = get_settings()
+        return f"{code}: {msg[:400]} (luonnostelija {model.drafter_model}, tarkastaja {model.checker_model}, alue {model.aws_region}) {hint}".strip()
+    return type(e).__name__
