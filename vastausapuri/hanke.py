@@ -45,6 +45,11 @@ class Hanke:
         return frozenset(_domain(u) for u in urls if u)
 
     @property
+    def asiantuntijat(self) -> list[dict]:
+        """Työryhmän ylläpitämä lista lääkäreistä, joihin saa ohjata nimeltä."""
+        return [a for a in self.config.get("asiantuntijat", []) if a.get("nimi")]
+
+    @property
     def research(self) -> dict:
         return self.config.get("tutkimus", {})
 

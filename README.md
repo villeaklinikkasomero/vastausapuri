@@ -45,6 +45,13 @@ Luonnokselle haetaan tutkimustietoa kahdesta lähteestä:
   Hankekohtaiset asetukset ovat `hanke.toml`-tiedoston `[tutkimus]`-osiossa. Vastaaja voi kytkeä haun
   pois kysymyskohtaisesti.
 
+## Asiantuntijalista
+
+`hanke.toml`-tiedoston `[[asiantuntijat]]`-kohdat ovat työryhmän ylläpitämä lista lääkäreistä ja palveluista,
+joihin saa ohjata nimeltä (nimi, erikoisala, alue, milloin, huom, tarkistettu). Luonnostelija mainitsee nimeltä
+vain listalla olevia, ja tarkastaja merkitsee vakavaksi, jos luonnoksessa on muu nimi. Lista kannattaa
+tarkistaa säännöllisesti, esimerkiksi ottaako lääkäri uusia potilaita.
+
 ## Lakitieto
 
 Keskeiset lainkohdat ovat katalogissa tyyppinä `laki`, ja niissä on tarkistettu tiivistelmä sekä linkki

@@ -82,6 +82,10 @@ Kirjoita luonnos, joka on valmis mutta jonka vastaaja voi helposti muokata. {tas
 KIRJOITUSOHJEET:
 - Suomeksi; {v.get("puhuttelu", "sinuttelu")}; {v.get("pituus", "noin 150–350 sanaa")}. Selkeää yleiskieltä,
   kappaleina ilman otsikoita. Vastaa siihen, mitä kysyttiin.
+- Kappaleet lyhyitä (enintään noin 4 virkettä), yksi asia per kappale.
+- Linkit: sijoita [[id]] virkkeen loppuun kaksoispisteen jälkeen tai omalle rivilleen, ei kesken virkettä.
+- Akuuteissa oireissa toimintaohje (esim. "hakeudu samana päivänä päivystykselliseen arvioon") tulee
+  selvästi ja aikaisin vastauksessa, ei vasta lopussa.
 - Kirjoita kuin kokenut ihmisvastaaja: luontevaa, vaihtelevaa suomen yleiskieltä. ÄLÄ käytä ajatusviivaa
   (– tai —) lauseiden tai virkkeiden erottimena; käytä pistettä, pilkkua, kaksoispistettä tai sulkeita.
   Numerovälit (esim. 3–6 kuukautta) saa kirjoittaa viivalla. Ei markdown-muotoilua (lihavointi, otsikot,
@@ -154,8 +158,13 @@ Tarkista:
    kaavamaiset fraasit, toisteiset virkerakenteet)? Vakavuus matala, ehdota luontevampaa muotoilua.
 4. Periaatteet: annostelu- tai kuuriohjeita, hankintaohjeita, diagnooseja, moralisointia tai
    syyllistämistä, liian varmoja lupauksia.
-5. Turvallisuus: jos kysymyksessä on akuutteja oireita tai kriisisignaaleja, kehotetaanko
-   hakeutumaan hoitoon? kriisi.havaittu = true, jos niitä on.
+5. Turvallisuus: jos kysymyksessä on akuutteja oireita (esim. korkea leposyke, tykytys, rintakipu,
+   pyörtyily, tulehdusoireet) tai kriisisignaaleja, onko luonnoksessa SELKEÄ toimintaohje aikarajan kanssa
+   (esim. "samana päivänä päivystykseen", 116117, 112)? Jos ei ole, vakavuus korkea.
+   kriisi.havaittu = true, jos akuutteja oireita tai kriisisignaaleja on.
+   Selitetäänkö oireita pelkillä dopingaineilla, vaikka muut syyt (sairaudet, lääkitys, ylikuormitus)
+   ovat mahdollisia? Ehdotetaanko jotain, mitä kysyjä kertoo jo kokeilleensa, ilman perustelua?
+   Mainitaanko nimeltä lääkäri, joka ei ole ASIANTUNTIJALISTALLA? (vakavuus korkea)
 6. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?
 7. Vastaako luonnos varsinaiseen kysymykseen? Jatkokysymyksessä: vastataanko kaikkiin uusiin
    kysymyksiin, ja vältetäänkö aiemmin kerrotun toistamista?
@@ -211,9 +220,24 @@ def links_user(question: str, candidates: list[CatalogItem], thread: str | None 
     return f"{head} (pseudonymisoitu):\n{question}\n\nEHDOKKAAT:\n{format_candidates(candidates)}"
 
 
+def format_experts(experts: list[dict]) -> str:
+    lines = []
+    for e in experts:
+        parts = [e.get("nimi", ""), e.get("erikoisala", "")]
+        if e.get("alue"):
+            parts.append(e["alue"])
+        line = ", ".join(p for p in parts if p)
+        if e.get("milloin"):
+            line += f". Milloin: {e['milloin']}"
+        if e.get("huom"):
+            line += f". Huom: {e['huom']}"
+        lines.append(f"- {line}")
+    return "\n".join(lines)
+
+
 def draft_user(question: str, candidates: list[CatalogItem], sources: list[CatalogItem],
                examples: list[Answer], own: str | None, thread: str | None = None,
-               research: str | None = None) -> str:
+               research: str | None = None, experts: list[dict] | None = None) -> str:
     parts = []
     if thread:
         parts.append(f"AIEMPI KESKUSTELU (pseudonymisoitu, vanhin ensin):\n{thread}")
@@ -222,6 +246,9 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
         f"EHDOKKAAT:\n{format_candidates(candidates)}",
         f"LÄHDEOTTEET (palvelun omista sisällöistä):\n{format_sources(sources)}",
     ]
+    if experts:
+        parts.append("ASIANTUNTIJALISTA (työryhmän ylläpitämä; nimeltä saa mainita vain nämä):\n"
+                     + format_experts(experts))
     if research:
         parts.append(f"TUTKIMUSLÄHTEET (Europe PMC, englanninkieliset tiivistelmät):\n{research}")
     if examples:
@@ -231,7 +258,8 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
 
 def checker_user(question: str, candidates: list[CatalogItem], draft: dict,
                  sources: list[CatalogItem] | None = None, draft_text: str | None = None,
-                 thread: str | None = None, research: str | None = None) -> str:
+                 thread: str | None = None, research: str | None = None,
+                 experts: list[dict] | None = None) -> str:
     parts = [f"AIEMPI KESKUSTELU:\n{thread}"] if thread else []
     parts += [f"{'JATKOKYSYMYS' if thread else 'KYSYMYS'} (pseudonymisoitu):\n{question}",
               f"EHDOKKAAT:\n{format_candidates(candidates)}"]
@@ -239,6 +267,8 @@ def checker_user(question: str, candidates: list[CatalogItem], draft: dict,
         parts.append(f"LÄHDEOTTEET:\n{format_sources(sources)}")
     if research:
         parts.append(f"TUTKIMUSLÄHTEET:\n{research}")
+    if experts:
+        parts.append(f"ASIANTUNTIJALISTA:\n{format_experts(experts)}")
     parts.append(f"LUONNOS:\n{json.dumps(draft, ensure_ascii=False, indent=1)}")
     if draft_text is not None:
         parts.append(f"LUONNOKSEN TEKSTI:\n{draft_text}")

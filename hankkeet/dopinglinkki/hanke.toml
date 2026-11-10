@@ -62,8 +62,21 @@ Periaatteet:
 - Pelko potilastietomerkinnöistä tai vakuutuksista on yleinen: suhtaudu siihen ymmärtäväisesti ja
   kerro asiallisesti, mitä kirjataan, mihin kysyjä voi vaikuttaa ja miten tiedot voi tarkistaa (OmaKanta).
   Älä anna varmoja lupauksia vakuutusvaikutuksista.
-- Akuutit oireet (esim. pistoskohdan kuumottava turvotus ja kuume, rintakipu, DNP:n
-  ylikuumenemisoireet, insuliinin aiheuttama matala verensokeri) = kehota hakeutumaan heti hoitoon.
+- Akuutit oireet = anna selkeä toimintaohje aikarajan kanssa. Esimerkkejä: korkea leposyke (yli noin
+  100/min levossa), sydämentykytys, rytmihäiriötuntemukset, rintakipu, pyörtyily, pistoskohdan kuumottava
+  turvotus ja kuume, DNP:n ylikuumenemisoireet, insuliinin aiheuttama matala verensokeri. Kehota
+  hakeutumaan päivystykselliseen arvioon SAMANA PÄIVÄNÄ (päivystysapu 116117) ja hätätilanteessa
+  soittamaan 112. Älä selitä akuutteja oireita pelkällä dopingaineiden käytöllä tai ylikuormituksella.
+- Kokonaisvaltaisuus: älä oleta, että kaikki oireet johtuvat dopingaineista. Nosta esiin myös muut
+  mahdolliset syyt (muut sairaudet, käytössä olevat lääkkeet, ylikuormitus, uni) ja kehota arvioimaan
+  oireet kokonaisuutena.
+- Hoitohistoria: huomioi, mitä kysyjä on jo kokeillut (esim. käynnit eri lääkäreillä). Älä ehdota samaa
+  uudelleen ilman perustelua, vaan ehdota seuraava järkevä askel. Kun tarvitaan kokonaisarviota
+  monimuotoisista oireista, sisätautien erikoislääkäri on usein hyvä seuraava vaihtoehto; liikuntalääketieteen
+  erikoislääkäri, jos epäillään ylikuormitusta; urologi tai endokrinologi testosteronivajeessa.
+- Lääkärisuositukset: jos ASIANTUNTIJALISTALLA on tilanteeseen sopiva lääkäri, voit mainita hänet nimeltä
+  ja kertoa listan huomiot (esim. saatavuus). Älä mainitse nimeltä ketään listan ulkopuolelta, äläkä
+  kirjoita "emme voi suositella lääkäriä nimeltä"; kuvaa silloin sopiva erikoisala ja miten sinne pääsee.
 - Kilpaurheilun dopingtestaus ei kuulu Dopinglinkin aihepiiriin: ohjaa SUEKiin.
 - Laillisuus: useimmat dopingaineet ovat reseptilääkkeitä. Lisätietoa Tullilta ja Fimealta.
 - Puhtaita pistovälineitä saa terveysneuvontapisteistä ja apteekeista.
@@ -81,16 +94,40 @@ maara = 4      # tiivistelmiä luonnokselle
 vuodet = 12    # julkaisut viimeisen N vuoden ajalta, katsaukset ensin
 aihe = "anabolic androgenic steroids, performance and image enhancing drugs, doping in recreational sport"
 
+[[asiantuntijat]]
+# Työryhmän ylläpitämä lista lääkäreistä ja palveluista, joihin voi ohjata nimeltä.
+# Luonnostelija saa mainita nimeltä VAIN tällä listalla olevia. Päivitä listaa säännöllisesti.
+# Kentät: nimi, erikoisala, alue, milloin (mihin tilanteisiin), huom (esim. saatavuus), tarkistettu
+nimi = "Roman Rusman"
+erikoisala = "urologi"
+alue = "pääkaupunkiseutu"
+milloin = "anabolisten steroidien käytön lopettamisen jälkeiset oireet, testosteronivaje, hormonitoiminnan palautuminen"
+huom = ""
+tarkistettu = "2026-10-23"
+
+[[asiantuntijat]]
+nimi = "Antti Perheentupa"
+erikoisala = "urologi"
+alue = ""
+milloin = "anabolisten steroidien käytön lopettamisen jälkeiset oireet, testosteronivaje, hedelmällisyys"
+huom = "tällä hetkellä epävarmaa, ottaako uusia omia potilaita"
+tarkistettu = "2026-10-23"
+
 [kriisi]
-# Hankekohtaiset lisäsignaalit (säännölliset lausekkeet), yhteisten kriisisignaalien lisäksi
+# Hankekohtaiset lisäsignaalit (säännölliset lausekkeet), yhteisten kriisisignaalien lisäksi.
+# Huom. taivutus: "sydän" -> "sydämen", siksi vartalo "syd[äa]n|syd[äa]m".
 akuutti_terveysriski = [
   "rintakip\\w*",
-  "sydän\\w* (?:hakkaa|lyö|tykyttää|rytmihäiriö\\w*)",
+  "(?:syd[äa]n|syd[äa]m)\\w*\\s*(?:hakkaa|lyö|tykyt\\w*|tykytt\\w*|rytmihäiriö\\w*|pysäh\\w*)",
+  "tykytys\\w*|tykyttel\\w*",
+  "rytmihäiriö\\w*",
+  "(?:lepo)?syke\\w*\\D{0,15}(?:1[1-9]\\d|[2-9]\\d\\d)",
   "(?:pistos|piikki)\\w* .{0,40}(?:turvo\\w*|punoitt\\w*|kuum\\w*|märk\\w*|paise\\w*)",
   "paise\\w*",
   "korkea kuume",
   "ylikuume\\w*",
   "verensokeri\\w* .{0,20}(?:alhaal\\w*|matal\\w*|laski\\w*)",
   "hengenahdistu\\w*",
+  "pyörty\\w*|tajun(?:nan)? menetys",
   "puutu\\w* .{0,20}(?:käsi|jalka|kasvo\\w*)",
 ]

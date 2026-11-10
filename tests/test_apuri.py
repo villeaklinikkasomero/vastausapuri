@@ -443,3 +443,39 @@ def test_draft_is_tidied_and_noted(doping):
     res, _ = make(doping, DashyLLM()).run("Akne ja steroidit?", mode="luonnos")
     assert "–" not in res.draft and "Akne, etenkin selässä, on yleistä." in res.draft
     assert any("ajatusviivaa" in n for n in res.notes)
+
+
+# --- Vertailun havainnot (lokakuu 2026) ------------------------------------------------
+
+CARDIAC = ("Mieheni lopetti dopingin 2 v sitten. Sydämen tykytystä ja hikoilua, leposyke 124, heikotusta. "
+           "Käynyt terveyskeskuslääkärillä, yksityisellä yleislääkärillä ja endokrinologilla.")
+
+
+def test_cardiac_symptoms_trigger_signal_and_emergency_links(doping):
+    res, _ = make(doping).run(CARDIAC, mode="luonnos")
+    assert "akuutti_terveysriski" in {s.kind for s in res.signals}
+    ids = [l.id for l in res.links]
+    assert ids[:2] == ["hata-112", "paivystysapu"] or {"hata-112", "paivystysapu"} <= set(ids[:3])
+    assert "kriisipuhelin" not in ids  # itsetuhoisuuden palvelu ei kuulu tähän
+
+
+class CapturingLLM(MockLLM):
+    def __init__(self):
+        self.calls = []
+
+    def complete(self, *, model, system, user, max_tokens=1500):
+        self.calls.append((system, user))
+        if "<luonnos>" in system:
+            return '<meta>{"linkit": []}</meta><luonnos>Ymmärrämme hyvin huolesi.\n</luonnos>'
+        return super().complete(model=model, system=system, user=user)
+
+
+def test_expert_list_and_rules_reach_models_and_greeting_is_added(doping):
+    llm = CapturingLLM()
+    res, _ = make(doping, llm).run(CARDIAC, mode="luonnos")
+    draft_sys, draft_user = next(c for c in llm.calls if "<luonnos>" in c[0])
+    assert "ASIANTUNTIJALISTA" in draft_user and "Roman Rusman" in draft_user
+    assert "SAMANA PÄIVÄNÄ" in draft_sys and "Hoitohistoria" in draft_sys
+    checker_sys, checker_user = next(c for c in llm.calls if "TARKASTAJA" in c[0] and "ongelmat" in c[0])
+    assert "aikarajan" in checker_sys and "ASIANTUNTIJALISTA" in checker_user
+    assert res.draft.startswith("Hei, kiitos kysymyksestäsi.")

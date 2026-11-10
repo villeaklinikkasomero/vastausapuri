@@ -201,7 +201,7 @@ class Assistant:
                 system=prompts.draft_system(self.h, self.s.max_links, own_style=own is not None,
                                             followup=followup),
                 user=prompts.draft_user(p_question, candidates, sources, examples, own, p_thread,
-                                        research_text),
+                                        research_text, self.h.asiantuntijat),
                 max_tokens=3000,
             )
             meta, draft_text = parse_draft(raw)
@@ -225,7 +225,8 @@ class Assistant:
                 system=prompts.checker_system(self.h, draft_mode),
                 user=prompts.checker_user(p_question, candidates, meta,
                                           sources if draft_mode else None,
-                                          draft_text if draft_mode else None, p_thread, research_text),
+                                          draft_text if draft_mode else None, p_thread, research_text,
+                                          self.h.asiantuntijat if draft_mode else None),
             )
             check = parse_json(raw_c)
         except Exception as e:  # noqa: BLE001
@@ -296,6 +297,10 @@ class Assistant:
         if n_fixed:
             notes.append(f"Luonnoksesta korjattiin {n_fixed} ajatusviivaa tai muotoilumerkintää. "
                          "Lue korjatut lauseet läpi.")
+        # Tervehdys alkuun, jos malli unohti sen (esim. aloitti "Ymmärrämme hyvin...")
+        greeting = (self.h.vastaus.get("jatko_tervehdys") if followup else None) or self.h.tervehdys
+        if draft_out and greeting and not draft_out.lstrip().lower().startswith(greeting.split()[0].lower().strip(",.")):
+            draft_out = f"{greeting}\n\n{draft_out.lstrip()}"
         feedback = self.h.vastaus.get("palaute", "").strip()
         if draft_out and feedback and not followup:
             draft_out = f"{draft_out.rstrip()}\n\n{feedback}"

@@ -26,6 +26,31 @@
   ]
  },
  {
+  "id": "paivystysapu",
+  "title": "Päivystysapu 116117",
+  "url": "https://www.116117.fi/",
+  "type": "kriisi",
+  "description": "Maksuton päivystysavun numero: neuvoo, tarvitaanko päivystyksellistä hoitoa ja minne hakeutua. Hätätilanteessa 112.",
+  "topics": [
+   "päivystys",
+   "akuutit oireet",
+   "sydän",
+   "korkea syke",
+   "rintakipu",
+   "kuume",
+   "tulehdus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "signals": [
+   "akuutti_terveysriski",
+   "akuutti_myrkytys"
+  ]
+ },
+ {
   "id": "myrkytystietokeskus",
   "title": "Myrkytystietokeskus (tarkista yhteystiedot)",
   "url": "https://www.myrkytystietokeskus.fi/",
