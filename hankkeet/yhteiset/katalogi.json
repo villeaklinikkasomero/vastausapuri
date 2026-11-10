@@ -65,5 +65,97 @@
   "signals": [
    "itsetuhoisuus"
   ]
+ },
+ {
+  "id": "laki-potilasasiakirjat",
+  "title": "Laki potilaan asemasta ja oikeuksista: potilasasiakirjat ja salassapito (12–13 §)",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1992/785",
+  "type": "laki",
+  "description": "Mitä potilastietoihin kirjataan, kuka niitä saa nähdä ja miten omat tiedot voi tarkistaa ja korjata.",
+  "topics": [
+   "laki",
+   "potilastiedot",
+   "potilasasiakirjat",
+   "kirjaaminen",
+   "salassapito",
+   "vaitiolovelvollisuus",
+   "OmaKanta",
+   "tietojen korjaaminen",
+   "vakuutukset",
+   "lääkärille kertominen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "content": "Kirjaaminen (12 §): terveydenhuollon ammattihenkilön on merkittävä potilasasiakirjoihin potilaan hoidon järjestämisen, suunnittelun, toteuttamisen ja seurannan turvaamiseksi tarpeelliset tiedot. Tarkemmin kirjaamisesta säädetään sosiaali- ja terveysministeriön asetuksella potilasasiakirjoista. Tiedon kirjaamisesta päättää viime kädessä hoitava ammattihenkilö, mutta potilas voi keskustella siitä, miten ja millä tarkkuudella asia kirjataan.\n\nSalassapito (13 §): potilasasiakirjojen tiedot ovat salassa pidettäviä. Niitä saa antaa sivullisille (esim. vakuutusyhtiölle tai työnantajalle) vain potilaan kirjallisella suostumuksella tai jos laissa erikseen säädetään oikeudesta saada tietoja.\n\nOmat tiedot: potilaalla on oikeus tarkastaa omat potilastietonsa (esim. OmaKannasta) ja vaatia virheellisen, puutteellisen tai vanhentuneen tiedon korjaamista (tietosuoja-asetuksen oikeudet tarkastaa ja oikaista tiedot). Jos korjaamisesta kieltäydytään, asiasta voi kääntyä tietosuojavaltuutetun puoleen.\n\nVakuutukset: vakuutusyhtiöllä ei ole automaattista pääsyä potilastietoihin. Tietoja voidaan antaa esimerkiksi vakuutusta haettaessa tai korvausasiaa käsiteltäessä suostumuksella tai lain perusteella. Vakuutusta haettaessa hakijalla on vakuutussopimuslain mukainen velvollisuus vastata vakuutusyhtiön kysymyksiin totuudenmukaisesti.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 10.11.2026. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-10",
+  "description_source": "käsin"
+ },
+ {
+  "id": "laki-vaitiolovelvollisuus",
+  "title": "Laki terveydenhuollon ammattihenkilöistä: vaitiolovelvollisuus",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1994/559",
+  "type": "laki",
+  "description": "Lääkäreitä ja muita terveydenhuollon ammattihenkilöitä sitoo vaitiolovelvollisuus: he eivät saa kertoa potilaan tietoja sivullisille.",
+  "topics": [
+   "laki",
+   "vaitiolovelvollisuus",
+   "lääkäri",
+   "luottamuksellisuus",
+   "lääkärille kertominen",
+   "poliisi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "content": "Terveydenhuollon ammattihenkilö ei saa sivulliselle luvatta ilmaista tietoja, jotka hän on asemansa tai tehtävänsä perusteella saanut potilaasta. Vaitiolovelvollisuus jatkuu ammatinharjoittamisen päätyttyä.\n\nKäytännössä tämä tarkoittaa, että lääkärille voi kertoa dopingaineiden käytöstä ilman, että tieto välittyy esimerkiksi poliisille, työnantajalle tai läheisille. Dopingaineiden käyttö ei ole rikos, eikä lääkärillä ole velvollisuutta ilmoittaa siitä viranomaisille. Poikkeuksia on vain laissa erikseen säädetyissä tilanteissa (esim. vakavan väkivallan uhka tai lapsen suojelun tarve).\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 10.11.2026. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-10",
+  "description_source": "käsin"
+ },
+ {
+  "id": "laki-vakuutus",
+  "title": "Vakuutussopimuslaki: tiedonantovelvollisuus vakuutusta haettaessa",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1994/543",
+  "type": "laki",
+  "description": "Vakuutusta haettaessa yhtiön kysymyksiin on vastattava totuudenmukaisesti; väärät tiedot voivat vaikuttaa korvauksiin.",
+  "topics": [
+   "laki",
+   "vakuutus",
+   "vakuutukset",
+   "henkivakuutus",
+   "sairauskuluvakuutus",
+   "tiedonantovelvollisuus",
+   "terveysselvitys"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "content": "Henkilövakuutusta (esim. henki-, sairauskulu- tai tapaturmavakuutus) haettaessa vakuutuksenhakijan on annettava oikeat ja täydelliset vastaukset vakuutusyhtiön esittämiin kysymyksiin, esimerkiksi terveysselvityksessä. Jos tietoja jätetään tahallaan tai huolimattomuudesta kertomatta tai ne annetaan väärin, vakuutusyhtiö voi tietyissä tilanteissa rajata vastuutaan tai evätä korvauksen.\n\nVakuutusyhtiö voi pyytää terveystietoja terveydenhuollosta vain hakijan tai vakuutetun suostumuksella tai laissa säädetyn oikeuden perusteella, esimerkiksi korvausasiaa käsiteltäessä. Mahdolliset vaikutukset riippuvat vakuutuksesta ja sen ehdoista, eikä niitä voi arvioida varmasti etukäteen.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 10.11.2026. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-10",
+  "description_source": "käsin"
+ },
+ {
+  "id": "tietosuojavaltuutettu",
+  "title": "Tietosuojavaltuutetun toimisto",
+  "url": "https://tietosuoja.fi/",
+  "type": "palvelu",
+  "description": "Neuvoo omien tietojen tarkastamisessa ja korjaamisessa; tähän voi kääntyä, jos rekisterinpitäjä ei korjaa tietoja.",
+  "topics": [
+   "tietosuoja",
+   "tietojen korjaaminen",
+   "potilastiedot",
+   "oikeudet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
  }
 ]

@@ -26,6 +26,25 @@ _SEP = "\n\n\u27e6JATKOKYSYMYS\u27e7\n\n"
 _REF = re.compile(r"\[\[([^\[\]\s]+)\]\]")
 
 
+_DASH = re.compile(r"(?<=[^\W\d_])[ \u00a0]*[\u2013\u2014][ \u00a0]*(?=[^\W\d_])|(?<=[^\W\d_]) - (?=[^\W\d_])")
+_BOLD = re.compile(r"\*\*(.+?)\*\*|__(.+?)__")
+_BULLET = re.compile(r"^[ \t]*[-*•][ \t]+", re.M)
+
+
+def tidy_text(text: str) -> tuple[str, int]:
+    """Poistaa koneellisen tekstin tuntomerkkejä, joita malli ei aina vältä ohjeista huolimatta:
+    ajatusviivat lauseenerottimina (sanan ja sanan välissä) -> pilkku, markdown-lihavointi pois.
+    Numerovälit (3–6) ja yhdyssanat (C-hepatiitti) säilyvät. Luettelomerkkejä ei poisteta, koska
+    linkkilistat voivat olla tarkoituksellisia."""
+    n = 0
+    text, k = _DASH.subn(", ", text)
+    n += k
+    text, k = _BOLD.subn(lambda m: m.group(1) or m.group(2), text)
+    n += k
+    text = re.sub(r",\s*,", ",", text)
+    return text, n
+
+
 @dataclass
 class LinkSuggestion:
     id: str
@@ -156,6 +175,8 @@ class Assistant:
         candidates = self._candidates(query)
         cand_by_id = {c.id: c for c in candidates}
         sources = [c for c in candidates if c.type != "kriisi"][: self.s.sources]
+        # Lakitiivistelmät mukaan lähteiksi, jos ne ovat kärkiosumissa (lakiasiat perustetaan niihin)
+        sources += [c for c in candidates[: self.s.sources * 2] if c.type == "laki" and c not in sources][:2]
         examples = []
         if draft_mode:
             examples = self.h.answers.similar(query, k=self.s.examples,
@@ -271,7 +292,10 @@ class Assistant:
                 return f"{item.url} [TARKISTA: tarkastaja ei suositellut tätä linkkiä]"
             return item.url
 
-        draft_out = _REF.sub(link_sub, draft_text)
+        draft_out, n_fixed = tidy_text(_REF.sub(link_sub, draft_text))
+        if n_fixed:
+            notes.append(f"Luonnoksesta korjattiin {n_fixed} ajatusviivaa tai muotoilumerkintää. "
+                         "Lue korjatut lauseet läpi.")
         feedback = self.h.vastaus.get("palaute", "").strip()
         if draft_out and feedback and not followup:
             draft_out = f"{draft_out.rstrip()}\n\n{feedback}"

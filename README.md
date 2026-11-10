@@ -45,6 +45,24 @@ Luonnokselle haetaan tutkimustietoa kahdesta lähteestä:
   Hankekohtaiset asetukset ovat `hanke.toml`-tiedoston `[tutkimus]`-osiossa. Vastaaja voi kytkeä haun
   pois kysymyskohtaisesti.
 
+## Lakitieto
+
+Keskeiset lainkohdat ovat katalogissa tyyppinä `laki`, ja niissä on tarkistettu tiivistelmä sekä linkki
+Finlexin ajantasaiseen lakiin. Luonnostelija perustaa lakiasiat niihin, eikä se anna oikeudellista arviota
+yksittäistapauksesta. Tarkastaja vertaa lakiväitteitä tiivistelmiin.
+
+| Kohde | Missä | Sisältö |
+| --- | --- | --- |
+| `laki-dopingrikos` | Dopinglinkki | RL 44:6–8 dopingrikokset, 44:16 dopingaineen määritelmä, käyttö ei rangaistavaa |
+| `laki-laakkeiden-tuonti` | Dopinglinkki | Netistä tilaaminen (EU/ETA, resepti, 3 kk) ja matkalta tuonti |
+| `laki-potilasasiakirjat` | yhteiset | Potilaslaki 12–13 §: kirjaaminen, salassapito, omien tietojen tarkastus ja korjaus, vakuutukset |
+| `laki-vaitiolovelvollisuus` | yhteiset | Terveydenhuollon ammattihenkilöiden vaitiolovelvollisuus |
+| `laki-vakuutus` | yhteiset | Vakuutussopimuslaki: tiedonantovelvollisuus vakuutusta haettaessa |
+
+Tiivistelmät on tarkistettu 10.11.2026 (kenttä `tarkistettu`). Ne kannattaa käydä läpi lakiasioihin
+perehtyneen kanssa ja päivittää, kun lakeja muutetaan. Uuden lakikohteen voi lisätä hankkeen tai
+yhteiseen `katalogi.json`-tiedostoon samalla rakenteella.
+
 ## Hankkeet
 
 ```

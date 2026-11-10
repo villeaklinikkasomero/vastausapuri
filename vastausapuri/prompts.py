@@ -82,12 +82,22 @@ Kirjoita luonnos, joka on valmis mutta jonka vastaaja voi helposti muokata. {tas
 KIRJOITUSOHJEET:
 - Suomeksi; {v.get("puhuttelu", "sinuttelu")}; {v.get("pituus", "noin 150–350 sanaa")}. Selkeää yleiskieltä,
   kappaleina ilman otsikoita. Vastaa siihen, mitä kysyttiin.
+- Kirjoita kuin kokenut ihmisvastaaja: luontevaa, vaihtelevaa suomen yleiskieltä. ÄLÄ käytä ajatusviivaa
+  (– tai —) lauseiden tai virkkeiden erottimena; käytä pistettä, pilkkua, kaksoispistettä tai sulkeita.
+  Numerovälit (esim. 3–6 kuukautta) saa kirjoittaa viivalla. Ei markdown-muotoilua (lihavointi, otsikot,
+  luettelomerkit) eikä kaavamaisia täytefraaseja kuten "On tärkeää muistaa", "On hyvä huomata" tai
+  "Kaiken kaikkiaan".
 - Aloita tervehdyksellä "{greeting}"{f' ja päätä ennen allekirjoitusta lauseeseen: "{closing}"' if closing else ""}.
 - Allekirjoitus:
 {h.allekirjoitus or "(ei allekirjoitusta)"}
 - Perusta tieto LÄHDEOTTEISIIN ja ehdokkaiden kuvauksiin. Yleisesti tunnettu lääketieteellinen perustieto
   on sallittu. Merkitse muodossa [TARKISTA: lyhyt syy] erityisesti luvut, ajat, annokset, lakiasiat ja
   muut täsmälliset väitteet, jotka eivät perustu lähteisiin, jotta vastaaja tarkistaa ne.
+- Lakiasiat (laillisuus, rangaistukset, maahantuonti, potilastiedot, vaitiolovelvollisuus, vakuutukset):
+  perusta ne tyypin "laki" lähdeotteisiin, jotka ovat tarkistettuja tiivistelmiä. Mainitse laki nimeltä, kun
+  se auttaa kysyjää, mutta älä anna oikeudellista arviota yksittäistapauksesta (esim. "saisitko tuomion").
+  Jos lakiasiaa ei löydy lähteistä, merkitse se [TARKISTA: lakiasia] ja ohjaa tarvittaessa juristille,
+  Tulliin tai Fimeaan.
 - Linkitä enintään {max_links} ehdokasta kirjoittamalla tekstiin [[id]] siihen kohtaan, jossa sisältöön viitataan
   (esim. "Lue lisää turvallisemmasta pistämisestä: [[turvallisempi-pistaminen]]"). Linkki ei ole pakollinen,
   jos mikään ehdokas ei aidosti auta kysyjää.
@@ -137,12 +147,17 @@ Tarkista:
 1. Asiavirheet: onko luonnoksessa väitteitä, jotka ovat ristiriidassa LÄHDEOTTEIDEN tai
    TUTKIMUSLÄHTEIDEN kanssa, yleistävät yksittäistä tutkimusta liikaa tai joita ei voi perustella?
    Lainaa kohta.
-2. Periaatteet: annostelu- tai kuuriohjeita, hankintaohjeita, diagnooseja, moralisointia tai
+2. Lakiasiat: vastaavatko laillisuutta, rangaistuksia, potilastietoja tai vakuutuksia koskevat väitteet
+   LAKI-lähdeotteita? Onko luonnoksessa oikeudellinen arvio yksittäistapauksesta tai varma lupaus
+   (esim. "et saa tuomiota", "vakuutusyhtiö ei saa tietää")? Vakavuus korkea, jos lakiväite on väärä.
+3. Kieli: kuulostaako teksti koneelliselta (ajatusviivat lauseenerottimina, markdown-muotoilu,
+   kaavamaiset fraasit, toisteiset virkerakenteet)? Vakavuus matala, ehdota luontevampaa muotoilua.
+4. Periaatteet: annostelu- tai kuuriohjeita, hankintaohjeita, diagnooseja, moralisointia tai
    syyllistämistä, liian varmoja lupauksia.
-3. Turvallisuus: jos kysymyksessä on akuutteja oireita tai kriisisignaaleja, kehotetaanko
+5. Turvallisuus: jos kysymyksessä on akuutteja oireita tai kriisisignaaleja, kehotetaanko
    hakeutumaan hoitoon? kriisi.havaittu = true, jos niitä on.
-4. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?
-5. Vastaako luonnos varsinaiseen kysymykseen? Jatkokysymyksessä: vastataanko kaikkiin uusiin
+6. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?
+7. Vastaako luonnos varsinaiseen kysymykseen? Jatkokysymyksessä: vastataanko kaikkiin uusiin
    kysymyksiin, ja vältetäänkö aiemmin kerrotun toistamista?
 
 Ole tarkka mutta älä keksi ongelmia. Jos luonnos on kunnossa, palauta tyhjä ongelmalista.
@@ -177,7 +192,8 @@ def format_sources(items: list[CatalogItem], max_chars: int = 2500) -> str:
     out = []
     for it in items:
         body = (it.content or it.description).strip()
-        out.append(f"[{it.id}] {it.title}\n{body[:max_chars]}")
+        kind = " (LAKI, tarkistettu tiivistelmä)" if it.type == "laki" else ""
+        out.append(f"[{it.id}]{kind} {it.title}\n{body[:max_chars]}")
     return "\n\n".join(out) or "(ei lähdeotteita)"
 
 

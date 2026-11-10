@@ -2764,5 +2764,58 @@
    "ammattilainen"
   ],
   "description_source": "käsin"
+ },
+ {
+  "id": "laki-dopingrikos",
+  "title": "Rikoslaki 44 luku: dopingrikokset (6–8 §) ja dopingaineen määritelmä (16 §)",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1889/39",
+  "type": "laki",
+  "description": "Mikä on rangaistavaa: dopingaineen valmistus, maahantuonti ja levittäminen sekä hallussapito levittämistarkoituksessa. Käyttö ja hallussapito omaan käyttöön eivät ole rangaistavia.",
+  "topics": [
+   "laki",
+   "dopingrikos",
+   "rangaistus",
+   "maahantuonti",
+   "hallussapito",
+   "levittäminen",
+   "sakko",
+   "vankeus",
+   "rikoslaki",
+   "dopingaine"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "content": "Rikoslain 44 luvun 16 §:n mukaan dopingaineena pidetään: 1) synteettisiä anabolisia steroideja ja niiden johdannaisia, 2) testosteronia ja sen johdannaisia, 3) kasvuhormonia ja 4) kemiallisia aineita, jotka lisäävät testosteronin ja sen johdannaisten tai kasvuhormonin tuotantoa elimistössä.\n\nDopingrikos (44:6): rangaistavaa on dopingaineen laiton valmistus, maahantuonti ja levittäminen (myös yritys) sekä dopingaineen hallussapito, kun tarkoituksena on todennäköisesti levittää sitä laittomasti. Rangaistus on sakkoa tai vankeutta enintään kaksi vuotta.\n\nTörkeä dopingrikos (44:7): jos rikos kohdistuu huomattavan suureen määrään, tavoitellaan huomattavaa taloudellista hyötyä, tekijä toimii järjestäytyneen rikollisryhmän jäsenenä tai ainetta levitetään alaikäisille, ja rikos on kokonaisuutena törkeä: vankeutta vähintään neljä kuukautta ja enintään neljä vuotta.\n\nLievä dopingrikos (44:8): kokonaisuutena vähäinen teko, rangaistuksena sakkoa.\n\nDopingaineen käyttö ja hallussapito omaan käyttöön eivät ole rangaistavia. Maahantuonti on kuitenkin rangaistavaa myös omaan käyttöön, jos se tapahtuu laittomasti (esim. tilaus EU/ETA-alueen ulkopuolelta tai ilman reseptiä).\n\nMuut aineet: aineet, jotka eivät kuulu dopingaineen määritelmään mutta ovat lääkkeitä (esim. SARMit, monet peptidit, aromataasin estäjät), käsitellään lääkelain ja rikoslain lääkerikossäännösten mukaan. Niiden laiton maahantuonti voi olla lääkerikos.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 10.11.2026. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-10",
+  "description_source": "käsin"
+ },
+ {
+  "id": "laki-laakkeiden-tuonti",
+  "title": "Lääkkeiden tilaaminen ja tuominen ulkomailta (lääkelaki)",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1987/395",
+  "type": "laki",
+  "description": "Milloin lääkkeitä saa tilata netistä tai tuoda matkalta: ETA-alueen sisältä laillisesta apteekista reseptillä, enimmäismäärät.",
+  "topics": [
+   "laki",
+   "lääkelaki",
+   "tilaaminen netistä",
+   "verkkokauppa",
+   "maahantuonti",
+   "resepti",
+   "tulli",
+   "matkustaminen",
+   "lääkerikos"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "content": "Tilaaminen postitse tai netistä: lääkkeitä saa tilata vain EU/ETA-alueelta laillisesti toimivasta apteekista tai jakelijalta, ja reseptilääkkeisiin tarvitaan voimassa oleva resepti. Määrä saa vastata enintään kolmen kuukauden käyttöä. Lääkkeiden tilaaminen ja vastaanottaminen postitse EU/ETA-alueen ulkopuolelta on kielletty.\n\nTuominen matkalta omaan käyttöön: ETA-maasta enintään vuoden käyttöä vastaava määrä, ETA-alueen ulkopuolelta enintään kolmen kuukauden käyttöä vastaava määrä. Huumausaineiksi luokitelluille lääkkeille on tiukemmat rajat. Valmisteen pitää olla myyntiluvallinen ostomaassa ja ostettu luvalliselta myyjältä, ja oma käyttö pitää tarvittaessa voida osoittaa (resepti tai lääkärintodistus).\n\nLaiton maahantuonti voi olla lääkerikos tai, dopingaineiden kohdalla, dopingrikos (ks. rikoslaki 44 luku). Lievemmistä tapauksista seuraa yleensä sakko, vakavammista vankeutta.\n\nFimea ratkaisee, onko valmiste lääke (Fimean lääkeluettelo). Tulli neuvoo tilaamisessa ja maahantuonnissa.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 10.11.2026. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-10",
+  "description_source": "käsin"
  }
 ]

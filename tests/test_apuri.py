@@ -400,3 +400,46 @@ def test_stream_denies_other_projects(monkeypatch):
     c = client(monkeypatch, "rajattu:pw:toinen")
     login(c, "rajattu", "pw")
     assert c.post("/api/suggest/stream", json={"question": "Testi kysymys", "hanke": "dopinglinkki"}).status_code == 403
+
+
+# --- Lakitiivistelmät ---------------------------------------------------------------
+
+def test_law_items_are_curated(doping):
+    laws = doping.index.by_type("laki")
+    assert {"laki-dopingrikos", "laki-laakkeiden-tuonti", "laki-potilasasiakirjat"} <= {l.id for l in laws}
+    for l in laws:
+        assert l.url.startswith("https://www.finlex.fi/fi/lainsaadanto/")
+        assert "Tiivistelmä, ei virallinen lakiteksti" in l.content
+
+
+@pytest.mark.parametrize("query,expected", [
+    ("Voiko lääkäri ilmoittaa poliisille jos kerron steroidien käytöstä?", "laki-vaitiolovelvollisuus"),
+    ("Näkeekö vakuutusyhtiö potilastietoni?", "laki-potilasasiakirjat"),
+    ("Saako SARMeja tuoda matkalta Thaimaasta?", "laki-laakkeiden-tuonti"),
+])
+def test_law_found_and_used_as_source(doping, query, expected):
+    res, _ = make(doping).run(query, mode="luonnos")
+    assert expected in res.sources_used, (query, res.sources_used)
+
+
+# --- Kieli --------------------------------------------------------------------------
+
+def test_tidy_text_removes_dashes_and_bold_but_keeps_ranges():
+    from vastausapuri.pipeline import tidy_text
+    out, n = tidy_text("Testosteroni – erityisesti suurina annoksina – lisää aknea. Kestää 3–6 kuukautta. "
+                       "**Tärkeää**: C-hepatiitti.")
+    assert "–" not in out.replace("3–6", "") and "**" not in out
+    assert "3–6 kuukautta" in out and "C-hepatiitti" in out and n == 3
+
+
+class DashyLLM(MockLLM):
+    def complete(self, *, model, system, user, max_tokens=1500):
+        if "<luonnos>" in system:
+            return '<meta>{"linkit": []}</meta><luonnos>Hei,\nAkne – etenkin selässä – on yleistä.\n</luonnos>'
+        return super().complete(model=model, system=system, user=user)
+
+
+def test_draft_is_tidied_and_noted(doping):
+    res, _ = make(doping, DashyLLM()).run("Akne ja steroidit?", mode="luonnos")
+    assert "–" not in res.draft and "Akne, etenkin selässä, on yleistä." in res.draft
+    assert any("ajatusviivaa" in n for n in res.notes)
