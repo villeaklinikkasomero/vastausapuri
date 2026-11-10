@@ -340,3 +340,24 @@ def test_europepmc_parsing(monkeypatch):
     assert len(papers) == 1 and papers[0].title == "Acne vulgaris" and papers[0].review
     assert papers[0].abstract == "Background Text & more." and papers[0].authors == "Smith J et al."
     assert papers[0].url == "https://europepmc.org/article/MED/1"
+
+
+class _ClientError(Exception):
+    def __init__(self, code, msg):
+        self.response = {"Error": {"Code": code, "Message": msg}}
+
+
+class RetiredCheckerLLM(MockLLM):
+    def complete(self, *, model, system, user, max_tokens=1500):
+        if model == "eu.vanha-malli":
+            raise _ClientError("ResourceNotFoundException", "This model version has reached the end of its life.")
+        return super().complete(model=model, system=system, user=user)
+
+
+def test_checker_falls_back_to_drafter_model(doping):
+    s = Settings(provider="mock", checker_model="eu.vanha-malli")
+    a = Assistant(s, doping, RetiredCheckerLLM(), FakeResearch())
+    res, _ = a.run("Testosteroni ja akne?", mode="luonnos")
+    assert res.research, "tutkimushaku toimii varamallilla"
+    assert not any("Tarkastus epäonnistui" in n for n in res.notes)
+    assert sum("ei ole käytettävissä" in n and "end of its life" in n for n in res.notes) == 1

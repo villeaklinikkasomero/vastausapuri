@@ -16,7 +16,7 @@ from . import prompts
 from .catalog import CatalogItem
 from .config import Settings
 from .hanke import Hanke
-from .llm import LLM, parse_draft, parse_json
+from .llm import LLM, MODEL_UNAVAILABLE, describe_error, error_code, parse_draft, parse_json
 from .pseudonymize import Pseudonymized, pseudonymize
 from .safety import Signal, detect_signals
 from .tutkimus import Paper, ResearchClient, format_papers
@@ -78,14 +78,29 @@ class Assistant:
         self.index = hanke.index
         self.llm = llm
         self.research = research
+        self._checker_down = False  # asetetaan, jos tarkastajan malli ei vastaa (esim. vanhentunut)
+
+    def _light(self, *, system: str, user: str, notes: list[str], max_tokens: int = 1500) -> str:
+        """Tarkastajan malli; jos se ei ole käytettävissä, varalla luonnostelijan malli."""
+        if not self._checker_down:
+            try:
+                return self.llm.complete(model=self.s.checker_model, system=system, user=user,
+                                         max_tokens=max_tokens)
+            except Exception as e:  # noqa: BLE001
+                if error_code(e) not in MODEL_UNAVAILABLE or self.s.drafter_model == self.s.checker_model:
+                    raise
+                self._checker_down = True
+                notes.append(f"Tarkastajan malli {self.s.checker_model} ei ole käytettävissä "
+                             f"({describe_error(e)}). Käytettiin luonnostelijan mallia. "
+                             "Vaihda APURI_CHECKER_MODEL Renderissä.")
+        return self.llm.complete(model=self.s.drafter_model, system=system, user=user, max_tokens=max_tokens)
 
     def _research(self, question: str, notes: list[str]) -> tuple[str, list[Paper]]:
         """Hakulause mallilta (vain yleiset termit) ja tiivistelmät Europe PMC:stä."""
         cfg = self.h.research
         try:
-            raw = self.llm.complete(model=self.s.checker_model,
-                                    system=prompts.research_query_system(self.h),
-                                    user=f"KYSYMYS (pseudonymisoitu):\n{question}", max_tokens=200)
+            raw = self._light(system=prompts.research_query_system(self.h),
+                              user=f"KYSYMYS (pseudonymisoitu):\n{question}", notes=notes, max_tokens=200)
             q = parse_json(raw)
             if not q.get("tarpeen", True) or not q.get("haku"):
                 return "", []
@@ -95,7 +110,7 @@ class Assistant:
                 notes.append(f"Tutkimushaku ei löytänyt tiivistelmiä hakulauseella: {query}")
             return query, papers
         except Exception as e:  # noqa: BLE001
-            notes.append(f"Tutkimushaku epäonnistui ({type(e).__name__}); luonnos tehtiin ilman sitä.")
+            notes.append(f"Tutkimushaku epäonnistui ({describe_error(e)}); luonnos tehtiin ilman sitä.")
             return "", []
 
     def _candidates(self, text: str) -> list[CatalogItem]:
@@ -111,6 +126,7 @@ class Assistant:
             raise ValueError(f"Tuntematon tila: {mode}")
         draft_mode = mode == "luonnos"
         t0 = time.perf_counter()
+        self._checker_down = False
         thread = (thread or "").strip() or None
         followup = thread is not None
         # Keskustelu ja kysymys pseudonymisoidaan yhdessä, jotta sama nimi saa saman paikkamerkin
@@ -161,8 +177,8 @@ class Assistant:
 
         # 2) Tarkastaja (virhe ei kaada putkea, mutta näkyy vastaajalle)
         try:
-            raw_c = self.llm.complete(
-                model=self.s.checker_model,
+            raw_c = self._light(
+                notes=notes,
                 system=prompts.checker_system(self.h, draft_mode),
                 user=prompts.checker_user(p_question, candidates, meta,
                                           sources if draft_mode else None,
@@ -172,7 +188,7 @@ class Assistant:
         except Exception as e:  # noqa: BLE001
             check = {"linkit": [], "lisaa": [], "ongelmat": [], "huomiot": [],
                      "kriisi": {"havaittu": False, "kuvaus": ""}}
-            notes.append(f"Tarkastus epäonnistui ({type(e).__name__}). Tarkista luonnos ja linkit itse.")
+            notes.append(f"Tarkastus epäonnistui ({describe_error(e)}). Tarkista luonnos ja linkit itse.")
         t3 = time.perf_counter()
 
         # 3) Koodin tarkistukset: vain katalogin id:t kelpaavat

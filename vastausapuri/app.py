@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTex
 from pydantic import BaseModel, Field
 
 from .config import get_settings
-from .llm import get_llm
+from .llm import describe_error, error_code, get_llm
 from .hanke import load_all
 from .pipeline import MODES, Assistant
 from .tutkimus import EuropePMC
@@ -217,16 +217,12 @@ def suggest(body: Ask, request: Request) -> dict:
 
 def _explain(e: Exception) -> str:
     """AWS:n virheviesti näytetään (se ei sisällä kysymyksen tekstiä), muut vain tyyppinä."""
-    resp = getattr(e, "response", None)
-    if isinstance(resp, dict) and "Error" in resp:
-        err = resp["Error"]
-        code, msg = err.get("Code", type(e).__name__), err.get("Message", "")
-        hint = {
-            "AccessDeniedException": "Tarkista IAM-oikeudet (bedrock:InvokeModel) ja mallin käyttöoikeus Bedrockissa.",
-            "ValidationException": "Tarkista mallitunniste (APURI_DRAFTER_MODEL / APURI_CHECKER_MODEL) ja AWS_REGION.",
-            "ResourceNotFoundException": "Mallia ei löydy tältä alueelta. Tarkista mallitunniste ja AWS_REGION.",
-            "ThrottlingException": "Bedrockin käyttöraja täyttyi. Yritä hetken päästä uudelleen.",
-        }.get(code, "")
-        model = get_settings()
-        return f"{code}: {msg[:400]} (luonnostelija {model.drafter_model}, tarkastaja {model.checker_model}, alue {model.aws_region}) {hint}".strip()
-    return type(e).__name__
+    hint = {
+        "AccessDeniedException": "Tarkista IAM-oikeudet (bedrock:InvokeModel) ja mallin käyttöoikeus Bedrockissa.",
+        "ValidationException": "Tarkista mallitunniste (APURI_DRAFTER_MODEL / APURI_CHECKER_MODEL) ja AWS_REGION.",
+        "ResourceNotFoundException": "Mallia ei löydy tai se on vanhentunut. Tarkista mallitunniste ja AWS_REGION.",
+        "ThrottlingException": "Bedrockin käyttöraja täyttyi. Yritä hetken päästä uudelleen.",
+    }.get(error_code(e), "")
+    s = get_settings()
+    return (f"{describe_error(e)} (luonnostelija {s.drafter_model}, tarkastaja {s.checker_model}, "
+            f"alue {s.aws_region}) {hint}").strip()

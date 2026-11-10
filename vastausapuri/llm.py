@@ -109,3 +109,22 @@ def parse_draft(text: str) -> tuple[dict, str]:
     meta_m = re.search(r"<meta>\s*(.*?)\s*</meta>", text, re.S)
     meta = parse_json(meta_m.group(1) if meta_m else text[: m.start()])
     return meta, draft
+
+
+# Bedrockin virheet, joiden syy on mallissa (ei saatavilla, ei oikeutta, vanhentunut tunniste)
+MODEL_UNAVAILABLE = {"ResourceNotFoundException", "AccessDeniedException", "ValidationException"}
+
+
+def error_code(e: Exception) -> str:
+    resp = getattr(e, "response", None)
+    if isinstance(resp, dict) and "Error" in resp:
+        return resp["Error"].get("Code", type(e).__name__)
+    return type(e).__name__
+
+
+def describe_error(e: Exception) -> str:
+    """AWS:n virheviesti (ei sisällä kysymyksen tekstiä); muista virheistä vain tyyppi."""
+    resp = getattr(e, "response", None)
+    if isinstance(resp, dict) and "Error" in resp:
+        return f"{error_code(e)}: {resp['Error'].get('Message', '')[:300]}".strip()
+    return type(e).__name__
