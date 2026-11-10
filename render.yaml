@@ -1,6 +1,6 @@
 # Render Blueprint: vastausapuri omana palvelunaan Lähde.AI:n Render-työtilassa.
-# Lähde.AI:hin ei kosketa. AWS-tunnukset luetaan samasta Environment Groupista
-# kuin Lähde.AI:ssa (vaihda ryhmän nimi alla vastaamaan teidän ryhmäänne).
+# Lähde.AI:hin ei kosketa. AWS-tunnukset ja käyttäjätunnukset syötetään Renderissä
+# palvelun luonnin yhteydessä (sync: false = arvoa ei tallenneta repoon).
 services:
   - type: web
     name: vastausapuri
@@ -12,7 +12,10 @@ services:
     startCommand: uvicorn vastausapuri.app:app --host 0.0.0.0 --port $PORT --proxy-headers --no-access-log
     healthCheckPath: /healthz
     envVars:
-      - fromGroup: lahde-aws   # <- Lähde.AI:n AWS-tunnukset (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
       - key: PYTHON_VERSION
         value: 3.12.7
       - key: APURI_PROVIDER

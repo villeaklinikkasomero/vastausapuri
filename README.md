@@ -35,19 +35,19 @@ Avaa http://localhost:8000. Testit: `pytest -q`.
 
 ## Julkaisu Renderiin (Lähde.AI:n työtilaan, omana palvelunaan)
 
-Apuri on oma Render-palvelunsa. Lähde.AI:n koodiin tai palveluun ei kosketa, vain AWS-tunnukset
-jaetaan saman Environment Groupin kautta. Kenenkään koneelle ei asenneta mitään.
+Apuri on oma Render-palvelunsa. Lähde.AI:n koodiin tai palveluun ei kosketa.
+Kenenkään koneelle ei asenneta mitään.
 
-1. Vie tämä kansio omaan Git-repoon (GitHub/GitLab), jonka Render näkee.
-2. Tarkista `render.yaml`:
-   - `fromGroup`: Lähde.AI:n Environment Groupin nimi, jossa ovat `AWS_ACCESS_KEY_ID`
-     ja `AWS_SECRET_ACCESS_KEY`.
-   - `AWS_REGION`: sama alue kuin Lähde.AI:ssa.
-   - Mallitunnisteet: samat `eu.`-profiilit, joihin Lähde.AI:n AWS-tilillä on käyttöoikeus.
-3. Renderissä: **New → Blueprint** → valitse repo → Apply.
-4. Aseta palvelun Environment-välilehdellä `APURI_USERS` muodossa
-   `nimi:salasana,nimi2:salasana2`. Ilman sitä palvelu vastaa Bedrock-tilassa 503:lla eikä ole
-   auki kenellekään.
+1. Renderissä: **New → Blueprint** → valitse tämä repo.
+2. Render kysyy arvot kolmelle muuttujalle (niitä ei tallenneta repoon):
+   - `AWS_ACCESS_KEY_ID` ja `AWS_SECRET_ACCESS_KEY`: IAM-käyttäjä, jolla on Bedrock-oikeus.
+     Samat arvot löytyvät Lähde.AI-palvelun Environment-välilehdeltä, mutta apurille kannattaa
+     tehdä oma IAM-käyttäjä (ks. alla).
+   - `APURI_USERS` muodossa `nimi:salasana,nimi2:salasana2`. Ilman sitä palvelu vastaa
+     Bedrock-tilassa 503:lla eikä ole auki kenellekään.
+3. Tarkista ennen Apply-painallusta `render.yaml`:sta `AWS_REGION` ja mallitunnisteet: samat kuin
+   Lähde.AI:ssa, ja vain `eu.`-profiileja.
+4. Paina **Apply**.
 5. Avaa palvelun osoite selaimella ja kirjaudu.
 
 Huomioita:
