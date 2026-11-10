@@ -15,10 +15,10 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
-from .catalog import Index, load_catalog
 from .config import get_settings
 from .llm import get_llm
-from .pipeline import Assistant
+from .hanke import load_all
+from .pipeline import MODES, Assistant
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 COOKIE = "apuri_session"
@@ -32,14 +32,23 @@ app = FastAPI(title="Neuvontapalvelun vastausapuri", docs_url=None, redoc_url=No
 _SECRET = (os.getenv("APURI_SECRET") or secrets.token_hex(32)).encode()
 
 
-def _credentials() -> dict[str, str]:
-    """Käyttäjät muodossa APURI_USERS="nimi:salasana,nimi2:salasana2"."""
-    out = {}
-    for pair in filter(None, (os.getenv("APURI_USERS") or "").split(",")):
-        user, _, pw = pair.strip().partition(":")
-        if user.strip() and pw.strip():
-            out[user.strip()] = pw.strip()
+def _users() -> dict[str, tuple[str, set[str] | None]]:
+    """Käyttäjät: APURI_USERS="nimi:salasana[:hanke1|hanke2],nimi2:salasana2".
+
+    Ilman hankeosaa käyttäjä näkee kaikki hankkeet. Käyttäjänimeä käytetään myös
+    vastaajatunnisteena, kun luonnos kirjoitetaan omalla tyylillä.
+    """
+    out: dict[str, tuple[str, set[str] | None]] = {}
+    for entry in filter(None, (os.getenv("APURI_USERS") or "").split(",")):
+        parts = [x.strip() for x in entry.strip().split(":")]
+        if len(parts) >= 2 and parts[0] and parts[1]:
+            projects = {p for p in parts[2].split("|") if p} if len(parts) > 2 and parts[2] not in ("", "*") else None
+            out[parts[0]] = (parts[1], projects)
     return out
+
+
+def _credentials() -> dict[str, str]:
+    return {u: pw for u, (pw, _) in _users().items()}
 
 
 def _sign(user: str, expires: int) -> str:
@@ -148,13 +157,26 @@ def healthz() -> dict:
 
 
 @lru_cache
-def assistant() -> Assistant:
+def assistants() -> dict[str, Assistant]:
     s = get_settings()
-    return Assistant(s, Index(load_catalog(s.catalog_path)), get_llm(s))
+    llm = get_llm(s)
+    return {hid: Assistant(s, h, llm) for hid, h in load_all(s.hankkeet_dir, s.data_dir).items()}
+
+
+def _allowed(request: Request) -> tuple[str | None, list[str]]:
+    user = _session_user(request)
+    all_ids = list(assistants())
+    if user is None:  # kehitystila ilman käyttäjiä
+        return None, all_ids
+    _, projects = _users()[user]
+    return user, [h for h in all_ids if projects is None or h in projects]
 
 
 class Ask(BaseModel):
     question: str = Field(min_length=5, max_length=20000)
+    hanke: str
+    mode: str = "luonnos"
+    own_style: bool = False
 
 
 @app.get("/")
@@ -163,17 +185,26 @@ def index() -> FileResponse:
 
 
 @app.get("/api/status")
-def status() -> dict:
-    a = assistant()
-    return {"provider": a.s.provider, "drafter": a.s.drafter_model,
-            "checker": a.s.checker_model, "catalog_items": len(a.index.items)}
+def status(request: Request) -> dict:
+    user, allowed = _allowed(request)
+    a = assistants()
+    s = get_settings()
+    return {"provider": s.provider, "drafter": s.drafter_model, "checker": s.checker_model,
+            "user": user, "modes": list(MODES),
+            "hankkeet": [a[h].h.summary() for h in allowed]}
 
 
 @app.post("/api/suggest")
-def suggest(body: Ask) -> dict:
+def suggest(body: Ask, request: Request) -> dict:
+    user, allowed = _allowed(request)
+    if body.hanke not in allowed:
+        raise HTTPException(status_code=403, detail="Ei oikeutta tähän hankkeeseen.")
+    if body.mode not in MODES:
+        raise HTTPException(status_code=400, detail="Tuntematon tila.")
     # Kysymystä tai vastausta ei lokiteta eikä tallenneta.
     try:
-        result, ps = assistant().run(body.question)
+        result, ps = assistants()[body.hanke].run(body.question, mode=body.mode,
+                                                 vastaaja=user, own_style=body.own_style)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {type(e).__name__}") from None
     return result.to_dict(restore=ps)

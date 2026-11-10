@@ -25,7 +25,7 @@ class BedrockLLM:
 
         self._client = boto3.client("bedrock-runtime", region_name=region)
 
-    def complete(self, *, model: str, system: str, user: str, max_tokens: int = 1500) -> str:
+    def complete(self, *, model: str, system: str, user: str, max_tokens: int = 3000) -> str:
         resp = self._client.converse(
             modelId=model,
             system=[{"text": system}],
@@ -49,26 +49,33 @@ class MockLLM:
                 {
                     "linkit": [{"id": i, "hyvaksytty": True, "syy": "Sopii aiheeseen."} for i in ids],
                     "lisaa": [],
+                    "ongelmat": [],
                     "huomiot": [],
                     "kriisi": {"havaittu": False, "kuvaus": ""},
                 },
                 ensure_ascii=False,
             )
         ids = re.findall(r"^- id: (\S+)", user, flags=re.M)[:3]
-        return json.dumps(
-            {
-                "aiheet": ["(mock) aihe"],
-                "kysyja": "ei tiedossa",
-                "linkit": [{"id": i, "perustelu": "(mock) Haun perusteella osuvin."} for i in ids],
-                "runko": [
-                    "Kiitä yhteydenotosta ja tunnista kysyjän tilanne.",
-                    "Vastaa varsinaiseen kysymykseen.",
-                    "Ehdota sopivia sisältöjä ja jatko-ohjausta.",
-                ],
-                "huomiot": [],
-            },
-            ensure_ascii=False,
+        meta = {
+            "aiheet": ["(mock) aihe"],
+            "kysyja": "ei tiedossa",
+            "linkit": [{"id": i, "perustelu": "(mock) Haun perusteella osuvin."} for i in ids],
+            "runko": [
+                "Kiitä yhteydenotosta ja tunnista kysyjän tilanne.",
+                "Vastaa varsinaiseen kysymykseen.",
+                "Ehdota sopivia sisältöjä ja jatko-ohjausta.",
+            ],
+            "huomiot": [],
+        }
+        if "<luonnos>" not in system:
+            return json.dumps(meta, ensure_ascii=False)
+        refs = "\n".join(f"- [[{i}]]" for i in ids)
+        body = (
+            "Hei,\n\nkiitos kysymyksestäsi. (Mock-luonnos: oikea malli kirjoittaa tähän vastauksen.)\n\n"
+            "Tässä on tietoa aiheesta [TARKISTA: mock-väite]. Lisää luettavaa:\n"
+            f"{refs}\n\nYstävällisin terveisin,\nNeuvontapalvelu"
         )
+        return f"<meta>\n{json.dumps(meta, ensure_ascii=False)}\n</meta>\n<luonnos>\n{body}\n</luonnos>"
 
 
 def get_llm(settings: Settings) -> LLM:
@@ -89,3 +96,14 @@ def parse_json(text: str) -> dict:
     if start == -1 or end == -1:
         raise ValueError("Mallin vastauksesta ei löytynyt JSON-oliota")
     return json.loads(text[start : end + 1])
+
+
+def parse_draft(text: str) -> tuple[dict, str]:
+    """Erottaa luonnostelijan vastauksesta metatiedot (JSON) ja luonnostekstin."""
+    m = re.search(r"<luonnos>\s*(.*?)\s*(?:</luonnos>|$)", text, re.S)
+    if not m:
+        raise ValueError("Mallin vastauksesta ei löytynyt luonnosta")
+    draft = m.group(1).strip()
+    meta_m = re.search(r"<meta>\s*(.*?)\s*</meta>", text, re.S)
+    meta = parse_json(meta_m.group(1) if meta_m else text[: m.start()])
+    return meta, draft

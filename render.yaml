@@ -8,7 +8,11 @@ services:
     region: frankfurt          # EU: kysymykset käsitellään Frankfurtissa
     plan: starter
     autoDeploy: false          # julkaisu vain käsin, ei vahingossa
-    buildCommand: pip install -r requirements.txt
+    # Katalogi päivitetään hankkeiden sivustoilta jokaisessa julkaisussa. Jos haku epäonnistuu,
+    # käytetään repossa olevaa katalogia (julkaisu ei kaadu).
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      (python -m vastausapuri.tyokalut.rakenna_katalogi --kaikki --kirjoita || echo "Katalogin päivitys ohitettiin")
     startCommand: uvicorn vastausapuri.app:app --host 0.0.0.0 --port $PORT --proxy-headers --no-access-log
     healthCheckPath: /healthz
     envVars:
@@ -26,7 +30,13 @@ services:
         value: eu.anthropic.claude-opus-5-5
       - key: APURI_CHECKER_MODEL
         value: eu.anthropic.claude-sonnet-5-5
+      # Vanhat vastaukset (vastaukset.jsonl) eivät ole repossa. Kun ne tuodaan, ota käyttöön levy:
+      # lisää alla oleva disk-lohko (palvelun tasolle) ja aseta APURI_DATA_DIR=/var/data
+      #   disk:
+      #     name: vastausdata
+      #     mountPath: /var/data
+      #     sizeGB: 1
       - key: APURI_SECRET      # istuntojen allekirjoitusavain, Render arpoo sen itse
         generateValue: true
-      - key: APURI_USERS       # "nimi:salasana,nimi2:salasana2" – asetetaan Renderin hallintapaneelissa
+      - key: APURI_USERS       # "nimi:salasana[:hanke1|hanke2],..." – asetetaan Renderin hallintapaneelissa
         sync: false

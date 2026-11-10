@@ -3,10 +3,10 @@
 Katalogi on ainoa lähde linkeille: malli valitsee ehdokkaista id:n perusteella,
 eikä se koskaan kirjoita URL-osoitetta itse.
 
-Haku on MVP:ssä merkki-n-grammeihin perustuva TF-IDF. Se kestää suomen
-taivutusta (juominen / juomisesta / juon) paremmin kuin sanahaku, eikä vaadi
-ulkoisia palveluita. Myöhemmin rinnalle voi lisätä upotushaun (esim. Cohere
-Embed Multilingual Bedrockissa).
+Haku on merkki-n-grammeihin perustuva TF-IDF. Se kestää suomen taivutusta
+(juominen / juomisesta / juon) paremmin kuin sanahaku, eikä vaadi ulkoisia
+palveluita. Myöhemmin rinnalle voi lisätä upotushaun (esim. Cohere Embed
+Multilingual Bedrockissa).
 """
 from __future__ import annotations
 
@@ -14,8 +14,9 @@ import json
 import math
 import re
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Generic, Sequence, TypeVar
 
 
 @dataclass(frozen=True)
@@ -27,38 +28,50 @@ class CatalogItem:
     type: str  # "artikkeli" | "testi" | "oma-apu" | "palvelu" | "kriisi"
     topics: tuple[str, ...] = ()
     audience: tuple[str, ...] = ()  # "itse" | "läheinen" | "ammattilainen" | "nuori"
+    signals: tuple[str, ...] = ()  # kriisikohteet: mihin signaalilajeihin tämä nostetaan automaattisesti
+    content: str = ""  # sivun tekstiote (katalogityökalu täyttää), annetaan mallille lähteeksi
 
     @property
     def search_text(self) -> str:
-        return " ".join([self.title, self.description, " ".join(self.topics), " ".join(self.audience)])
+        # Otsikko ja aiheet painavat enemmän kuin leipäteksti
+        head = " ".join([self.title, self.title, " ".join(self.topics), " ".join(self.topics)])
+        return " ".join([head, self.description, " ".join(self.audience), self.content[:1500]])
 
 
 def load_catalog(path: str | Path) -> list[CatalogItem]:
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
-    items = []
-    seen = set()
-    for r in raw:
-        if r["id"] in seen:
-            raise ValueError(f"Katalogissa on kaksi kohdetta samalla id:llä: {r['id']}")
-        seen.add(r["id"])
-        items.append(
-            CatalogItem(
-                id=r["id"],
-                title=r["title"],
-                url=r["url"],
-                description=r["description"],
-                type=r.get("type", "artikkeli"),
-                topics=tuple(r.get("topics", [])),
-                audience=tuple(r.get("audience", [])),
-            )
+    return [
+        CatalogItem(
+            id=r["id"],
+            title=r["title"],
+            url=r["url"],
+            description=r.get("description", ""),
+            type=r.get("type", "artikkeli"),
+            topics=tuple(r.get("topics", [])),
+            audience=tuple(r.get("audience", [])),
+            signals=tuple(r.get("signals", [])),
+            content=r.get("content", ""),
         )
+        for r in raw
+    ]
+
+
+def merge_catalogs(*catalogs: list[CatalogItem]) -> list[CatalogItem]:
+    items: list[CatalogItem] = []
+    seen: set[str] = set()
+    for cat in catalogs:
+        for it in cat:
+            if it.id in seen:
+                raise ValueError(f"Katalogissa on kaksi kohdetta samalla id:llä: {it.id}")
+            seen.add(it.id)
+            items.append(it)
     return items
 
 
 def _ngrams(text: str, n_min: int = 3, n_max: int = 5) -> Counter[str]:
     text = re.sub(r"\[[A-ZÅÄÖ]+_\d+\]", " ", text.lower())  # paikkamerkit pois
     grams: Counter[str] = Counter()
-    for word in re.findall(r"[a-zåäö0-9]+", text):
+    for word in re.findall(r"[a-zåäö0-9-]+", text):
         w = f" {word} "
         for n in range(n_min, n_max + 1):
             for i in range(len(w) - n + 1):
@@ -66,18 +79,19 @@ def _ngrams(text: str, n_min: int = 3, n_max: int = 5) -> Counter[str]:
     return grams
 
 
-@dataclass
-class Index:
-    items: list[CatalogItem]
-    _idf: dict[str, float] = field(default_factory=dict)
-    _vecs: list[dict[str, float]] = field(default_factory=list)
+T = TypeVar("T")
 
-    def __post_init__(self) -> None:
-        docs = [_ngrams(it.search_text) for it in self.items]
+
+class TextIndex(Generic[T]):
+    """Yleinen n-grammi-TF-IDF-indeksi mille tahansa olioille."""
+
+    def __init__(self, objects: Sequence[T], texts: Sequence[str]):
+        self.objects = list(objects)
+        docs = [_ngrams(t) for t in texts]
         df: Counter[str] = Counter()
         for d in docs:
             df.update(d.keys())
-        n = len(docs)
+        n = max(len(docs), 1)
         self._idf = {g: math.log((1 + n) / (1 + c)) + 1 for g, c in df.items()}
         self._vecs = [self._vec(d) for d in docs]
 
@@ -86,14 +100,21 @@ class Index:
         norm = math.sqrt(sum(x * x for x in v.values())) or 1.0
         return {g: x / norm for g, x in v.items()}
 
-    def search(self, query: str, k: int = 10) -> list[tuple[CatalogItem, float]]:
+    def search(self, query: str, k: int = 10, where=None) -> list[tuple[T, float]]:
         q = self._vec(_ngrams(query))
         scored = []
-        for item, vec in zip(self.items, self._vecs):
-            s = sum(w * vec.get(g, 0.0) for g, w in q.items())
-            scored.append((item, s))
+        for obj, vec in zip(self.objects, self._vecs):
+            if where is not None and not where(obj):
+                continue
+            scored.append((obj, sum(w * vec.get(g, 0.0) for g, w in q.items())))
         scored.sort(key=lambda t: -t[1])
         return scored[:k]
+
+
+class Index(TextIndex[CatalogItem]):
+    def __init__(self, items: list[CatalogItem]):
+        super().__init__(items, [it.search_text for it in items])
+        self.items = self.objects
 
     def by_type(self, type_: str) -> list[CatalogItem]:
         return [it for it in self.items if it.type == type_]

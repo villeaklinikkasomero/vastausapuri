@@ -1,63 +1,99 @@
-# Neuvontapalvelun vastausapuri – MVP (linkkiehdottaja)
+# Neuvontapalvelun vastausapuri
 
-Apuri ehdottaa neuvontapalvelun vastaajalle 3–5 sopivaa sisältöä säätiön omasta
-sisältökatalogista, perustelee valinnat, ehdottaa vastauksen rungon ja merkitsee
-mahdolliset kriisisignaalit. Vastauksen kirjoittaa ja lähettää aina ihminen.
+Apuri kirjoittaa neuvontapalvelun vastaajalle vastausluonnoksen, jossa on valmiina linkit palvelun
+omiin sisältöihin ja oikeisiin jatko-ohjauksiin. Toinen malli tarkistaa luonnoksen, ja vastaaja
+muokkaa ja lähettää vastauksen itse. Ensimmäinen hanke on **Dopinglinkki**, ja uusia hankkeita voi
+lisätä ilman koodimuutoksia.
+
+## Tilat
+
+| Tila | Mitä vastaaja saa |
+| --- | --- |
+| **Luonnos** | Kokonainen vastausluonnos, linkit, tarkastajan huomiot (vakavuus, lainaus, korjausehdotus) ja `[TARKISTA: …]`-merkinnät kohtiin, joille ei löytynyt lähdettä |
+| **Vain linkit** | 3–5 linkkiä perusteluineen, vastauksen runko ja huomiot |
+
+**Kirjoita minun tyylilläni**: kun vastaajan omia vanhoja vastauksia on tuotu indeksiin (ks. alla),
+luonnostelija saa esimerkeiksi ensisijaisesti hänen omiaan ja jäljittelee hänen tapaansa kirjoittaa.
 
 ## Miten se toimii
 
-1. **Pseudonymisointi** (`pseudonymize.py`) omassa ympäristössä: nimet, paikkakunnat, iät,
-   yhteystiedot, henkilötunnukset, osoitteet ja päivämäärät korvataan paikkamerkeillä
-   (`[NIMI_1]`). Vastaavuustaulu ei lähde mallille.
-2. **Kriisisignaalit** (`safety.py`) tunnistetaan paikallisesti alkuperäisestä tekstistä,
-   mallista riippumatta.
-3. **Haku** (`catalog.py`) poimii katalogista ehdokkaat merkki-n-grammi-TF-IDF:llä, joka kestää
-   suomen taivutusta. Kriisipalvelut ovat aina ehdokkaina.
-4. **Luonnostelija** (Claude Opus 5.5) valitsee ehdokkaista linkit ja tekee rungon.
-5. **Tarkastaja** (Claude Sonnet 5.5) hyväksyy tai hylkää linkit, voi lisätä paremman ja arvioi
-   kriisisignaalit.
-6. **Koodin tarkistukset** (`pipeline.py`): vain katalogin id:t kelpaavat, joten malli ei voi
-   keksiä osoitteita. Kriisisignaalin yhteydessä kriisipalvelut nostetaan ensimmäisiksi.
+1. **Pseudonymisointi** (`pseudonymize.py`) omassa ympäristössä: nimet, paikkakunnat, iät, yhteystiedot,
+   henkilötunnukset, osoitteet ja päivämäärät korvataan paikkamerkeillä (`[NIMI_1]`). Palvelun omat linkit
+   säilytetään. Nimet palautetaan vasta vastaajan näkymässä.
+2. **Kriisisignaalit** (`safety.py`) tunnistetaan paikallisesti: yhteiset (itsetuhoisuus, väkivalta,
+   myrkytys) ja hankekohtaiset (Dopinglinkillä mm. pistoskohdan tulehdus, rintakipu, ylikuumeneminen).
+3. **Haku** (`catalog.py`): katalogista ehdokkaat ja niiden tekstiotteet lähteiksi, vastausindeksistä
+   samankaltaiset vanhat vastaukset esimerkeiksi.
+4. **Luonnostelija** (Claude Opus 5.5) kirjoittaa luonnoksen hankkeen ohjeiden mukaan ja viittaa
+   sisältöihin merkinnällä `[[id]]`.
+5. **Tarkastaja** (Claude Sonnet 5.5) etsii asiavirheet, periaatteiden vastaiset kohdat (esim.
+   annosteluohjeet, diagnoosit, moralisointi), puuttuvat hoitoon ohjaukset ja sopimattomat linkit.
+6. **Koodin tarkistukset** (`pipeline.py`): `[[id]]`-viittaukset muutetaan katalogin osoitteiksi. Malli ei voi
+   keksiä osoitteita: tuntematon viittaus muuttuu `[TARKISTA]`-merkinnäksi. Kriisipalvelut nostetaan ensimmäisiksi.
 
-## Käynnistys
+## Hankkeet
+
+```
+hankkeet/
+  yhteiset/katalogi.json        kaikille yhteiset (kriisipalvelut)
+  dopinglinkki/hanke.toml       nimi, sivusto, sivukartat, ohjeet mallille, tervehdys, allekirjoitus, kriisisignaalit
+  dopinglinkki/katalogi.json    sisällöt ja ohjauskohteet (Dopinglinkin sivut + SUEK, Tulli, Fimea, terveysneuvontapisteet ...)
+```
+
+**Uusi hanke:** kopioi `hankkeet/dopinglinkki` uudeksi kansioksi, muokkaa `hanke.toml` (erityisesti
+`[ohjeet]` ja `sivukartat`) ja rakenna katalogi:
+
+```bash
+python -m vastausapuri.tyokalut.rakenna_katalogi <hanke> --kirjoita
+```
+
+Käy uudet kohteet (`"uusi": true`) läpi ja lisää niille `topics` ja `audience`. Hankkeen näkyvyys
+rajataan käyttäjäkohtaisesti (ks. `APURI_USERS`).
+
+### Katalogi
+
+`katalogi.json`-kohteessa on `id`, `title`, `url`, `type` (`artikkeli`, `testi`, `palvelu`, `kriisi`),
+`description`, `topics`, `audience` ja `content` (sivun tekstiote, jonka katalogityökalu täyttää).
+Renderissä katalogi päivitetään sivustolta jokaisen julkaisun yhteydessä. Käsin kuratoidut tiedot
+(id, tyyppi, aiheet, kohderyhmä) säilyvät.
+
+## Vanhat vastaukset (vastaajan ääni ja ohjausmallit)
+
+```bash
+python -m vastausapuri.tyokalut.tuo_vastaukset dopinglinkki vienti.csv \
+  --vastaus-sarake vastaus --vastaaja-sarake vastaaja --aihe-sarake kategoria \
+  --vastaajakartta "Ville S.=ville,Liisa K.=liisa" --raportti raportti.md
+```
+
+- Kysymyksiä ei tuoda. Vastaukset pseudonymisoidaan, ja palvelun omat linkit säilyvät.
+- `--vastaajakartta` yhdistää kannan vastaajatunnisteen kirjautumistunnukseen ("minun tyylilläni").
+- Raportti näyttää vastaajakohtaiset määrät ja yleisimmät ohjaukset. Mukana ovat myös linkit, joita ei
+  vielä ole katalogissa.
+- **Tulos `vastaukset.jsonl` ei kuulu Gitiin** (se on `.gitignore`-listalla). Renderissä se sijoitetaan
+  levylle (`APURI_DATA_DIR`, ks. `render.yaml`).
+- Aja tuonti vain säätiön omassa ympäristössä, esim. Renderin Shell-välilehdellä.
+
+## Käynnistys paikallisesti
 
 ```bash
 pip install -r requirements.txt
-
-# Kehitys ilman mallia (ei verkkoyhteyttä, ei dataa minnekään)
-APURI_PROVIDER=mock uvicorn vastausapuri.app:app --port 8000
-
-# Bedrock (AWS-tunnukset tavalliseen tapaan, esim. AWS_PROFILE)
-APURI_PROVIDER=bedrock AWS_REGION=eu-north-1 uvicorn vastausapuri.app:app --port 8000
+APURI_PROVIDER=mock uvicorn vastausapuri.app:app --port 8000   # ilman mallia
+pytest -q
 ```
 
-Avaa http://localhost:8000. Testit: `pytest -q`.
+## Julkaisu Renderiin
 
-## Julkaisu Renderiin (Lähde.AI:n työtilaan, omana palvelunaan)
+Palvelu on `render.yaml`-Blueprint. Lähde.AI:hin ei kosketa.
 
-Apuri on oma Render-palvelunsa. Lähde.AI:n koodiin tai palveluun ei kosketa.
-Kenenkään koneelle ei asenneta mitään.
-
-1. Renderissä: **New → Blueprint** → valitse tämä repo.
-2. Render kysyy arvot kolmelle muuttujalle (niitä ei tallenneta repoon):
-   - `AWS_ACCESS_KEY_ID` ja `AWS_SECRET_ACCESS_KEY`: IAM-käyttäjä, jolla on Bedrock-oikeus.
-     Samat arvot löytyvät Lähde.AI-palvelun Environment-välilehdeltä, mutta apurille kannattaa
-     tehdä oma IAM-käyttäjä (ks. alla).
-   - `APURI_USERS` muodossa `nimi:salasana,nimi2:salasana2`. Ilman sitä palvelu vastaa
-     Bedrock-tilassa 503:lla eikä ole auki kenellekään.
-3. Tarkista ennen Apply-painallusta `render.yaml`:sta `AWS_REGION` ja mallitunnisteet: samat kuin
-   Lähde.AI:ssa, ja vain `eu.`-profiileja.
-4. Paina **Apply**.
-5. Avaa palvelun osoite selaimella ja kirjaudu.
+1. Renderissä: **New → Blueprint** → tämä repo (tai **Manual sync**, jos Blueprint on jo olemassa).
+2. Render kysyy `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` ja `APURI_USERS`.
+3. Julkaise: **Manual Deploy → Deploy latest commit** (automaattinen julkaisu on pois päältä).
 
 Huomioita:
-- Palvelu on Frankfurtissa (EU). Varmista, että säätiöllä on Renderin kanssa tietojenkäsittelysopimus
-  (DPA), koska kysymykset kulkevat Renderin palvelimen kautta.
-- Pääsynhallinta on MVP:ssä HTTP Basic -kirjautuminen. Pilotin jälkeen se kannattaa korvata säätiön
-  kertakirjautumisella (esim. Microsoft Entra ID) tai Lähde.AI:n kirjautumisella.
-- Pyyntölokitus on pois päältä (`--no-access-log`), eikä sovellus tallenna kysymyksiä.
-- Jos IAM-käyttäjä on Lähde.AI:n kanssa yhteinen, sen oikeudet koskevat myös apuria. Pilotissa oma
-  IAM-käyttäjä, jolla on oikeus vain `bedrock:InvokeModel`-kutsuun `eu.`-profiileihin, on siistimpi.
+- Palvelu on Frankfurtissa. Varmista Renderin tietojenkäsittelysopimus (DPA).
+- Pilottia varten apurille kannattaa tehdä oma IAM-käyttäjä, jolla on oikeus vain `bedrock:InvokeModel`
+  -kutsuun `eu.`-profiileihin.
+- Pyyntölokitus on pois päältä, eikä sovellus tallenna kysymyksiä.
 
 ## Asetukset (ympäristömuuttujat)
 
@@ -67,39 +103,38 @@ Huomioita:
 | `AWS_REGION` | `eu-north-1` | EU-lähdealue Bedrock-kutsuille |
 | `APURI_DRAFTER_MODEL` | `eu.anthropic.claude-opus-5-5` | Luonnostelija |
 | `APURI_CHECKER_MODEL` | `eu.anthropic.claude-sonnet-5-5` | Tarkastaja |
-| `APURI_CATALOG` | `data/katalogi.json` | Sisältökatalogin polku |
+| `APURI_USERS` | – | `nimi:salasana[:hanke1\|hanke2],...`; ilman hankeosaa kaikki hankkeet. Pakollinen Bedrock-tilassa |
+| `APURI_SECRET` | arvottu | Istuntojen allekirjoitusavain (Render arpoo) |
+| `APURI_DATA_DIR` | – | Vanhojen vastausten kansio (`<kansio>/<hanke>/vastaukset.jsonl`) |
+| `APURI_HANKKEET` | `hankkeet` | Hankekansio |
 | `APURI_MAX_LINKS` | `5` | Linkkien enimmäismäärä (kriisipalvelut tulevat lisäksi) |
+| `APURI_CANDIDATES` | `12` | Hakuehdokkaita mallille |
+| `APURI_SOURCES` | `4` | Lähdeotteita luonnokselle |
+| `APURI_EXAMPLES` | `3` | Esimerkkivastauksia luonnokselle |
 | `APURI_SPACY_MODEL` | – | Valinnainen suomen NER-malli pseudonymisoinnin tueksi |
-| `APURI_USERS` | – | Kirjautumistunnukset `nimi:salasana,...` (pakollinen Bedrock-tilassa) |
-
-Bedrock-tilassa sovellus kieltäytyy käynnistymästä, jos malli ei ole `eu.`-profiili.
 
 ## Ennen pilottia
 
-- **Katalogi:** `data/katalogi.json` on keksitty esimerkki, ja sen osoitteet ovat
-  `example.org`-osoitteita. Korvaa se säätiön oikeilla sisällöillä. Kriisipalvelujen yhteystiedot
-  pitää tarkistaa.
-- **Pseudonymisointi:** nimi- ja paikkalistat ovat suppeita. Laajenna niitä, harkitse suomen
-  NER-mallia ja testaa oikeilla (sisäisesti käsitellyillä) esimerkeillä.
-- **Kriisisanasto:** käy `safety.py`:n lista läpi neuvontapalvelun asiantuntijoiden kanssa.
-- **AWS:** salli IAM-politiikassa vain `eu.`-inferenssiprofiilit. Pidä mallikutsujen lokitus
-  pois päältä tai ohjaa se omaan salattuun säilöön.
-- **Lokitus:** sovellus ei tallenna kysymyksiä. Älä lisää pyyntölokitusta, joka tallentaisi
-  pyyntöjen sisällön.
+- **Dopinglinkin ohjeet** (`hankkeet/dopinglinkki/hanke.toml`): tervehdys, allekirjoitus ja periaatteet
+  käydään läpi vastaajien kanssa.
+- **Kriisipalvelujen yhteystiedot** (`hankkeet/yhteiset/katalogi.json`) tarkistetaan.
+- **Pseudonymisoinnin nimi- ja paikkalistat** laajennetaan, ja niitä testataan oikeilla esimerkeillä.
 
 ## Rakenne
 
 ```
 vastausapuri/
-  config.py        asetukset ja EU-profiilin pakotus
-  pseudonymize.py  paikkamerkit ja palautus
-  safety.py        paikallinen kriisisignaalien tunnistus
-  catalog.py       katalogi ja haku
-  llm.py           Bedrock- ja mock-mallit
-  prompts.py       luonnostelijan ja tarkastajan ohjeet
-  pipeline.py      kahden mallin putki ja tarkistukset
-  app.py           FastAPI-rajapinta
-static/index.html  vastaajan käyttöliittymä
-data/katalogi.json esimerkkikatalogi
-tests/             yksikkötestit (mock-malli)
+  app.py            rajapinta, kirjautuminen, hankeoikeudet
+  pipeline.py       kahden mallin putki (linkit / luonnos)
+  prompts.py        mallien ohjeet (hankekohtainen sisältö hanke.toml:sta)
+  hanke.py          hankkeiden lataus
+  catalog.py        katalogi ja n-grammihaku
+  answers.py        vanhojen vastausten indeksi
+  pseudonymize.py   paikkamerkit
+  safety.py         kriisisignaalit
+  llm.py            Bedrock- ja mock-mallit
+  tyokalut/         rakenna_katalogi.py, tuo_vastaukset.py
+static/index.html   käyttöliittymä
+hankkeet/           hankkeiden asetukset ja katalogit
+tests/              testit
 ```

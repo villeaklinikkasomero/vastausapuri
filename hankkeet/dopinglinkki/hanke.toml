@@ -1,0 +1,58 @@
+# Dopinglinkin vastausapurin asetukset.
+# Uusi hanke = uusi kansio hankkeet/<id>/ samalla rakenteella (hanke.toml + katalogi.json).
+
+[hanke]
+id = "dopinglinkki"
+nimi = "Dopinglinkki"
+kuvaus = "Kuntodopingia eli dopingaineiden käyttöä kilpaurheilun ulkopuolella käsittelevä neuvontapalvelu."
+sivusto = "https://dopinglinkki.fi"
+# Katalogin rakennustyökalu hakee nämä sivukartat (ks. vastausapuri/tyokalut/rakenna_katalogi.py)
+sivukartat = ["https://dopinglinkki.fi/page-sitemap1.xml"]
+# Sivut, joita ei oteta katalogiin
+ohita = ["/info/", "/plp", "/sv/", "/en/", "/ru/", "/ajankohtaista/"]
+
+[haku]
+# Yhteiset katalogit, jotka liitetään tämän hankkeen katalogiin (kriisipalvelut ym.)
+sisallyta = ["yhteiset"]
+
+[vastaus]
+# TARKISTA neuvontapalvelun vastaajien kanssa
+tervehdys = "Hei,"
+allekirjoitus = "Ystävällisin terveisin,\nDopinglinkin asiantuntija"
+pituus = "noin 150–350 sanaa"
+puhuttelu = "sinuttelu"
+
+[ohjeet]
+teksti = """
+Dopinglinkin neuvonta on anonyymiä, maksutonta ja perustuu tutkittuun tietoon. Kysyjät ovat
+dopingaineita käyttäviä tai käyttöä harkitsevia kuntoilijoita, heidän läheisiään ja ammattilaisia.
+
+Periaatteet:
+- Moralisoimaton ja haittoja vähentävä ote. Kysyjää ei syyllistetä eikä käyttöä tuomita, mutta
+  riskeistä kerrotaan suoraan ja tutkimustietoon perustuen.
+- Ei henkilökohtaisia annostelu- tai kuuriohjeita eikä ohjeita aineiden hankkimiseen.
+  Yleistä tietoa vaikutuksista, riskeistä ja turvallisemmasta pistämisestä voi antaa.
+- Ei diagnooseja. Oireiden kohdalla ohjataan terveydenhuoltoon. Hormonitoimintaan,
+  hedelmällisyyteen tai urheilulääketieteeseen perehtyneet lääkärit (esim. endokrinologia)
+  tuntevat aiheen usein parhaiten. Lääkärillä on vaitiolovelvollisuus, ja käytöstä kannattaa kertoa.
+- Akuutit oireet (esim. pistoskohdan kuumottava turvotus ja kuume, rintakipu, DNP:n
+  ylikuumenemisoireet, insuliinin aiheuttama matala verensokeri) = kehota hakeutumaan heti hoitoon.
+- Kilpaurheilun dopingtestaus ei kuulu Dopinglinkin aihepiiriin: ohjaa SUEKiin.
+- Laillisuus: useimmat dopingaineet ovat reseptilääkkeitä. Lisätietoa Tullilta ja Fimealta.
+- Puhtaita pistovälineitä saa terveysneuvontapisteistä ja apteekeista.
+- Läheisille: tieto, tuki ja oma jaksaminen; puheeksiotto ilman syyllistämistä.
+"""
+
+[kriisi]
+# Hankekohtaiset lisäsignaalit (säännölliset lausekkeet), yhteisten kriisisignaalien lisäksi
+akuutti_terveysriski = [
+  "rintakip\\w*",
+  "sydän\\w* (?:hakkaa|lyö|tykyttää|rytmihäiriö\\w*)",
+  "(?:pistos|piikki)\\w* .{0,40}(?:turvo\\w*|punoitt\\w*|kuum\\w*|märk\\w*|paise\\w*)",
+  "paise\\w*",
+  "korkea kuume",
+  "ylikuume\\w*",
+  "verensokeri\\w* .{0,20}(?:alhaal\\w*|matal\\w*|laski\\w*)",
+  "hengenahdistu\\w*",
+  "puutu\\w* .{0,20}(?:käsi|jalka|kasvo\\w*)",
+]

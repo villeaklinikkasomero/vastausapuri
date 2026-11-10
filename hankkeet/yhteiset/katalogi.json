@@ -1,0 +1,69 @@
+[
+ {
+  "id": "hata-112",
+  "title": "Hätätilanteessa soita 112",
+  "url": "https://112.fi/",
+  "type": "kriisi",
+  "description": "Välitön hengenvaara, myrkytys, tajuttomuus tai väkivalta: soita hätänumeroon 112.",
+  "topics": [
+   "hätä",
+   "myrkytys",
+   "yliannostus",
+   "väkivalta",
+   "tajuttomuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "signals": [
+   "itsetuhoisuus",
+   "väkivalta",
+   "lapsen_turvallisuus",
+   "akuutti_myrkytys",
+   "akuutti_terveysriski"
+  ]
+ },
+ {
+  "id": "myrkytystietokeskus",
+  "title": "Myrkytystietokeskus (tarkista yhteystiedot)",
+  "url": "https://www.myrkytystietokeskus.fi/",
+  "type": "kriisi",
+  "description": "Neuvoo myrkytysepäilyissä ympäri vuorokauden.",
+  "topics": [
+   "myrkytys",
+   "yliannostus",
+   "DNP",
+   "insuliini"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "signals": [
+   "akuutti_myrkytys"
+  ]
+ },
+ {
+  "id": "kriisipuhelin",
+  "title": "MIELI ry:n Kriisipuhelin (tarkista yhteystiedot)",
+  "url": "https://mieli.fi/",
+  "type": "kriisi",
+  "description": "Keskusteluapua kriisissä oleville ja itsetuhoisille sekä heidän läheisilleen.",
+  "topics": [
+   "kriisi",
+   "itsetuhoisuus",
+   "itsemurha",
+   "masennus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "signals": [
+   "itsetuhoisuus"
+  ]
+ }
+]

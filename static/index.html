@@ -8,45 +8,59 @@
   :root {
     --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #5f5e5a; --line: #dddbd4;
     --accent: #1f5fa8; --accent-soft: #e6eef8; --warn: #9a3412; --warn-soft: #fdeee6;
-    --ok: #166534; --radius: 10px;
+    --mid: #8a5a00; --mid-soft: #fbf1dc; --radius: 10px;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #18181a; --panel: #222225; --ink: #ecebe7; --muted: #a3a29c; --line: #3a3a3e;
-      --accent: #7fb0ea; --accent-soft: #1f2d3e; --warn: #f2a37a; --warn-soft: #3a241a; --ok: #86d19b; }
+      --accent: #7fb0ea; --accent-soft: #1f2d3e; --warn: #f2a37a; --warn-soft: #3a241a;
+      --mid: #e5c07b; --mid-soft: #33291a; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
     font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex;
-    justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  header { padding: 14px 24px; border-bottom: 1px solid var(--line); display: flex;
+    justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
   header h1 { font-size: 18px; margin: 0; }
   header small { color: var(--muted); }
-  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px;
-    padding: 24px; max-width: 1280px; margin: 0 auto; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; padding: 16px; } }
-  section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  header a { color: inherit; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 24px;
+    padding: 24px; max-width: 1360px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; min-width: 0; }
   h2 { font-size: 15px; margin: 0 0 12px; }
-  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 24px 0 8px; }
-  textarea { width: 100%; min-height: 280px; resize: vertical; padding: 12px; border-radius: 8px;
-    border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; }
+  h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 24px 0 8px; }
+  textarea, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink); font: inherit; }
+  #q { min-height: 260px; resize: vertical; }
+  #draft { min-height: 360px; resize: vertical; line-height: 1.55; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .controls label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { flex: 1; border: 0; border-radius: 0; background: var(--bg); color: var(--ink); padding: 9px 8px; }
+  .seg button.on { background: var(--accent); color: #fff; }
   button { font: inherit; border-radius: 8px; padding: 8px 16px; cursor: pointer;
     border: 1px solid var(--accent); background: var(--accent); color: #fff; }
   button.ghost { background: transparent; color: var(--accent); }
   button:disabled { opacity: .5; cursor: progress; }
   .row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-top: 4px; }
   .hint { color: var(--muted); font-size: 13px; }
   .empty { color: var(--muted); padding: 40px 0; text-align: center; }
   .banner { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 12px 16px;
     margin-bottom: 16px; font-weight: 600; }
   .banner span { font-weight: 400; display: block; }
-  .link { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 8px;
-    display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+  .issue { border-left: 3px solid var(--line); padding: 6px 12px; margin-bottom: 8px; font-size: 14px; }
+  .issue.korkea { border-color: var(--warn); background: var(--warn-soft); }
+  .issue.keski { border-color: var(--mid); background: var(--mid-soft); }
+  .issue q { color: var(--muted); font-style: italic; }
+  .link { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+    display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; }
   .link.kriisi { border-color: var(--warn); }
   .link input { margin-top: 4px; }
-  .link a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .link a { color: var(--accent); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
   .link .meta { grid-column: 2; color: var(--muted); font-size: 13px; }
   .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px;
-    background: var(--accent-soft); color: var(--accent); margin-right: 6px; }
+    background: var(--accent-soft); color: var(--accent); margin: 0 6px 4px 0; }
   ol, ul { margin: 0; padding-left: 20px; }
   pre { white-space: pre-wrap; background: var(--bg); border-radius: 8px; padding: 12px; font-size: 13px;
     border: 1px solid var(--line); margin: 0; }
@@ -57,41 +71,79 @@
 </head>
 <body>
 <header>
-  <h1>Vastausapuri <small>· linkkiehdottaja (MVP)</small></h1>
-  <small><span id="status">…</span> · <a href="/logout" style="color:inherit">Kirjaudu ulos</a></small>
+  <h1>Vastausapuri</h1>
+  <small><span id="status">…</span> · <a href="/logout">Kirjaudu ulos</a></small>
 </header>
 <main>
   <section>
-    <h2>Kysymys</h2>
+    <div class="controls">
+      <div><label for="hanke">Palvelu</label><select id="hanke"></select></div>
+      <div><label>Tila</label>
+        <div class="seg" id="mode">
+          <button type="button" data-mode="luonnos" class="on">Luonnos</button>
+          <button type="button" data-mode="linkit">Vain linkit</button>
+        </div>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="own"> <span id="ownLabel">Kirjoita minun tyylilläni</span></label>
+    <h2 style="margin-top:16px">Kysymys</h2>
     <textarea id="q" placeholder="Liitä kysyjän viesti tähän. Nimet ja yhteystiedot korvataan paikkamerkeillä ennen kuin teksti lähtee mallille."></textarea>
     <div class="row">
-      <button id="go">Hae ehdotukset</button>
+      <button id="go">Tee luonnos</button>
       <span class="hint">Ctrl + Enter</span>
     </div>
     <p class="hint">Apuri ei tallenna kysymystä. Vastaus lähtee aina vastaajalta itseltään.</p>
   </section>
-  <section id="out"><p class="empty">Ehdotukset näkyvät tässä.</p></section>
+  <section id="out"><p class="empty">Luonnos ja ehdotukset näkyvät tässä.</p></section>
 </main>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const SIGNAL = {itsetuhoisuus: "itsetuhoisuus", "väkivalta": "väkivalta",
-  lapsen_turvallisuus: "lapsen turvallisuus", akuutti_myrkytys: "akuutti myrkytys"};
+const SIGNAL = {itsetuhoisuus: "itsetuhoisuus", "väkivalta": "väkivalta", lapsen_turvallisuus: "lapsen turvallisuus",
+  akuutti_myrkytys: "akuutti myrkytys", akuutti_terveysriski: "akuutti terveysriski"};
 const SOURCE = {luonnostelija: "luonnostelija", tarkastaja: "lisätty tarkastuksessa", "kriisi-automaatti": "kriisisignaali"};
+let state = {mode: "luonnos", status: null};
+
+function store(k, v) { try { v === undefined ? null : localStorage.setItem(k, v); return localStorage.getItem(k); } catch { return null; } }
 
 fetch("/api/status").then(r => r.json()).then(s => {
-  $("#status").textContent = `${s.provider} · ${s.drafter.replace(/^eu\.anthropic\./, "")} + ${s.checker.replace(/^eu\.anthropic\./, "")} · katalogissa ${s.catalog_items}`;
+  state.status = s;
+  $("#status").textContent = `${s.user ? s.user + " · " : ""}${s.provider} · ${s.drafter.replace(/^eu\.anthropic\./, "")} + ${s.checker.replace(/^eu\.anthropic\./, "")}`;
+  $("#hanke").innerHTML = s.hankkeet.map(h => `<option value="${esc(h.id)}">${esc(h.nimi)}</option>`).join("");
+  const saved = store("apuri.hanke");
+  if (saved && s.hankkeet.some(h => h.id === saved)) $("#hanke").value = saved;
+  const m = store("apuri.mode"); if (m) setMode(m);
+  refreshOwn();
 }).catch(() => $("#status").textContent = "ei yhteyttä");
+
+function refreshOwn() {
+  const s = state.status; if (!s) return;
+  const h = s.hankkeet.find(x => x.id === $("#hanke").value);
+  const has = h && s.user && h.vastaajat.includes(s.user);
+  $("#own").disabled = !has || state.mode !== "luonnos";
+  if (!has) $("#own").checked = false;
+  $("#ownLabel").textContent = has ? "Kirjoita minun tyylilläni"
+    : "Kirjoita minun tyylilläni (ei käytössä: omia vastauksia ei ole indeksissä)";
+}
+function setMode(m) {
+  state.mode = m; store("apuri.mode", m);
+  document.querySelectorAll("#mode button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+  $("#go").textContent = m === "luonnos" ? "Tee luonnos" : "Hae linkit";
+  refreshOwn();
+}
+document.querySelectorAll("#mode button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+$("#hanke").onchange = () => { store("apuri.hanke", $("#hanke").value); refreshOwn(); };
 
 async function run() {
   const q = $("#q").value.trim();
-  if (q.length < 5) return;
+  if (q.length < 5 || !$("#hanke").value) return;
   $("#go").disabled = true;
-  $("#out").innerHTML = '<p class="empty">Haetaan ehdotuksia…</p>';
+  $("#out").innerHTML = `<p class="empty">${state.mode === "luonnos" ? "Kirjoitetaan luonnosta ja tarkistetaan sitä… (noin 20–60 s)" : "Haetaan ehdotuksia…"}</p>`;
   try {
     const r = await fetch("/api/suggest", {method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({question: q})});
+      body: JSON.stringify({question: q, hanke: $("#hanke").value, mode: state.mode, own_style: $("#own").checked})});
     const d = await r.json();
+    if (r.status === 401) { location.href = "/login"; return; }
     if (!r.ok) throw new Error(d.detail || r.status);
     render(d);
   } catch (e) {
@@ -99,18 +151,32 @@ async function run() {
   } finally { $("#go").disabled = false; }
 }
 
+async function copy(text, el) {
+  try { await navigator.clipboard.writeText(text); el.textContent = "Kopioitu"; }
+  catch { el.textContent = "Kopiointi ei onnistunut"; }
+}
+
 function render(d) {
   const kinds = [...new Set(d.signals.map(s => SIGNAL[s.kind] || s.kind))];
-  const crisis = kinds.length || d.crisis?.havaittu;
   let h = "";
-  if (crisis) {
+  if (kinds.length || d.crisis?.havaittu) {
     h += `<div class="banner">Huomio: mahdollinen kriisisignaali${kinds.length ? " (" + esc(kinds.join(", ")) + ")" : ""}
       <span>${esc(d.crisis?.kuvaus || "Arvioi tilanne ja tarvittaessa ohjaa kiireelliseen apuun.")}</span></div>`;
   }
-  h += `<h2>Linkkiehdotukset</h2>`;
-  h += d.topics.map(t => `<span class="tag">${esc(t)}</span>`).join("") +
-       `<span class="tag">kysyjä: ${esc(d.asker)}</span>`;
-  h += `<div style="margin-top:12px">`;
+  h += d.topics.map(t => `<span class="tag">${esc(t)}</span>`).join("") + `<span class="tag">kysyjä: ${esc(d.asker)}</span>`;
+
+  if (d.mode === "luonnos") {
+    const checks = d.draft.match(/\[TARKISTA:[^\]]*\]/g) || [];
+    h += `<h3>Vastausluonnos</h3><textarea id="draft">${esc(d.draft)}</textarea>
+      <div class="row"><button id="copyDraft">Kopioi luonnos</button><span class="hint" id="copyDraftMsg"></span>
+      ${checks.length ? `<span class="hint">· ${checks.length} [TARKISTA]-kohtaa poistettava ennen lähetystä</span>` : ""}</div>`;
+    h += `<h3>Tarkastajan huomiot</h3>`;
+    h += d.issues.length ? d.issues.map(i => `<div class="issue ${esc(i.vakavuus)}"><strong>${esc(i.vakavuus || "")}</strong> · ${esc(i.kuvaus)}
+        ${i.kohta ? `<br><q>${esc(i.kohta)}</q>` : ""}${i.ehdotus ? `<br>Ehdotus: ${esc(i.ehdotus)}` : ""}</div>`).join("")
+      : `<p class="hint">Tarkastaja ei löytänyt korjattavaa.</p>`;
+  }
+
+  h += `<h3>${d.mode === "luonnos" ? "Luonnoksen linkit" : "Linkkiehdotukset"}</h3>`;
   if (!d.links.length) h += `<p class="hint">Katalogista ei löytynyt sopivaa sisältöä.</p>`;
   d.links.forEach((l, i) => {
     h += `<label class="link ${l.type === "kriisi" ? "kriisi" : ""}">
@@ -120,20 +186,24 @@ function render(d) {
       <div class="meta">${esc(l.type)} · ${esc(SOURCE[l.source] || l.source)}</div>
     </label>`;
   });
-  h += `</div><div class="row"><button class="ghost" id="copy">Kopioi valitut linkit</button><span class="hint" id="copied"></span></div>`;
+  h += `<div class="row"><button class="ghost" id="copyLinks">Kopioi valitut linkit</button><span class="hint" id="copyLinksMsg"></span></div>`;
   if (d.outline.length) h += `<h3>Ehdotettu runko</h3><ol>${d.outline.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
-  if (d.notes.length) h += `<h3>Huomiot</h3><ul>${d.notes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
-  if (d.rejected.length) h += `<details><summary>Tarkastajan hylkäämät (${d.rejected.length})</summary><ul>${
+  if (d.notes.length) h += `<h3>Muut huomiot</h3><ul>${d.notes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  if (d.rejected.length) h += `<details><summary>Tarkastajan hylkäämät linkit (${d.rejected.length})</summary><ul>${
       d.rejected.map(x => `<li>${esc(x.id)}: ${esc(x.syy)}</li>`).join("")}</ul></details>`;
   const counts = Object.entries(d.pseudonym_counts).map(([k, v]) => `${k} ${v}`).join(", ") || "ei korvauksia";
   h += `<details><summary>Mallille lähtenyt teksti (${esc(counts)})</summary><pre>${esc(d.pseudonymized_question)}</pre></details>`;
-  h += `<footer>${esc(d.models.provider)} · luonnostelija ${d.timings_ms.luonnostelija} ms · tarkastaja ${d.timings_ms.tarkastaja} ms</footer>`;
+  if (d.mode === "luonnos") {
+    const own = d.examples_used.filter(e => e.oma).length;
+    h += `<details><summary>Luonnoksen pohjana</summary><p class="hint">Lähdeotteet: ${esc(d.sources_used.join(", ") || "–")}<br>
+      Esimerkkivastauksia: ${d.examples_used.length}${own ? ` (omia ${own})` : ""}</p></details>`;
+  }
+  h += `<footer>${esc(d.models.provider)} · luonnostelija ${(d.timings_ms.luonnostelija / 1000).toFixed(1)} s · tarkastaja ${(d.timings_ms.tarkastaja / 1000).toFixed(1)} s</footer>`;
   $("#out").innerHTML = h;
-  $("#copy").onclick = async () => {
+  if ($("#copyDraft")) $("#copyDraft").onclick = () => copy($("#draft").value, $("#copyDraftMsg"));
+  $("#copyLinks").onclick = () => {
     const sel = [...document.querySelectorAll(".link input:checked")].map(c => d.links[+c.dataset.i]);
-    const text = sel.map(l => `${l.title}: ${l.url}`).join("\n");
-    try { await navigator.clipboard.writeText(text); $("#copied").textContent = `Kopioitu ${sel.length} linkkiä`; }
-    catch { $("#copied").textContent = "Kopiointi ei onnistunut"; }
+    copy(sel.map(l => `${l.title}: ${l.url}`).join("\n"), $("#copyLinksMsg"));
   };
 }
 $("#go").onclick = run;

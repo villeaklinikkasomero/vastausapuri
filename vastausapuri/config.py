@@ -20,12 +20,20 @@ class Settings:
     checker_model: str = field(
         default_factory=lambda: os.getenv("APURI_CHECKER_MODEL", "eu.anthropic.claude-sonnet-5-5")
     )
-    catalog_path: Path = field(
-        default_factory=lambda: Path(os.getenv("APURI_CATALOG", ROOT / "data" / "katalogi.json"))
+    hankkeet_dir: Path = field(
+        default_factory=lambda: Path(os.getenv("APURI_HANKKEET", ROOT / "hankkeet"))
+    )
+    # Vanhojen vastausten kansio (ei Git-repoon). Tyhjä = hankkeet-kansio.
+    data_dir: Path | None = field(
+        default_factory=lambda: Path(os.environ["APURI_DATA_DIR"]) if os.getenv("APURI_DATA_DIR") else None
     )
     # Montako ehdokasta haku antaa luonnostelijalle ja montako linkkiä enintään ehdotetaan
-    candidates: int = int(os.getenv("APURI_CANDIDATES", "10"))
-    max_links: int = int(os.getenv("APURI_MAX_LINKS", "5"))
+    candidates: int = field(default_factory=lambda: int(os.getenv("APURI_CANDIDATES", "12")))
+    max_links: int = field(default_factory=lambda: int(os.getenv("APURI_MAX_LINKS", "5")))
+    # Montako samankaltaista vanhaa vastausta annetaan luonnostelijalle esimerkiksi
+    examples: int = field(default_factory=lambda: int(os.getenv("APURI_EXAMPLES", "3")))
+    # Montako lähdeotetta (sivujen tekstiä) annetaan luonnokselle
+    sources: int = field(default_factory=lambda: int(os.getenv("APURI_SOURCES", "4")))
 
     def validate(self) -> None:
         if self.provider == "bedrock":

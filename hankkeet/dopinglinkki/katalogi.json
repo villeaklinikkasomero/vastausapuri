@@ -1,0 +1,1365 @@
+[
+ {
+  "id": "amfetamiini",
+  "title": "Amfetamiini",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/amfetamiini/",
+  "type": "artikkeli",
+  "description": "Amfetamiinin käyttö piristeenä ja laihdutukseen kuntoilussa, vaikutukset ja haitat.",
+  "topics": [
+   "amfetamiini",
+   "piriste",
+   "laihdutus",
+   "huumeet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "steroidit-testosteroni",
+  "title": "Anaboliset steroidit ja testosteroni",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/anaboliset-steroidit-ja-testosteroni/",
+  "type": "artikkeli",
+  "description": "Anabolisten steroidien ja testosteronin vaikutukset, haittavaikutukset ja käytön riskit.",
+  "topics": [
+   "anaboliset steroidit",
+   "testosteroni",
+   "kuuri",
+   "haittavaikutukset",
+   "AAS",
+   "testo",
+   "steroidikuuri"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aromataasin-estajat",
+  "title": "Aromataasin estäjät",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/aromataasin-estajat/",
+  "type": "artikkeli",
+  "description": "Aromataasin estäjien käyttö steroidikuurien yhteydessä estrogeenivaikutusten hillitsemiseen ja riskit.",
+  "topics": [
+   "aromataasin estäjä",
+   "estrogeeni",
+   "estradioli",
+   "gynekomastia",
+   "anastrotsoli",
+   "letrotsoli",
+   "rintojen kasvu",
+   "rinnat",
+   "nänni"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "dhea",
+  "title": "Dehydroepiandrosteroni (DHEA)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/dehydroepiandrosteroni-dhea/",
+  "type": "artikkeli",
+  "description": "DHEA-hormonin käyttö, vaikutukset ja haitat.",
+  "topics": [
+   "DHEA",
+   "hormoni",
+   "lisäravinne"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "dnp",
+  "title": "Dinitrofenoli (DNP)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/dinitrofenoli-dnp/",
+  "type": "artikkeli",
+  "description": "DNP on hengenvaarallinen laihdutusaine: vaikutukset, myrkytysoireet ja riskit.",
+  "topics": [
+   "DNP",
+   "dinitrofenoli",
+   "laihdutus",
+   "rasvanpoltto",
+   "myrkytys",
+   "ylikuumeneminen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "diureetit",
+  "title": "Diureetit",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/diureetit/",
+  "type": "artikkeli",
+  "description": "Nesteenpoistolääkkeiden käyttö esim. kisadieetillä ja niiden vaarat.",
+  "topics": [
+   "diureetit",
+   "nesteenpoisto",
+   "kisadieetti",
+   "elektrolyytit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "efedriini",
+  "title": "Efedriini",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/efedriini/",
+  "type": "artikkeli",
+  "description": "Efedriinin käyttö rasvanpolttoon ja piristeenä, sydän- ja verenkiertoriskit.",
+  "topics": [
+   "efedriini",
+   "rasvanpoltto",
+   "piriste",
+   "ECA"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "glp1",
+  "title": "Glukagonin kaltainen peptidi-1 reseptoriagonisti (GLP-1 RA)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/glukagonin-kaltainen-peptidi-1-reseptoriagonisti-glp-1-ra/",
+  "type": "artikkeli",
+  "description": "GLP-1-lääkkeiden (esim. semaglutidi) käyttö laihdutukseen ilman reseptiä ja riskit.",
+  "topics": [
+   "GLP-1",
+   "semaglutidi",
+   "tirtsepatidi",
+   "retatrutidi",
+   "laihdutus",
+   "peptidit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "mk677",
+  "title": "Ibutamoreeni (MK-677) ja muut kasvuhormonin vapauttajat",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/ibutamoreeni-mk-677-ja-muut-kasvuhormonin-vapauttajat/",
+  "type": "artikkeli",
+  "description": "MK-677:n ja muiden kasvuhormonin vapauttajien vaikutukset ja tutkimustieto.",
+  "topics": [
+   "MK-677",
+   "ibutamoreeni",
+   "kasvuhormoni",
+   "GHRP",
+   "peptidit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "injektoitavat-oljyt",
+  "title": "Injektoitavat öljyt",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/injektoitavat-oljyt/",
+  "type": "artikkeli",
+  "description": "Lihaksiin pistettävät öljyt (esim. synthol) ja niiden vakavat haitat.",
+  "topics": [
+   "synthol",
+   "öljy",
+   "pistäminen",
+   "injektio"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "insuliini",
+  "title": "Insuliini",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/insuliini/",
+  "type": "artikkeli",
+  "description": "Insuliinin käyttö lihasmassan kasvattamiseen ja hengenvaarallisen matalan verensokerin riski.",
+  "topics": [
+   "insuliini",
+   "verensokeri",
+   "hypoglykemia"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "igf1",
+  "title": "Insuliinin kaltainen kasvutekijä (IGF-1) ja LR3IGF-1",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/insuliinin-kaltainen-kasvutekija-igf-1-ja-pitkaketjuinen-igf-lr3igf-1/",
+  "type": "artikkeli",
+  "description": "IGF-1:n ja LR3-IGF-1:n käyttö, vaikutukset ja riskit.",
+  "topics": [
+   "IGF-1",
+   "LR3",
+   "kasvutekijä",
+   "peptidit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "istukkahormoni",
+  "title": "Istukkahormoni (hCG)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/istukkahormoni/",
+  "type": "artikkeli",
+  "description": "Istukkahormonin käyttö kuurien yhteydessä ja jälkihoidossa, vaikutukset ja riskit.",
+  "topics": [
+   "hCG",
+   "istukkahormoni",
+   "jälkihoito",
+   "PCT",
+   "hormonitoiminta"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kasvuhormoni",
+  "title": "Kasvuhormoni",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/kasvuhormoni/",
+  "type": "artikkeli",
+  "description": "Kasvuhormonin käyttö kuntoilussa, vaikutukset ja haitat.",
+  "topics": [
+   "kasvuhormoni",
+   "GH",
+   "somatropiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kilpirauhashormonit",
+  "title": "Kilpirauhashormonit",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/kilpirauhashormonit/",
+  "type": "artikkeli",
+  "description": "Kilpirauhashormonien (T3, T4) käyttö laihdutukseen ja haitat.",
+  "topics": [
+   "kilpirauhanen",
+   "T3",
+   "T4",
+   "tyroksiini",
+   "laihdutus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "klenbuteroli",
+  "title": "Klenbuteroli",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/klenbuteroli/",
+  "type": "artikkeli",
+  "description": "Klenbuterolin käyttö rasvanpolttoon, sydänhaitat ja muut riskit.",
+  "topics": [
+   "klenbuteroli",
+   "clen",
+   "rasvanpoltto",
+   "sydän"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "msh",
+  "title": "Melanosyyttejä stimuloiva hormoni (MSH)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/melanosyytteja-stimuloiva-hormoni-msh/",
+  "type": "artikkeli",
+  "description": "Melanotaanin ja muiden MSH-valmisteiden käyttö rusketukseen ja riskit.",
+  "topics": [
+   "melanotaani",
+   "MSH",
+   "rusketus",
+   "peptidit",
+   "luomet"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "peptidit",
+  "title": "Mitä peptidit ovat?",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/mit%c3%a4-peptidit-ovat/",
+  "type": "artikkeli",
+  "description": "Yleiskatsaus peptideihin, niiden markkinointiin ja käytön riskeihin.",
+  "topics": [
+   "peptidit",
+   "BPC-157",
+   "tutkimuskemikaalit",
+   "research chemicals"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "modafiniili",
+  "title": "Modafiniili",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/modafiniili/",
+  "type": "artikkeli",
+  "description": "Modafiniilin käyttö vireyden ja keskittymisen parantamiseen, vaikutukset ja riskit.",
+  "topics": [
+   "modafiniili",
+   "aivodoping",
+   "vireys",
+   "keskittyminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "sarm",
+  "title": "Selektiivinen androgeenireseptorin modulaattori (SARM)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/selektiivinen-androgeenireseptorin-modulaattori-sarm/",
+  "type": "artikkeli",
+  "description": "SARM-valmisteet (esim. ostariini, ligandroli, RAD-140): vaikutukset, epäpuhtaudet ja laillisuus.",
+  "topics": [
+   "SARM",
+   "ostariini",
+   "ligandroli",
+   "RAD-140",
+   "testoloni"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "serm",
+  "title": "Selektiivinen estrogeenireseptorin modulaattori (SERM)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/selektiivinen-estrogeenireseptorin-modulaattori-serm/",
+  "type": "artikkeli",
+  "description": "SERM-lääkkeiden (esim. tamoksifeeni, klomifeeni) käyttö kuurien yhteydessä ja riskit.",
+  "topics": [
+   "SERM",
+   "tamoksifeeni",
+   "klomifeeni",
+   "gynekomastia",
+   "jälkihoito",
+   "PCT",
+   "rintojen kasvu",
+   "rinnat",
+   "rintarauhanen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ipamoreliini",
+  "title": "Ipamoreliini",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/ipamoreliini/",
+  "type": "artikkeli",
+  "description": "Ipamoreliini on kasvuhormonin vapauttajapeptidi: vaikutukset ja vähäinen tutkimustieto.",
+  "topics": [
+   "ipamoreliini",
+   "peptidit",
+   "kasvuhormoni"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "bpc157",
+  "title": "BPC-157 (Body Protection Compound 157)",
+  "url": "https://dopinglinkki.fi/tietopankki/dopingaineet/bpc-157-body-protection-compound-157/",
+  "type": "artikkeli",
+  "description": "BPC-157-peptidin markkinoidut vaikutukset, tutkimustieto ja riskit.",
+  "topics": [
+   "BPC-157",
+   "peptidit",
+   "palautuminen",
+   "vammat"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kuntodoping",
+  "title": "Kuntodoping",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/",
+  "type": "artikkeli",
+  "description": "Tietoa kuntodopingista: käytön haitat, riskit ja terveysvaikutukset.",
+  "topics": [
+   "kuntodoping",
+   "haitat"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "nuorten-kaytto",
+  "title": "Nuorten dopingaineiden käyttö",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/nuorten-dopingaineiden-kaytto/",
+  "type": "artikkeli",
+  "description": "Nuorten dopingaineiden käytön yleisyys, syyt ja erityiset riskit kasvuikäisille.",
+  "topics": [
+   "nuoret",
+   "kasvuikä",
+   "murrosikä"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen",
+   "nuori"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "naiset",
+  "title": "Naisten dopingin käytön erityispiirteet",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/naisten-dopingin-kayton-erityispiirteet/",
+  "type": "artikkeli",
+  "description": "Dopingaineiden vaikutukset naisiin, maskulinisoivat muutokset ja erityiset riskit.",
+  "topics": [
+   "naiset",
+   "maskulinisaatio",
+   "ääni",
+   "kuukautiset"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "lihakseen-pistaminen",
+  "title": "Lihakseen pistämisen riskit",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/lihakseen-pistamisen-riskit/",
+  "type": "artikkeli",
+  "description": "Lihakseen pistämisen riskit: tulehdukset, paiseet, verisuoni- ja hermovauriot.",
+  "topics": [
+   "pistäminen",
+   "injektio",
+   "paise",
+   "tulehdus",
+   "pistoskohta",
+   "kipu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "steroidiriippuvuus",
+  "title": "Riippuvuus anabolisiin steroideihin",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/riippuvuus-anabolisiin-steroideihin/",
+  "type": "artikkeli",
+  "description": "Miten riippuvuus anabolisiin steroideihin kehittyy ja miten sitä voi tunnistaa.",
+  "topics": [
+   "riippuvuus",
+   "anaboliset steroidit",
+   "lopettaminen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "liikuntariippuvuus",
+  "title": "Liikuntariippuvuus",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/liikuntariippuvuus/",
+  "type": "artikkeli",
+  "description": "Liikuntariippuvuuden tunnusmerkit ja yhteys kehonkuvaan ja dopingin käyttöön.",
+  "topics": [
+   "liikuntariippuvuus",
+   "pakonomainen treenaaminen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "hajusuola",
+  "title": "Hajusuola",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/hajusuola/",
+  "type": "artikkeli",
+  "description": "Hajusuolan (ammoniakki) käyttö treenissä ja sen haitat.",
+  "topics": [
+   "hajusuola",
+   "ammoniakki"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "turvallisempi-pistaminen",
+  "title": "Anabolisten steroidien turvallisempi pistäminen",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anabolisten-steroidien-turvallisempi-pistaminen/",
+  "type": "artikkeli",
+  "description": "Haittojen vähentäminen: puhtaat välineet, pistospaikat ja tulehdusten ehkäisy.",
+  "topics": [
+   "pistäminen",
+   "neulat",
+   "ruiskut",
+   "haittojen vähentäminen",
+   "injektio",
+   "hygienia"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "haittojen-tutkiminen",
+  "title": "Anabolisten steroidien haittavaikutusten tutkiminen",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anabolisten-steroidien-haittavaikutusten-tutkiminen/",
+  "type": "artikkeli",
+  "description": "Miten steroidien haittoja voi seurata: laboratoriokokeet ja lääkärikäynnit.",
+  "topics": [
+   "laboratoriokokeet",
+   "verikokeet",
+   "lääkäri",
+   "seuranta",
+   "terveystarkastus",
+   "lääkärille kertominen",
+   "vaitiolovelvollisuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tules",
+  "title": "Dopingaineet ja tuki- ja liikuntaelinvaivat",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/dopingaineet-ja-tuki-ja-liikuntaelinvaivat/",
+  "type": "artikkeli",
+  "description": "Dopingaineiden yhteys jänne- ja nivelvammoihin ja muihin tuki- ja liikuntaelinvaivoihin.",
+  "topics": [
+   "jänteet",
+   "nivelet",
+   "vammat",
+   "tuki- ja liikuntaelimet"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "yhteisvaikutukset",
+  "title": "Anabolisten steroidien ja päihteiden yhteisvaikutukset",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anabolisten-steroidien-ja-paihteiden-yhteisvaikutukset/",
+  "type": "artikkeli",
+  "description": "Steroidien ja alkoholin tai muiden päihteiden yhteiskäytön riskit.",
+  "topics": [
+   "päihteet",
+   "alkoholi",
+   "sekakäyttö",
+   "yhteisvaikutukset"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aggressiivisuus",
+  "title": "Testosteroni, anaboliset steroidit ja aggressiivisuus",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/testosteroni-anaboliset-steroidit-ja-aggressiivisuus/",
+  "type": "artikkeli",
+  "description": "Steroidien yhteys ärtyneisyyteen, aggressiivisuuteen ja väkivaltaan.",
+  "topics": [
+   "aggressiivisuus",
+   "mieliala",
+   "ärtyneisyys",
+   "väkivalta"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aivomuutokset",
+  "title": "Anaboliset steroidit aiheuttavat pitkäaikaisia muutoksia aivoissa",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anabloiset-steroidit-aiheuttavat-pitkaaikaisia-muutoksia-aivoissa/",
+  "type": "artikkeli",
+  "description": "Tutkimustietoa steroidien pitkäaikaisista vaikutuksista aivoihin.",
+  "topics": [
+   "aivot",
+   "pitkäaikaisvaikutukset"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aivoterveys",
+  "title": "Anaboliset steroidit ja aivoterveys",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anaboliset-steroidit-ja-aivoterveys/",
+  "type": "artikkeli",
+  "description": "Steroidien vaikutukset mielialaan, muistiin ja aivoterveyteen.",
+  "topics": [
+   "aivot",
+   "mieliala",
+   "masennus",
+   "muisti"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "lisaantymisterveys",
+  "title": "Anaboliset steroidit ja miehen lisääntymisterveys",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/anaboliset-steroidit-ja-miehen-lisaantymisterveys/",
+  "type": "artikkeli",
+  "description": "Steroidien vaikutus siittiötuotantoon, hedelmällisyyteen ja hormonitoiminnan palautumiseen.",
+  "topics": [
+   "hedelmällisyys",
+   "siittiöt",
+   "lapsettomuus",
+   "hormonitoiminnan palautuminen",
+   "kivekset",
+   "libido"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "trt",
+  "title": "Androgeenit ja testosteronikorvaushoito",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/androgeenit-ja-testosteronikorvaushoito/",
+  "type": "artikkeli",
+  "description": "Testosteronikorvaushoito (TRT): milloin se on aiheellinen ja miten se eroaa dopingista.",
+  "topics": [
+   "TRT",
+   "testosteronikorvaushoito",
+   "matala testosteroni",
+   "hypogonadismi",
+   "lääkäri"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aivodoping",
+  "title": "Aivodoping",
+  "url": "https://dopinglinkki.fi/tietopankki/kuntodoping/aivodoping/",
+  "type": "artikkeli",
+  "description": "Aivodoping eli lääkkeiden käyttö suorituskyvyn ja keskittymisen parantamiseen.",
+  "topics": [
+   "aivodoping",
+   "nootropit",
+   "modafiniili",
+   "keskittyminen",
+   "opiskelu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "lainsaadanto",
+  "title": "Dopinglainsäädäntö",
+  "url": "https://dopinglinkki.fi/tietopankki/dopinglainsaadanto/",
+  "type": "artikkeli",
+  "description": "Mitä laki sanoo dopingaineista: hallussapito, maahantuonti ja kauppa.",
+  "topics": [
+   "laki",
+   "laillisuus",
+   "rikos",
+   "hallussapito",
+   "maahantuonti",
+   "tilaaminen netistä"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "rikollisuus-ilmiona",
+  "title": "Dopingrikollisuus ilmiönä",
+  "url": "https://dopinglinkki.fi/tietopankki/dopinglainsaadanto/dopingrikollisuus-ilmiona/",
+  "type": "artikkeli",
+  "description": "Dopingrikollisuuden piirteet ja yhteys muuhun rikollisuuteen.",
+  "topics": [
+   "rikollisuus",
+   "kauppa"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "rangaistukset",
+  "title": "Rangaistuksia dopingrikoksista",
+  "url": "https://dopinglinkki.fi/tietopankki/dopinglainsaadanto/rangaistuksia-dopingrikoksista/",
+  "type": "artikkeli",
+  "description": "Esimerkkejä dopingrikoksista annetuista rangaistuksista.",
+  "topics": [
+   "rangaistus",
+   "sakko",
+   "tuomio",
+   "dopingrikos",
+   "tulli"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tilastot-rikollisuus",
+  "title": "Tilastoitu dopingrikollisuus",
+  "url": "https://dopinglinkki.fi/tietopankki/dopinglainsaadanto/tilastoitu-dopingrikollisuus/",
+  "type": "artikkeli",
+  "description": "Tilastotietoa Suomessa havaituista dopingrikoksista.",
+  "topics": [
+   "tilastot",
+   "rikollisuus"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kulku-suomeen",
+  "title": "Dopingaineiden kulku Suomeen",
+  "url": "https://dopinglinkki.fi/tietopankki/dopinglainsaadanto/dopingaineiden-kulku-suomeen/",
+  "type": "artikkeli",
+  "description": "Miten dopingaineet päätyvät Suomeen: verkkokauppa, salakuljetus ja laittomat valmistajat.",
+  "topics": [
+   "verkkokauppa",
+   "salakuljetus",
+   "tulli",
+   "tilaaminen netistä",
+   "väärennökset"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kayton-taustat",
+  "title": "Käytön taustat",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/",
+  "type": "artikkeli",
+  "description": "Miksi dopingaineita käytetään kuntoilussa: kehonkuva, kulttuuri ja käyttäjäryhmät.",
+  "topics": [
+   "syyt",
+   "motiivit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kehonkuva",
+  "title": "Vartalotyytymättömyys ja ruumiinkuvan häiriöt",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/vartalotyytymattomyys-ja-ruumiinkuvan-hairiot/",
+  "type": "artikkeli",
+  "description": "Kehotyytymättömyys, lihasdysmorfia ja niiden yhteys dopingin käyttöön.",
+  "topics": [
+   "kehonkuva",
+   "lihasdysmorfia",
+   "bigoreksia",
+   "syömishäiriö",
+   "itsetunto"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kayttajat",
+  "title": "Kuntodopingin käyttäjät",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/kuntodopingin-kayttajat/",
+  "type": "artikkeli",
+  "description": "Keitä kuntodopingin käyttäjät ovat ja millaisia käyttäjäryhmiä on.",
+  "topics": [
+   "käyttäjät",
+   "käyttäjäprofiili"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ajankuva",
+  "title": "Kuntodoping ajankuvana",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/kuntodoping-ajankuvana/",
+  "type": "artikkeli",
+  "description": "Kuntodoping osana nykykulttuuria, somea ja ulkonäköpaineita.",
+  "topics": [
+   "some",
+   "ulkonäköpaineet",
+   "kulttuuri"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "riskien-manipulointi",
+  "title": "Doping ja riskien manipulointi",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/doping-ja-riskien-manipulointi/",
+  "type": "artikkeli",
+  "description": "Miten käyttäjät arvioivat ja vähättelevät riskejä.",
+  "topics": [
+   "riskit",
+   "riskikäsitys"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "yleisyys",
+  "title": "Dopingaineiden käytön yleisyys",
+  "url": "https://dopinglinkki.fi/tietopankki/kayton-taustat/dopingaineiden-kayton-yleisyys/",
+  "type": "artikkeli",
+  "description": "Tutkimustietoa dopingaineiden käytön yleisyydestä Suomessa ja maailmalla.",
+  "topics": [
+   "yleisyys",
+   "tilastot",
+   "tutkimus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-liikuntariippuvuus",
+  "title": "Liikuntariippuvuuden riskiarviointilomake",
+  "url": "https://dopinglinkki.fi/tietopankki/riippuvuustestit/liikuntariippuvuuden-riskiarviointilomake/",
+  "type": "testi",
+  "description": "Testi oman liikuntasuhteen ja liikuntariippuvuuden riskin arviointiin.",
+  "topics": [
+   "liikuntariippuvuus",
+   "testi",
+   "itsearviointi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-steroidiriippuvuus",
+  "title": "Anabolisten steroidien riippuvuuden arviointilomake",
+  "url": "https://dopinglinkki.fi/tietopankki/riippuvuustestit/anabolisten-steroidien-riippuvuuden-arviointilomake/",
+  "type": "testi",
+  "description": "Testi steroidien käyttöön liittyvän riippuvuuden arviointiin.",
+  "topics": [
+   "riippuvuus",
+   "anaboliset steroidit",
+   "testi",
+   "itsearviointi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laheisille",
+  "title": "Läheisille",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/",
+  "type": "artikkeli",
+  "description": "Tietoa ja tukea dopingaineita käyttävän läheisille.",
+  "topics": [
+   "läheinen",
+   "puoliso",
+   "vanhempi",
+   "ystävä"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "puheeksiotto",
+  "title": "Toimintaohjeita puheeksiottoon",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/toimintaohjeita-puheeksiottoon/",
+  "type": "artikkeli",
+  "description": "Miten ottaa dopingin käyttö puheeksi läheisen kanssa.",
+  "topics": [
+   "puheeksi ottaminen",
+   "keskustelu",
+   "läheinen"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kayttaako-lapseni",
+  "title": "Käyttääkö lapseni dopingaineita?",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/kayttaako-lapseni-dopingaineita/",
+  "type": "artikkeli",
+  "description": "Vanhemmalle: merkit, joista nuoren käyttöä voi epäillä, ja miten toimia.",
+  "topics": [
+   "vanhempi",
+   "nuori",
+   "lapsi",
+   "merkit"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laheiset-mista-apua",
+  "title": "Mistä apua? (läheisille)",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/mista-apua/",
+  "type": "palvelu",
+  "description": "Mistä läheinen saa tietoa, tukea ja neuvontaa: neuvontapalvelu ja terveydenhuolto.",
+  "topics": [
+   "apu",
+   "tuki",
+   "neuvonta",
+   "terveydenhuolto"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tunnistaminen",
+  "title": "Miten tunnistan, käyttääkö läheiseni dopingaineita?",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/miten-tunnistan-kayttaako-laheiseni-dopingaineita/",
+  "type": "artikkeli",
+  "description": "Fyysiset ja psyykkiset merkit, jotka voivat viitata dopingaineiden käyttöön.",
+  "topics": [
+   "merkit",
+   "tunnistaminen",
+   "oireet",
+   "läheinen"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "muista-itsesi",
+  "title": "Muista itsesi",
+  "url": "https://dopinglinkki.fi/tietopankki/laheisille/muista-itsesi/",
+  "type": "artikkeli",
+  "description": "Läheisen oma jaksaminen ja itsestä huolehtiminen.",
+  "topics": [
+   "jaksaminen",
+   "läheinen",
+   "huoli"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tyokalupankki",
+  "title": "Työkalupankki ammattilaisille",
+  "url": "https://dopinglinkki.fi/tietopankki/tyokalupankki-ammattilaisille/",
+  "type": "artikkeli",
+  "description": "Materiaalit ja työkalut ammattilaisille, jotka kohtaavat dopingaineiden käyttäjiä.",
+  "topics": [
+   "ammattilainen",
+   "materiaalit",
+   "työkalut"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tyokalut-liikunta",
+  "title": "Liikunta-alan työkalupankki",
+  "url": "https://dopinglinkki.fi/tietopankki/tyokalupankki-ammattilaisille/liikunta-alan-tyokalupankki/",
+  "type": "artikkeli",
+  "description": "Materiaalit kuntosalien ja liikunta-alan ammattilaisille.",
+  "topics": [
+   "kuntosali",
+   "valmentaja",
+   "personal trainer",
+   "liikunta-ala"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tyokalut-nuorisotyo",
+  "title": "Nuorisotyön materiaalipankki",
+  "url": "https://dopinglinkki.fi/tietopankki/tyokalupankki-ammattilaisille/nuorisotyon-materiaalipankki/",
+  "type": "artikkeli",
+  "description": "Materiaalit nuorisotyöhön ja nuorten kanssa työskentelyyn.",
+  "topics": [
+   "nuorisotyö",
+   "nuoret",
+   "koulu"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tyokalut-turvallisuus",
+  "title": "Turvallisuusalan työkalupankki",
+  "url": "https://dopinglinkki.fi/tietopankki/tyokalupankki-ammattilaisille/turvallisuusalan-tyokalupankki/",
+  "type": "artikkeli",
+  "description": "Materiaalit turvallisuusalan ammattilaisille.",
+  "topics": [
+   "turvallisuusala",
+   "vartija",
+   "poliisi"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tyokalut-sote",
+  "title": "Sosiaali- ja terveysalan työkalupankki",
+  "url": "https://dopinglinkki.fi/tietopankki/tyokalupankki-ammattilaisille/sosiaali-ja-terveysalan-tyokalupankki/",
+  "type": "artikkeli",
+  "description": "Materiaalit sosiaali- ja terveysalan ammattilaisille dopingaineiden käyttäjien kohtaamiseen.",
+  "topics": [
+   "terveydenhuolto",
+   "lääkäri",
+   "hoitaja",
+   "sosiaaliala"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "podcast",
+  "title": "Dopinglinkin podcast",
+  "url": "https://dopinglinkki.fi/tietopankki/podcast/",
+  "type": "artikkeli",
+  "description": "Podcast-jaksoja kuntodopingista ja siihen liittyvistä ilmiöistä.",
+  "topics": [
+   "podcast"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kirjoita-kysymys",
+  "title": "Kirjoita kysymys (anonyymi neuvonta)",
+  "url": "https://dopinglinkki.fi/neuvonta/kirjoita-kysymys/",
+  "type": "palvelu",
+  "description": "Kysy asiantuntijoilta anonyymisti ja maksutta. Myös Telegramin ja Signalin kautta.",
+  "topics": [
+   "neuvonta",
+   "kysymys",
+   "anonyymi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ukk",
+  "title": "Usein kysytyt kysymykset",
+  "url": "https://dopinglinkki.fi/neuvonta/usein-kysytyt-kysymykset/",
+  "type": "artikkeli",
+  "description": "Vastauksia yleisiin kysymyksiin mm. hedelmällisyydestä, palautumisesta, gynekomastiasta, lisäravinteista, neuloista ja laillisuudesta.",
+  "topics": [
+   "UKK",
+   "hedelmällisyys",
+   "palautuminen",
+   "gynekomastia",
+   "lisäravinteet",
+   "neulat",
+   "laillisuus",
+   "rintojen kasvu",
+   "estradioli",
+   "verikokeet",
+   "lääkärille kertominen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "koulutus-nuorille",
+  "title": "Koulutus nuorille",
+  "url": "https://dopinglinkki.fi/koulutus/nuorille/",
+  "type": "palvelu",
+  "description": "Koulutukset ja materiaalit nuorille kuntodopingista.",
+  "topics": [
+   "koulutus",
+   "nuoret",
+   "koulu"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "verkkokoulutukset",
+  "title": "Verkkokoulutukset ammattilaisille",
+  "url": "https://dopinglinkki.fi/koulutus/verkkokoulutukset/",
+  "type": "palvelu",
+  "description": "Verkkokoulutukset ammattilaisille dopingaineiden käytöstä ja käyttäjien kohtaamisesta.",
+  "topics": [
+   "verkkokurssi",
+   "koulutus",
+   "ammattilainen"
+  ],
+  "audience": [
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "suek",
+  "title": "SUEK – Suomen Urheilun Eettinen Keskus",
+  "url": "https://suek.fi/",
+  "type": "palvelu",
+  "description": "Dopingtestaus ja kilpaurheilijoiden kysymykset (Dopinglinkki ei käsittele kilpaurheilun testausta).",
+  "topics": [
+   "dopingtesti",
+   "kilpaurheilu",
+   "urheilija",
+   "SUEK"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ruokavirasto",
+  "title": "Ruokavirasto",
+  "url": "https://www.ruokavirasto.fi/",
+  "type": "palvelu",
+  "description": "Lisäravinteiden turvallisuus ja valvonta.",
+  "topics": [
+   "lisäravinteet",
+   "ravintolisät",
+   "turvallisuus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tulli-netista",
+  "title": "Tulli: netistä tilaajalle",
+  "url": "https://tulli.fi/henkiloasiakkaat/netista-tilaajalle",
+  "type": "palvelu",
+  "description": "Tullin ohjeet tuotteiden tilaamiseen netistä ja rajoitetuista tuotteista.",
+  "topics": [
+   "tulli",
+   "tilaaminen netistä",
+   "maahantuonti",
+   "laillisuus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "fimea-laakeluettelo",
+  "title": "Fimea: lääkeluettelo",
+  "url": "https://www.fimea.fi/valvonta/luokittelu/laakeluettelo",
+  "type": "palvelu",
+  "description": "Fimean luettelo lääkkeiksi luokiteltavista aineista.",
+  "topics": [
+   "Fimea",
+   "lääke",
+   "luokittelu",
+   "laillisuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "terveysneuvontapisteet",
+  "title": "Terveysneuvontapisteet (vinkki.info)",
+  "url": "https://www.vinkki.info/terveysneuvontapisteet",
+  "type": "palvelu",
+  "description": "Terveysneuvontapisteistä saa maksutta puhtaita pistovälineitä ja neuvontaa. Luettelo koko Suomesta.",
+  "topics": [
+   "neulat",
+   "ruiskut",
+   "pistovälineet",
+   "terveysneuvonta",
+   "haittojen vähentäminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "paihdelinkki-apua",
+  "title": "Päihdelinkki: Hae apua",
+  "url": "https://paihdelinkki.fi/mista-apua/",
+  "type": "palvelu",
+  "description": "Päihde- ja riippuvuuspalvelut omalla alueella.",
+  "topics": [
+   "hoito",
+   "palvelut",
+   "riippuvuus",
+   "päihteet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "paihdelinkki-laheiset",
+  "title": "Päihdelinkki: Tukea läheiselle",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/",
+  "type": "palvelu",
+  "description": "Verkkokurssit ja oppaat läheisille.",
+  "topics": [
+   "läheinen",
+   "tuki",
+   "verkkokurssi"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "nuortenlinkki-apua",
+  "title": "Nuortenlinkki: Apua pahaan oloon",
+  "url": "https://nuortenlinkki.fi/mista-apua/",
+  "type": "palvelu",
+  "description": "Apua ja tukea nuorille.",
+  "topics": [
+   "nuoret",
+   "paha olo",
+   "mielenterveys"
+  ],
+  "audience": [
+   "nuori"
+  ],
+  "description_source": "käsin"
+ }
+]

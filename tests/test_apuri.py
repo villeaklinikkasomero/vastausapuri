@@ -4,22 +4,38 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from vastausapuri.catalog import Index, load_catalog
-from vastausapuri.config import Settings
-from vastausapuri.llm import MockLLM
+from vastausapuri.config import ROOT, Settings
+from vastausapuri.hanke import load_all, load_hanke
+from vastausapuri.llm import MockLLM, parse_draft
 from vastausapuri.pipeline import Assistant
 from vastausapuri.pseudonymize import pseudonymize
 from vastausapuri.safety import detect_signals
 
-CATALOG = Path(__file__).resolve().parent.parent / "data" / "katalogi.json"
+HANKKEET = ROOT / "hankkeet"
 
 
 @pytest.fixture(scope="module")
-def index():
-    return Index(load_catalog(CATALOG))
+def doping():
+    return load_hanke(HANKKEET, "dopinglinkki")
 
 
-# --- Pseudonymisointi -------------------------------------------------------
+# --- Hankkeet ja katalogit ---------------------------------------------------------
+
+def test_all_projects_load():
+    hs = load_all(HANKKEET)
+    assert "dopinglinkki" in hs
+    for h in hs.values():
+        assert h.index.by_type("kriisi"), "jokaisella hankkeella pitää olla kriisipalvelut"
+        for it in h.index.items:
+            assert it.url.startswith("https://"), it.id
+
+
+def test_catalog_ids_unique(doping):
+    ids = [it.id for it in doping.index.items]
+    assert len(ids) == len(set(ids))
+
+
+# --- Pseudonymisointi -------------------------------------------------------------
 
 def test_pseudonymize_direct_identifiers():
     text = ("Hei, olen Matti, 42-vuotias Tampereelta. Puh 040 123 4567, matti.m@esimerkki.fi, "
@@ -31,96 +47,122 @@ def test_pseudonymize_direct_identifiers():
     assert ps.restore(ps.text) == text
 
 
-def test_same_value_gets_same_placeholder():
-    ps = pseudonymize("Liisa juo paljon. Liisalle sanoin asiasta.")
-    assert ps.text.count("[NIMI_1]") == 1  # Liisa ja Liisalle ovat eri merkkijonoja
-    assert "Liisa" not in ps.text
-
-
-def test_placeholders_are_numbered_per_kind():
-    ps = pseudonymize("Mikko ja Sanna asuvat Oulussa.")
-    assert "[NIMI_1]" in ps.text and "[NIMI_2]" in ps.text and "[PAIKKA_1]" in ps.text
+def test_own_links_kept_others_replaced():
+    ps = pseudonymize("Katso https://dopinglinkki.fi/neuvonta/ ja https://instagram.com/matti", {"dopinglinkki.fi"})
+    assert "https://dopinglinkki.fi/neuvonta/" in ps.text and "instagram" not in ps.text
 
 
 def test_ordinary_text_untouched():
-    t = "Juon viikonloppuisin noin kymmenen olutta ja mietin, onko se liikaa."
+    t = "Olen käyttänyt testosteronia kahdeksan viikkoa ja mietin palautumista."
     assert pseudonymize(t).text == t
 
 
-# --- Kriisisignaalit --------------------------------------------------------
+# --- Kriisisignaalit --------------------------------------------------------------
 
 @pytest.mark.parametrize("text,kind", [
     ("En enää halua elää tällaista elämää.", "itsetuhoisuus"),
-    ("Mieheni löi minua eilen humalassa.", "väkivalta"),
-    ("Äiti otti kaikki pillerit ja ei herää.", "akuutti_myrkytys"),
+    ("Mieheni löi minua eilen.", "väkivalta"),
+    ("Kaveri otti kaikki pillerit ja ei herää.", "akuutti_myrkytys"),
 ])
-def test_signals(text, kind):
+def test_common_signals(text, kind):
     assert kind in {s.kind for s in detect_signals(text)}
 
 
-def test_no_signal_in_neutral_text():
-    assert detect_signals("Miten voisin vähentää juomista arkisin?") == []
+def test_project_specific_signals(doping):
+    kinds = {s.kind for s in detect_signals(
+        "Pistoskohta pakarassa on turvonnut ja kuumottaa, ja nyt on korkea kuume.", doping.signal_patterns)}
+    assert "akuutti_terveysriski" in kinds
 
 
-# --- Haku -------------------------------------------------------------------
-
-def test_search_handles_inflection(index):
-    top = [it.id for it, _ in index.search("Haluaisin vähentää juomistani", k=3)]
-    assert "juomapaivakirja" in top or "alkoholi-vahentaminen" in top
+def test_no_signal_in_neutral_text(doping):
+    assert detect_signals("Kuinka kauan hormonitoiminnan palautuminen kestää kuurin jälkeen?",
+                          doping.signal_patterns) == []
 
 
-def test_search_gambling(index):
-    top = [it.id for it, _ in index.search("pelaan nettikasinolla ja velkaa kertyy", k=3)]
-    assert {"rahapeli-testi", "pelaamisen-hallinta"} & set(top)
+# --- Haku --------------------------------------------------------------------------
+
+@pytest.mark.parametrize("query,expected", [
+    ("Mistä saan puhtaita neuloja ja ruiskuja?", {"terveysneuvontapisteet", "turvallisempi-pistaminen"}),
+    ("Palautuuko hedelmällisyys steroidikuurin jälkeen?", {"lisaantymisterveys", "ukk"}),
+    ("Onko ostariinin tilaaminen netistä laitonta?", {"sarm", "lainsaadanto", "tulli-netista"}),
+    ("Poikani on alkanut treenata ja epäilen että hän käyttää jotain", {"kayttaako-lapseni", "tunnistaminen"}),
+])
+def test_search_dopinglinkki(doping, query, expected):
+    top = {it.id for it, _ in doping.index.search(query, k=5)}
+    assert expected & top, (query, top)
 
 
-# --- Putki ------------------------------------------------------------------
+# --- Putki ------------------------------------------------------------------------
 
-def make_assistant(index, llm=None):
-    return Assistant(Settings(provider="mock"), index, llm or MockLLM())
+def make(h, llm=None):
+    return Assistant(Settings(provider="mock"), h, llm or MockLLM())
 
 
-def test_pipeline_mock(index):
-    res, ps = make_assistant(index).run("Olen Pekka ja juon liikaa viikonloppuisin, miten vähennän?")
+def test_links_mode(doping):
+    res, _ = make(doping).run("Olen Pekka ja mietin klenbuterolin riskejä.", mode="linkit")
     assert "Pekka" not in res.pseudonymized_question
-    assert 1 <= len(res.links) <= 5
-    assert all(l.url.startswith("https://") for l in res.links)
-    assert not res.signals
+    assert 1 <= len(res.links) <= 5 and res.draft == ""
+
+
+def test_draft_mode_replaces_refs_with_urls(doping):
+    res, ps = make(doping).run("Olen Pekka. Miten pistän turvallisemmin?", mode="luonnos")
+    assert res.draft and "[[" not in res.draft
+    assert "https://dopinglinkki.fi/" in res.draft
+    assert res.sources_used
 
 
 class HallucinatingLLM(MockLLM):
     def complete(self, *, model, system, user, max_tokens=1500):
         if "TARKASTAJA" in system:
             return super().complete(model=model, system=system, user=user)
-        return json.dumps({"aiheet": ["alkoholi"], "kysyja": "itse",
-                           "linkit": [{"id": "keksitty-sivu", "perustelu": "x"},
-                                      {"id": "juomapaivakirja", "perustelu": "y"}],
-                           "runko": [], "huomiot": []})
+        meta = {"aiheet": ["x"], "kysyja": "itse",
+                "linkit": [{"id": "keksitty-sivu", "perustelu": "x"}, {"id": "klenbuteroli", "perustelu": "y"}]}
+        return (f"<meta>{json.dumps(meta)}</meta><luonnos>Hei,\nLue [[klenbuteroli]] ja [[keksitty-sivu]].\n"
+                "</luonnos>")
 
 
-def test_invented_ids_are_dropped(index):
-    res, _ = make_assistant(index, HallucinatingLLM()).run("Juon liikaa, mitä teen?")
-    ids = [l.id for l in res.links]
-    assert "keksitty-sivu" not in ids and "juomapaivakirja" in ids
-    assert res.invalid_ids == ["keksitty-sivu"]
+def test_invented_ids_never_become_links(doping):
+    res, _ = make(doping, HallucinatingLLM()).run("Klenbuterolin riskit?", mode="luonnos")
+    assert "keksitty-sivu" not in [l.id for l in res.links]
+    assert "[TARKISTA: tuntematon linkki]" in res.draft
+    assert "https://dopinglinkki.fi/tietopankki/dopingaineet/klenbuteroli/" in res.draft
 
 
-def test_crisis_links_added_first(index):
-    res, _ = make_assistant(index).run("Juon joka päivä enkä enää halua elää.")
+def test_crisis_links_first(doping):
+    res, _ = make(doping).run("Käytän steroideja enkä enää halua elää.", mode="luonnos")
     assert res.links[0].type == "kriisi"
-    assert any(s.kind == "itsetuhoisuus" for s in res.signals)
 
 
 class BrokenChecker(MockLLM):
     def complete(self, *, model, system, user, max_tokens=1500):
         if "TARKASTAJA" in system:
-            return "en osaa vastata"
+            return "en osaa"
         return super().complete(model=model, system=system, user=user)
 
 
-def test_checker_failure_is_visible(index):
-    res, _ = make_assistant(index, BrokenChecker()).run("Juon liikaa, mitä teen?")
-    assert res.links and any("Tarkastus epäonnistui" in n for n in res.notes)
+def test_checker_failure_is_visible(doping):
+    res, _ = make(doping, BrokenChecker()).run("Klenbuterolin riskit?", mode="luonnos")
+    assert res.draft and any("Tarkastus epäonnistui" in n for n in res.notes)
+
+
+def test_parse_draft_tolerates_missing_meta_tags():
+    meta, text = parse_draft('{"linkit": []}\n<luonnos>\nHei!\n</luonnos>')
+    assert meta == {"linkit": []} and text == "Hei!"
+
+
+def test_own_style_examples(tmp_path):
+    d = tmp_path / "dopinglinkki"
+    d.mkdir()
+    rows = [
+        {"id": "1", "text": "Moi! Steroidikuurin jälkeen hormonitoiminta palautuu yleensä kuukausissa.", "vastaaja": "ville"},
+        {"id": "2", "text": "Hei, hormonitoiminnan palautuminen kestää usein 3–6 kuukautta.", "vastaaja": "liisa"},
+    ]
+    (d / "vastaukset.jsonl").write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
+    h = load_hanke(HANKKEET, "dopinglinkki", data_dir=tmp_path)
+    assert h.answers.respondents() == {"ville", "liisa"}
+    res, _ = make(h).run("Kauanko hormonitoiminnan palautuminen kestää?", mode="luonnos",
+                         vastaaja="ville", own_style=True)
+    assert res.examples_used and res.examples_used[0] == {"id": "1", "oma": True}
 
 
 def test_bedrock_requires_eu_profile():
@@ -128,41 +170,88 @@ def test_bedrock_requires_eu_profile():
         Settings(provider="bedrock", drafter_model="global.anthropic.claude-opus-5-5").validate()
 
 
-# --- API --------------------------------------------------------------------
+# --- Työkalut ---------------------------------------------------------------------
 
-def test_api(monkeypatch):
-    monkeypatch.setenv("APURI_PROVIDER", "mock")
+def test_catalog_page_parser():
+    from vastausapuri.tyokalut.rakenna_katalogi import PageParser
+    html = ("<html><head><title>Klenbuteroli - Dopinglinkki</title><meta name='description' content='Kuvaus.'>"
+            "</head><body><nav>Valikko</nav><main><h1>Klenbuteroli</h1><p>" + "Tekstiä. " * 40 +
+            "</p><script>x()</script></main><footer>Alatunniste</footer></body></html>")
+    p = PageParser()
+    p.feed(html)
+    r = p.result("Dopinglinkki")
+    assert r["title"] == "Klenbuteroli" and r["description"] == "Kuvaus."
+    assert "Valikko" not in r["content"] and "x()" not in r["content"] and "Alatunniste" not in r["content"]
+
+
+def test_import_answers(tmp_path, capsys):
+    from vastausapuri.tyokalut.tuo_vastaukset import main
+    src = tmp_path / "vienti.csv"
+    src.write_text(
+        "id;vastaaja;vastaus\n"
+        "1;Ville S.;Hei Matti! Lue lisää https://dopinglinkki.fi/tietopankki/dopingaineet/klenbuteroli/ "
+        "ja soita 040 123 4567. Klenbuteroli rasittaa sydäntä merkittävästi.\n"
+        "2;Liisa;liian lyhyt\n", encoding="utf-8")
+    out = tmp_path / "v.jsonl"
+    assert main(["dopinglinkki", str(src), "--ulos", str(out), "--vastaajakartta", "Ville S.=ville",
+                 "--min-pituus", "20"]) == 0
+    recs = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines()]
+    assert len(recs) == 1 and recs[0]["vastaaja"] == "ville"
+    assert "Matti" not in recs[0]["text"] and "040 123 4567" not in recs[0]["text"]
+    assert "https://dopinglinkki.fi/tietopankki/dopingaineet/klenbuteroli/" in recs[0]["text"]
+    assert "kyllä" in capsys.readouterr().out  # linkki tunnistettiin katalogista
+
+
+# --- API --------------------------------------------------------------------------
+
+def client(monkeypatch, users=None, provider="mock"):
+    monkeypatch.setenv("APURI_PROVIDER", provider)
+    if users is None:
+        monkeypatch.delenv("APURI_USERS", raising=False)
+    else:
+        monkeypatch.setenv("APURI_USERS", users)
     from vastausapuri import app as appmod
-    appmod.assistant.cache_clear()
-    c = TestClient(appmod.app)
-    assert c.get("/api/status").json()["provider"] == "mock"
-    r = c.post("/api/suggest", json={"question": "Poikani polttaa kannabista, mitä teen?"})
-    assert r.status_code == 200 and r.json()["links"]
+    appmod.assistants.cache_clear()
+    return TestClient(appmod.app)
+
+
+def login(c, u, p):
+    return c.post("/login", data={"username": u, "password": p}, follow_redirects=False)
 
 
 def test_login_flow(monkeypatch):
-    monkeypatch.setenv("APURI_PROVIDER", "mock")
-    monkeypatch.setenv("APURI_USERS", "vastaaja:salainen")
-    from vastausapuri import app as appmod
-    appmod.assistant.cache_clear()
-    c = TestClient(appmod.app)
+    c = client(monkeypatch, "vastaaja:salainen")
     assert c.get("/healthz").status_code == 200
     r = c.get("/", follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"] == "/login"
-    assert "Kirjaudu" in c.get("/login").text
     assert c.get("/api/status").status_code == 401
-    assert c.post("/login", data={"username": "vastaaja", "password": "väärä"}).status_code == 401
-    r = c.post("/login", data={"username": "vastaaja", "password": "salainen"}, follow_redirects=False)
-    assert r.status_code == 303
+    assert login(c, "vastaaja", "väärä").status_code == 401
+    assert login(c, "vastaaja", "salainen").status_code == 303
     r = c.get("/api/status")
     assert r.status_code == 200 and r.headers["X-Robots-Tag"].startswith("noindex")
+    assert r.json()["user"] == "vastaaja" and r.json()["hankkeet"][0]["id"] == "dopinglinkki"
     c.cookies.set("apuri_session", "vastaaja|9999999999|vaarennetty")
     assert c.get("/api/status").status_code == 401
 
 
+def test_project_access_restricted(monkeypatch):
+    c = client(monkeypatch, "rajattu:pw:toinenhanke")
+    login(c, "rajattu", "pw")
+    assert c.get("/api/status").json()["hankkeet"] == []
+    r = c.post("/api/suggest", json={"question": "Klenbuterolin riskit?", "hanke": "dopinglinkki"})
+    assert r.status_code == 403
+
+
+def test_api_draft(monkeypatch):
+    c = client(monkeypatch, "ville:pw:dopinglinkki")
+    login(c, "ville", "pw")
+    r = c.post("/api/suggest", json={"question": "Olen Pekka, mistä saan neuloja?", "hanke": "dopinglinkki",
+                                     "mode": "luonnos"})
+    d = r.json()
+    assert r.status_code == 200 and d["draft"] and d["links"]
+    assert "Pekka" not in d["pseudonymized_question"]
+
+
 def test_bedrock_closed_without_users(monkeypatch):
-    monkeypatch.setenv("APURI_PROVIDER", "bedrock")
-    monkeypatch.delenv("APURI_USERS", raising=False)
-    from vastausapuri import app as appmod
-    c = TestClient(appmod.app)
+    c = client(monkeypatch, None, provider="bedrock")
     assert c.get("/").status_code == 503

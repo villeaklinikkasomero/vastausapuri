@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Signal:
-    kind: str  # "itsetuhoisuus" | "väkivalta" | "lapsen_turvallisuus" | "akuutti_myrkytys"
+    kind: str  # esim. "itsetuhoisuus", "väkivalta", "akuutti_myrkytys" tai hankkeen oma laji
     match: str
 
 
@@ -58,10 +58,18 @@ _PATTERNS: dict[str, list[str]] = {
 _COMPILED = {k: [re.compile(p, re.I) for p in v] for k, v in _PATTERNS.items()}
 
 
-def detect_signals(text: str) -> list[Signal]:
+def compile_patterns(extra: dict[str, list[str]] | None) -> dict[str, list[re.Pattern[str]]]:
+    """Hankekohtaiset lisäsignaalit yhdistettynä yhteisiin."""
+    merged = {k: list(v) for k, v in _COMPILED.items()}
+    for kind, pats in (extra or {}).items():
+        merged.setdefault(kind, []).extend(re.compile(p, re.I) for p in pats)
+    return merged
+
+
+def detect_signals(text: str, patterns: dict[str, list[re.Pattern[str]]] | None = None) -> list[Signal]:
     found: list[Signal] = []
-    for kind, patterns in _COMPILED.items():
-        for p in patterns:
+    for kind, pats in (patterns or _COMPILED).items():
+        for p in pats:
             m = p.search(text)
             if m:
                 found.append(Signal(kind=kind, match=m.group(0)))

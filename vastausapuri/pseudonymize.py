@@ -107,7 +107,20 @@ _NER = _load_ner()
 _NER_LABELS = {"PER": "NIMI", "PERSON": "NIMI", "LOC": "PAIKKA", "GPE": "PAIKKA"}
 
 
-def pseudonymize(text: str) -> Pseudonymized:
+_URL = re.compile(r"\bhttps?://[^\s)>\]]+|\bwww\.[^\s)>\]]+", re.I)
+
+
+def _domain(url: str) -> str:
+    host = re.sub(r"^(?:https?://)?(?:www\.)?", "", url.lower()).split("/", 1)[0]
+    return host
+
+
+def pseudonymize(text: str, keep_domains: frozenset[str] | set[str] = frozenset()) -> Pseudonymized:
+    """Korvaa tunnisteet paikkamerkeillä.
+
+    keep_domains: verkkotunnukset, joiden linkit säilytetään (esim. palvelun omat sisällöt),
+    koska ne eivät ole henkilötietoja ja kertovat, mihin vastaaja on ohjannut.
+    """
     result = Pseudonymized(text=text)
     reverse: dict[str, str] = {}  # alkuperäinen -> paikkamerkki (sama arvo = sama merkki)
     counter: dict[str, int] = {}
@@ -122,6 +135,18 @@ def pseudonymize(text: str) -> Pseudonymized:
         return reverse[key]
 
     out = text
+    kept: list[str] = []
+
+    def protect(m: re.Match) -> str:
+        url = m.group(0)
+        d = _domain(url)
+        if any(d == k or d.endswith("." + k) for k in keep_domains):
+            kept.append(url)
+            return f"\u27e6U{len(kept) - 1}\u27e7"
+        return url
+
+    if keep_domains:
+        out = _URL.sub(protect, out)
     if _NER is not None:  # pragma: no cover
         doc = _NER(out)
         for ent in sorted(doc.ents, key=lambda e: -e.start_char):
@@ -133,5 +158,7 @@ def pseudonymize(text: str) -> Pseudonymized:
     for kind, pattern in _RULES:
         out = pattern.sub(lambda m, k=kind: placeholder(k, m.group(0)), out)
 
+    for i, url in enumerate(kept):
+        out = out.replace(f"\u27e6U{i}\u27e7", url)
     result.text = out
     return result
