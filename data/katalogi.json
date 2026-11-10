@@ -1,0 +1,146 @@
+[
+  {
+    "id": "alkoholi-testi",
+    "title": "Alkoholinkäytön riskitesti (AUDIT)",
+    "url": "https://example.org/testit/audit",
+    "type": "testi",
+    "description": "Kymmenen kysymyksen testi, jolla voi arvioida oman alkoholinkäytön riskejä. Tulos ja palaute heti.",
+    "topics": ["alkoholi", "juominen", "riskikulutus", "humala"],
+    "audience": ["itse"]
+  },
+  {
+    "id": "juomapaivakirja",
+    "title": "Juomapäiväkirja",
+    "url": "https://example.org/oma-apu/juomapaivakirja",
+    "type": "oma-apu",
+    "description": "Työkalu juomisen seurantaan päivittäin. Auttaa huomaamaan juomisen tilanteita ja vähentämään.",
+    "topics": ["alkoholi", "juominen", "vähentäminen", "seuranta"],
+    "audience": ["itse"]
+  },
+  {
+    "id": "alkoholi-vahentaminen",
+    "title": "Näin vähennät juomista",
+    "url": "https://example.org/artikkelit/vahenna-juomista",
+    "type": "artikkeli",
+    "description": "Käytännön keinoja alkoholinkäytön vähentämiseen ja retkahdusten käsittelyyn.",
+    "topics": ["alkoholi", "vähentäminen", "lopettaminen", "retkahdus"],
+    "audience": ["itse"]
+  },
+  {
+    "id": "vieroitusoireet",
+    "title": "Alkoholin vieroitusoireet ja milloin hakeutua hoitoon",
+    "url": "https://example.org/artikkelit/vieroitusoireet",
+    "type": "artikkeli",
+    "description": "Mitä vieroitusoireita lopettaminen voi aiheuttaa ja milloin tarvitaan lääkärin apua.",
+    "topics": ["alkoholi", "vieroitus", "lopettaminen", "krapula", "hoito"],
+    "audience": ["itse", "läheinen"]
+  },
+  {
+    "id": "lahisen-juominen",
+    "title": "Kun läheinen juo liikaa",
+    "url": "https://example.org/artikkelit/laheisen-juominen",
+    "type": "artikkeli",
+    "description": "Tietoa ja tukea läheisille: miten ottaa puheeksi, miten pitää huolta itsestä.",
+    "topics": ["alkoholi", "läheinen", "puoliso", "vanhempi", "puheeksi ottaminen"],
+    "audience": ["läheinen"]
+  },
+  {
+    "id": "laheisryhma",
+    "title": "Läheisten vertaistukiryhmät",
+    "url": "https://example.org/palvelut/laheisryhmat",
+    "type": "palvelu",
+    "description": "Vertaistukiryhmiä läheisten päihde- tai peliongelmasta kärsiville, myös verkossa.",
+    "topics": ["läheinen", "vertaistuki", "ryhmä", "alkoholi", "huumeet", "rahapelit"],
+    "audience": ["läheinen"]
+  },
+  {
+    "id": "kannabis-tietoa",
+    "title": "Kannabis: vaikutukset ja riskit",
+    "url": "https://example.org/artikkelit/kannabis",
+    "type": "artikkeli",
+    "description": "Kannabiksen vaikutukset, riippuvuus ja haittojen vähentäminen.",
+    "topics": ["kannabis", "pilvi", "huumeet", "riippuvuus", "haittojen vähentäminen"],
+    "audience": ["itse", "nuori", "läheinen"]
+  },
+  {
+    "id": "nuoren-paihteet",
+    "title": "Kun nuori käyttää päihteitä – opas vanhemmille",
+    "url": "https://example.org/artikkelit/nuoren-paihteet",
+    "type": "artikkeli",
+    "description": "Miten vanhempi voi puhua päihteistä nuoren kanssa ja mistä saa apua.",
+    "topics": ["nuori", "lapsi", "vanhemmuus", "huumeet", "alkoholi", "kannabis"],
+    "audience": ["läheinen"]
+  },
+  {
+    "id": "rahapeli-testi",
+    "title": "Rahapelaamisen testi",
+    "url": "https://example.org/testit/rahapelit",
+    "type": "testi",
+    "description": "Testi rahapelaamisen riskien arviointiin: nettikasino, vedonlyönti, raha-automaatit.",
+    "topics": ["rahapelit", "pelaaminen", "nettikasino", "vedonlyönti", "velat"],
+    "audience": ["itse"]
+  },
+  {
+    "id": "pelaamisen-hallinta",
+    "title": "Pelaamisen hallinnan oma-apuohjelma",
+    "url": "https://example.org/oma-apu/pelaamisen-hallinta",
+    "type": "oma-apu",
+    "description": "Viikoittainen ohjelma rahapelaamisen vähentämiseen ja rajoitusten asettamiseen.",
+    "topics": ["rahapelit", "pelaaminen", "vähentäminen", "pelikielto", "velat"],
+    "audience": ["itse"]
+  },
+  {
+    "id": "digipelaaminen",
+    "title": "Digipelaaminen ja ruutuaika",
+    "url": "https://example.org/artikkelit/digipelaaminen",
+    "type": "artikkeli",
+    "description": "Milloin digipelaaminen muuttuu ongelmaksi ja miten vanhempi voi tukea.",
+    "topics": ["digipelaaminen", "videopelit", "ruutuaika", "nuori", "riippuvuus"],
+    "audience": ["itse", "läheinen", "nuori"]
+  },
+  {
+    "id": "laakkeet-ja-alkoholi",
+    "title": "Lääkkeet ja päihteet yhdessä",
+    "url": "https://example.org/artikkelit/laakkeet-ja-paihteet",
+    "type": "artikkeli",
+    "description": "Rauhoittavien lääkkeiden, kipulääkkeiden ja alkoholin yhteiskäytön riskit.",
+    "topics": ["lääkkeet", "bentsodiatsepiinit", "alkoholi", "sekakäyttö", "riskit"],
+    "audience": ["itse", "läheinen"]
+  },
+  {
+    "id": "hoitoon-hakeutuminen",
+    "title": "Mistä apua päihdeongelmaan?",
+    "url": "https://example.org/palvelut/hoitoon-hakeutuminen",
+    "type": "palvelu",
+    "description": "Hoitoon hakeutuminen omalla alueella: terveysasemat, päihdepalvelut, avohoito, katkaisuhoito.",
+    "topics": ["hoito", "palvelut", "katkaisuhoito", "avohoito", "lopettaminen", "huumeet", "alkoholi"],
+    "audience": ["itse", "läheinen"]
+  },
+  {
+    "id": "ammattilaiset-puheeksiotto",
+    "title": "Puheeksi ottaminen ammattilaisen työssä",
+    "url": "https://example.org/ammattilaisille/puheeksiotto",
+    "type": "artikkeli",
+    "description": "Menetelmiä ja materiaaleja päihteiden puheeksi ottamiseen sosiaali- ja terveysalalla.",
+    "topics": ["ammattilainen", "puheeksi ottaminen", "mini-interventio", "työväline"],
+    "audience": ["ammattilainen"]
+  },
+  {
+    "id": "kriisi-puhelin",
+    "title": "Kriisipuhelin (ESIMERKKI – tarkista ajantasaiset yhteystiedot)",
+    "url": "https://example.org/kriisi/kriisipuhelin",
+    "type": "kriisi",
+    "description": "Valtakunnallinen kriisipuhelin itsetuhoisille ja kriisissä oleville sekä heidän läheisilleen.",
+    "topics": ["kriisi", "itsetuhoisuus", "itsemurha"],
+    "audience": ["itse", "läheinen"]
+  },
+  {
+    "id": "kriisi-hatanumero",
+    "title": "Hätätilanteessa soita 112",
+    "url": "https://example.org/kriisi/112",
+    "type": "kriisi",
+    "description": "Välitön hengenvaara, väkivalta, myrkytys tai tajuttomuus: soita hätänumeroon 112.",
+    "topics": ["hätä", "väkivalta", "myrkytys", "yliannostus"],
+    "audience": ["itse", "läheinen", "ammattilainen"]
+  }
+]

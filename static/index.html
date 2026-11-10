@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vastausapuri</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --panel: #ffffff; --ink: #1d1d1b; --muted: #5f5e5a; --line: #dddbd4;
+    --accent: #1f5fa8; --accent-soft: #e6eef8; --warn: #9a3412; --warn-soft: #fdeee6;
+    --ok: #166534; --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #18181a; --panel: #222225; --ink: #ecebe7; --muted: #a3a29c; --line: #3a3a3e;
+      --accent: #7fb0ea; --accent-soft: #1f2d3e; --warn: #f2a37a; --warn-soft: #3a241a; --ok: #86d19b; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex;
+    justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; }
+  header small { color: var(--muted); }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px;
+    padding: 24px; max-width: 1280px; margin: 0 auto; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 24px 0 8px; }
+  textarea { width: 100%; min-height: 280px; resize: vertical; padding: 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; }
+  button { font: inherit; border-radius: 8px; padding: 8px 16px; cursor: pointer;
+    border: 1px solid var(--accent); background: var(--accent); color: #fff; }
+  button.ghost { background: transparent; color: var(--accent); }
+  button:disabled { opacity: .5; cursor: progress; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .hint { color: var(--muted); font-size: 13px; }
+  .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+  .banner { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 12px 16px;
+    margin-bottom: 16px; font-weight: 600; }
+  .banner span { font-weight: 400; display: block; }
+  .link { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 8px;
+    display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+  .link.kriisi { border-color: var(--warn); }
+  .link input { margin-top: 4px; }
+  .link a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .link .meta { grid-column: 2; color: var(--muted); font-size: 13px; }
+  .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px;
+    background: var(--accent-soft); color: var(--accent); margin-right: 6px; }
+  ol, ul { margin: 0; padding-left: 20px; }
+  pre { white-space: pre-wrap; background: var(--bg); border-radius: 8px; padding: 12px; font-size: 13px;
+    border: 1px solid var(--line); margin: 0; }
+  details { margin-top: 16px; } summary { cursor: pointer; color: var(--muted); }
+  footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
+  .err { color: var(--warn); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Vastausapuri <small>· linkkiehdottaja (MVP)</small></h1>
+  <small id="status">…</small>
+</header>
+<main>
+  <section>
+    <h2>Kysymys</h2>
+    <textarea id="q" placeholder="Liitä kysyjän viesti tähän. Nimet ja yhteystiedot korvataan paikkamerkeillä ennen kuin teksti lähtee mallille."></textarea>
+    <div class="row">
+      <button id="go">Hae ehdotukset</button>
+      <span class="hint">Ctrl + Enter</span>
+    </div>
+    <p class="hint">Apuri ei tallenna kysymystä. Vastaus lähtee aina vastaajalta itseltään.</p>
+  </section>
+  <section id="out"><p class="empty">Ehdotukset näkyvät tässä.</p></section>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const SIGNAL = {itsetuhoisuus: "itsetuhoisuus", "väkivalta": "väkivalta",
+  lapsen_turvallisuus: "lapsen turvallisuus", akuutti_myrkytys: "akuutti myrkytys"};
+const SOURCE = {luonnostelija: "luonnostelija", tarkastaja: "lisätty tarkastuksessa", "kriisi-automaatti": "kriisisignaali"};
+
+fetch("/api/status").then(r => r.json()).then(s => {
+  $("#status").textContent = `${s.provider} · ${s.drafter.replace(/^eu\.anthropic\./, "")} + ${s.checker.replace(/^eu\.anthropic\./, "")} · katalogissa ${s.catalog_items}`;
+}).catch(() => $("#status").textContent = "ei yhteyttä");
+
+async function run() {
+  const q = $("#q").value.trim();
+  if (q.length < 5) return;
+  $("#go").disabled = true;
+  $("#out").innerHTML = '<p class="empty">Haetaan ehdotuksia…</p>';
+  try {
+    const r = await fetch("/api/suggest", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({question: q})});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || r.status);
+    render(d);
+  } catch (e) {
+    $("#out").innerHTML = `<p class="err">Virhe: ${esc(e.message)}</p>`;
+  } finally { $("#go").disabled = false; }
+}
+
+function render(d) {
+  const kinds = [...new Set(d.signals.map(s => SIGNAL[s.kind] || s.kind))];
+  const crisis = kinds.length || d.crisis?.havaittu;
+  let h = "";
+  if (crisis) {
+    h += `<div class="banner">Huomio: mahdollinen kriisisignaali${kinds.length ? " (" + esc(kinds.join(", ")) + ")" : ""}
+      <span>${esc(d.crisis?.kuvaus || "Arvioi tilanne ja tarvittaessa ohjaa kiireelliseen apuun.")}</span></div>`;
+  }
+  h += `<h2>Linkkiehdotukset</h2>`;
+  h += d.topics.map(t => `<span class="tag">${esc(t)}</span>`).join("") +
+       `<span class="tag">kysyjä: ${esc(d.asker)}</span>`;
+  h += `<div style="margin-top:12px">`;
+  if (!d.links.length) h += `<p class="hint">Katalogista ei löytynyt sopivaa sisältöä.</p>`;
+  d.links.forEach((l, i) => {
+    h += `<label class="link ${l.type === "kriisi" ? "kriisi" : ""}">
+      <input type="checkbox" checked data-i="${i}">
+      <div><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a></div>
+      <div class="meta">${esc(l.reason)}${l.checker_note ? " · Tarkastaja: " + esc(l.checker_note) : ""}</div>
+      <div class="meta">${esc(l.type)} · ${esc(SOURCE[l.source] || l.source)}</div>
+    </label>`;
+  });
+  h += `</div><div class="row"><button class="ghost" id="copy">Kopioi valitut linkit</button><span class="hint" id="copied"></span></div>`;
+  if (d.outline.length) h += `<h3>Ehdotettu runko</h3><ol>${d.outline.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
+  if (d.notes.length) h += `<h3>Huomiot</h3><ul>${d.notes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  if (d.rejected.length) h += `<details><summary>Tarkastajan hylkäämät (${d.rejected.length})</summary><ul>${
+      d.rejected.map(x => `<li>${esc(x.id)}: ${esc(x.syy)}</li>`).join("")}</ul></details>`;
+  const counts = Object.entries(d.pseudonym_counts).map(([k, v]) => `${k} ${v}`).join(", ") || "ei korvauksia";
+  h += `<details><summary>Mallille lähtenyt teksti (${esc(counts)})</summary><pre>${esc(d.pseudonymized_question)}</pre></details>`;
+  h += `<footer>${esc(d.models.provider)} · luonnostelija ${d.timings_ms.luonnostelija} ms · tarkastaja ${d.timings_ms.tarkastaja} ms</footer>`;
+  $("#out").innerHTML = h;
+  $("#copy").onclick = async () => {
+    const sel = [...document.querySelectorAll(".link input:checked")].map(c => d.links[+c.dataset.i]);
+    const text = sel.map(l => `${l.title}: ${l.url}`).join("\n");
+    try { await navigator.clipboard.writeText(text); $("#copied").textContent = `Kopioitu ${sel.length} linkkiä`; }
+    catch { $("#copied").textContent = "Kopiointi ei onnistunut"; }
+  };
+}
+$("#go").onclick = run;
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) run(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Render Blueprint: vastausapuri omana palvelunaan Lähde.AI:n Render-työtilassa.
+# Lähde.AI:hin ei kosketa. AWS-tunnukset luetaan samasta Environment Groupista
+# kuin Lähde.AI:ssa (vaihda ryhmän nimi alla vastaamaan teidän ryhmäänne).
+services:
+  - type: web
+    name: vastausapuri
+    runtime: python
+    region: frankfurt          # EU: kysymykset käsitellään Frankfurtissa
+    plan: starter
+    autoDeploy: false          # julkaisu vain käsin, ei vahingossa
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn vastausapuri.app:app --host 0.0.0.0 --port $PORT --proxy-headers --no-access-log
+    healthCheckPath: /healthz
+    envVars:
+      - fromGroup: lahde-aws   # <- Lähde.AI:n AWS-tunnukset (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: APURI_PROVIDER
+        value: bedrock
+      - key: AWS_REGION
+        value: eu-central-1    # Frankfurt; vaihda samaksi kuin Lähde.AI:ssa
+      - key: APURI_DRAFTER_MODEL
+        value: eu.anthropic.claude-opus-5-5
+      - key: APURI_CHECKER_MODEL
+        value: eu.anthropic.claude-sonnet-5-5
+      - key: APURI_USERS       # "nimi:salasana,nimi2:salasana2" – asetetaan Renderin hallintapaneelissa
+        sync: false

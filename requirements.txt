@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn>=0.29
+boto3>=1.34
+pydantic>=2
+# testit
+pytest>=8
+httpx>=0.27
