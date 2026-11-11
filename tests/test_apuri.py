@@ -586,3 +586,59 @@ def test_feedback_denied_for_other_project(monkeypatch, tmp_path):
     c = client(monkeypatch, "rajattu:pw:toinen")
     login(c, "rajattu", "pw")
     assert c.post("/api/palaute", json={"hanke": "dopinglinkki", "arvio": "hyva"}).status_code == 403
+
+
+# --- Käyttäjähallinta ------------------------------------------------------------------
+
+def test_registry_hashes_and_permissions(tmp_path, monkeypatch):
+    from vastausapuri.kayttajat import Registry
+    monkeypatch.delenv("APURI_USERS", raising=False)
+    monkeypatch.delenv("APURI_ADMINS", raising=False)
+    reg = Registry(tmp_path / "kayttajat.json")
+    reg.upsert("liisa", password="pitkä-salasana-1", projects=["dopinglinkki"], create=True)
+    raw = (tmp_path / "kayttajat.json").read_text(encoding="utf-8")
+    assert "pitkä-salasana-1" not in raw and "tiiviste" in raw
+    assert reg.verify("liisa", "pitkä-salasana-1").projects == frozenset({"dopinglinkki"})
+    assert reg.verify("liisa", "väärä") is None
+    with pytest.raises(ValueError):
+        reg.upsert("x", password="lyhyt", create=True)  # liian lyhyt tunnus ja salasana
+    reg.upsert("liisa", projects=None, admin=False, active=False)
+    assert reg.verify("liisa", "pitkä-salasana-1") is None  # suljettu tunnus ei kirjaudu
+    reg.change_password  # olemassa
+
+
+def test_user_admin_flow(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("APURI_ADMINS", "admin")
+    c = client(monkeypatch, "admin:alkusalasana1")
+    login(c, "admin", "alkusalasana1")
+    r = c.post("/api/yllapito/kayttajat", json={"nimi": "Liisa", "salasana": "liisan-salasana-1",
+                                                "hankkeet": ["dopinglinkki"]})
+    assert r.status_code == 200
+    assert c.post("/api/yllapito/kayttajat", json={"nimi": "liisa", "salasana": "toinen-salasana"}).status_code == 400
+    assert c.post("/api/yllapito/kayttajat", json={"nimi": "pekka", "salasana": "pekan-salasana", "hankkeet": ["eiole"]}).status_code == 400
+    lst = c.get("/api/yllapito/kayttajat").json()["kayttajat"]
+    assert {u["nimi"]: u["lahde"] for u in lst} == {"liisa": "rekisteri", "admin": "ympäristö"}
+    # Uusi käyttäjä kirjautuu, näkee hankkeensa, ei pääse ylläpitoon, vaihtaa salasanan
+    u = client(monkeypatch, "admin:alkusalasana1")
+    assert login(u, "liisa", "liisan-salasana-1").status_code == 303
+    st = u.get("/api/status").json()
+    assert [h["id"] for h in st["hankkeet"]] == ["dopinglinkki"] and st["admin"] is False
+    assert u.get("/api/yllapito/kayttajat").status_code == 403
+    assert u.post("/api/salasana", json={"vanha": "väärä", "uusi": "uusi-salasana-22"}).status_code == 400
+    assert u.post("/api/salasana", json={"vanha": "liisan-salasana-1", "uusi": "uusi-salasana-22"}).status_code == 200
+    # Ylläpitäjä sulkee tunnuksen: istunto lakkaa toimimasta heti
+    assert c.put("/api/yllapito/kayttajat/liisa", json={"nimi": "liisa", "hankkeet": None, "aktiivinen": False}).status_code == 200
+    assert u.get("/api/status").status_code == 401
+    # Ylläpitäjäksi korotettu rekisterikäyttäjä pääsee ylläpitoon
+    c.put("/api/yllapito/kayttajat/liisa", json={"nimi": "liisa", "hankkeet": None, "admin": True})
+    u2 = client(monkeypatch, "admin:alkusalasana1")
+    login(u2, "liisa", "uusi-salasana-22")
+    assert u2.get("/api/yllapito/kayttajat").status_code == 200
+    # Omaa tunnusta ei voi poistaa tai alentaa
+    assert u2.delete("/api/yllapito/kayttajat/liisa").status_code == 400
+    assert u2.put("/api/yllapito/kayttajat/liisa", json={"nimi": "liisa", "admin": False}).status_code == 400
+    assert c.delete("/api/yllapito/kayttajat/liisa").status_code == 200
+    assert u2.get("/api/status").status_code == 401
+    # Ympäristökäyttäjän salasanaa ei voi vaihtaa sivulla
+    assert c.post("/api/salasana", json={"vanha": "alkusalasana1", "uusi": "uusi-salasana-33"}).status_code == 400

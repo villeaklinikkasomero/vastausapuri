@@ -26,6 +26,14 @@
   button:disabled { opacity:.5; cursor:progress; }
   .hint { color:var(--muted); font-size:13px; }
   .err { color:var(--warn); } .ok { color:var(--ok); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  @media (max-width:640px) { .grid2 { grid-template-columns:1fr; } }
+  button.ghost { background:transparent; color:var(--accent); }
+  button.small { margin-top:0; padding:4px 10px; font-size:13px; }
+  button.danger { background:transparent; color:var(--warn); border-color:var(--warn); }
+  .projects label { display:inline-flex; gap:6px; align-items:center; margin:4px 12px 4px 0; color:var(--ink); font-size:14px; }
+  .tag { display:inline-block; font-size:12px; padding:1px 8px; border-radius:99px; border:1px solid var(--line); color:var(--muted); margin-right:4px; }
   pre { white-space:pre-wrap; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:12px; font-size:13px; max-height:520px; overflow:auto; }
 </style>
 </head>
@@ -40,6 +48,29 @@
     <table><thead><tr><th>Hanke</th><th>Palvelu viennissä</th><th>Vastauksia</th><th>Päivitetty</th></tr></thead>
       <tbody id="status"><tr><td colspan="4" class="hint">Ladataan…</td></tr></tbody></table>
     <p class="hint" id="datadir"></p>
+  </section>
+  <section>
+    <h2>Käyttäjät</h2>
+    <table><thead><tr><th>Tunnus</th><th>Hankkeet</th><th>Rooli</th><th>Tila</th><th></th></tr></thead>
+      <tbody id="users"><tr><td colspan="5" class="hint">Ladataan…</td></tr></tbody></table>
+    <p class="hint">Ympäristömuuttujista (APURI_USERS) tulevat tunnukset ovat varakäyttöön, eikä niitä voi muokata täällä.
+      Jos luot rekisteriin saman tunnuksen, rekisterin tiedot korvaavat ympäristömuuttujan.</p>
+    <h2 style="margin-top:20px" id="uFormTitle">Lisää käyttäjä</h2>
+    <form id="uForm">
+      <div class="grid2">
+        <div><label for="uName">Käyttäjätunnus</label><input type="text" id="uName" autocomplete="off" placeholder="esim. etunimi.sukunimi" required></div>
+        <div><label for="uPass">Salasana <span id="uPassHint">(vähintään 10 merkkiä)</span></label><input type="text" id="uPass" autocomplete="new-password"></div>
+      </div>
+      <label>Hankkeet</label>
+      <div class="projects" id="uProjects"></div>
+      <label class="check"><input type="checkbox" id="uAll"> <span>Kaikki hankkeet (myös tulevat)</span></label>
+      <label class="check"><input type="checkbox" id="uAdmin"> <span>Ylläpitäjä (käyttäjät, vastausten tuonti, palaute)</span></label>
+      <label class="check"><input type="checkbox" id="uActive" checked> <span>Tunnus käytössä</span></label>
+      <div class="row"><button type="submit" id="uSave">Lisää käyttäjä</button>
+        <button type="button" class="ghost" id="uCancel" hidden>Peruuta</button>
+        <button type="button" id="uGen" class="ghost">Luo salasana</button></div>
+      <p id="uMsg" class="hint"></p>
+    </form>
   </section>
   <section>
     <h2>Vastaajien palaute luonnoksista</h2>
@@ -131,6 +162,71 @@ async function loadFeedback() {
         </tbody></table>` : ""}`;
   }).join("");
 }
+let users = {list: [], me: "", projects: [], editing: null};
+async function loadUsers() {
+  const r = await fetch("/api/yllapito/kayttajat");
+  const d = await r.json();
+  if (!r.ok) { $("#users").innerHTML = `<tr><td colspan="5" class="err">${esc(d.detail)}</td></tr>`; return; }
+  users.list = d.kayttajat; users.me = d["minä"]; users.projects = d.hankkeet;
+  $("#uProjects").innerHTML = d.hankkeet.map(h => `<label><input type="checkbox" value="${esc(h.id)}">${esc(h.nimi)}</label>`).join("");
+  const pname = id => (d.hankkeet.find(h => h.id === id) || {}).nimi || id;
+  $("#users").innerHTML = d.kayttajat.map(u => `<tr>
+    <td>${esc(u.nimi)}${u.nimi === users.me ? ' <span class="tag">sinä</span>' : ""}${u.lahde === "ympäristö" ? ' <span class="tag">ympäristö</span>' : ""}</td>
+    <td>${u.hankkeet === null ? "kaikki" : (u.hankkeet.map(pname).join(", ") || "–")}</td>
+    <td>${u.admin ? "ylläpitäjä" : "vastaaja"}</td>
+    <td>${u.aktiivinen ? "käytössä" : "suljettu"}</td>
+    <td style="white-space:nowrap">${u.lahde === "rekisteri" ? `<button class="small ghost" data-edit="${esc(u.nimi)}">Muokkaa</button>
+      ${u.nimi !== users.me ? `<button class="small danger" data-del="${esc(u.nimi)}">Poista</button>` : ""}` : ""}</td></tr>`).join("")
+    || `<tr><td colspan="5" class="hint">Ei käyttäjiä.</td></tr>`;
+  document.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => editUser(b.dataset.edit));
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deleteUser(b.dataset.del));
+}
+function resetForm() {
+  users.editing = null; $("#uForm").reset(); $("#uActive").checked = true;
+  $("#uName").disabled = false; $("#uFormTitle").textContent = "Lisää käyttäjä"; $("#uSave").textContent = "Lisää käyttäjä";
+  $("#uPassHint").textContent = "(vähintään 10 merkkiä)"; $("#uCancel").hidden = true; syncAll();
+}
+function editUser(name) {
+  const u = users.list.find(x => x.nimi === name); if (!u) return;
+  users.editing = name; $("#uName").value = name; $("#uName").disabled = true; $("#uPass").value = "";
+  $("#uAll").checked = u.hankkeet === null;
+  document.querySelectorAll("#uProjects input").forEach(c => c.checked = u.hankkeet === null || u.hankkeet.includes(c.value));
+  $("#uAdmin").checked = u.admin; $("#uActive").checked = u.aktiivinen;
+  $("#uFormTitle").textContent = `Muokkaa: ${name}`; $("#uSave").textContent = "Tallenna muutokset";
+  $("#uPassHint").textContent = "(jätä tyhjäksi, jos ei vaihdeta)"; $("#uCancel").hidden = false; syncAll();
+  $("#uFormTitle").scrollIntoView({behavior: "smooth"});
+}
+function syncAll() { document.querySelectorAll("#uProjects input").forEach(c => c.disabled = $("#uAll").checked); }
+$("#uAll").onchange = syncAll;
+$("#uCancel").onclick = resetForm;
+$("#uGen").onclick = () => {
+  const words = ["kuusi","kallio","sammal","virta","tuuli","lumi","kaarna","ranta","pilvi","kivi","marja","sade","tähti","aalto","polku","laakso"];
+  const pick = () => words[crypto.getRandomValues(new Uint32Array(1))[0] % words.length];
+  $("#uPass").value = `${pick()}-${pick()}-${pick()}-${crypto.getRandomValues(new Uint32Array(1))[0] % 90 + 10}`;
+};
+async function deleteUser(name) {
+  if (!confirm(`Poistetaanko käyttäjä ${name}?`)) return;
+  const r = await fetch(`/api/yllapito/kayttajat/${encodeURIComponent(name)}`, {method: "DELETE"});
+  const d = await r.json().catch(() => ({}));
+  $("#uMsg").className = r.ok ? "ok" : "err"; $("#uMsg").textContent = r.ok ? `Käyttäjä ${name} poistettu.` : d.detail;
+  loadUsers();
+}
+$("#uForm").onsubmit = async e => {
+  e.preventDefault();
+  const projects = $("#uAll").checked ? null : [...document.querySelectorAll("#uProjects input:checked")].map(c => c.value);
+  const body = {nimi: $("#uName").value.trim().toLowerCase(), salasana: $("#uPass").value || null,
+                hankkeet: projects, admin: $("#uAdmin").checked, aktiivinen: $("#uActive").checked};
+  const editing = users.editing;
+  const r = await fetch(editing ? `/api/yllapito/kayttajat/${encodeURIComponent(editing)}` : "/api/yllapito/kayttajat",
+    {method: editing ? "PUT" : "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { $("#uMsg").className = "err"; $("#uMsg").textContent = typeof d.detail === "string" ? d.detail : "Tallennus ei onnistunut."; return; }
+  $("#uMsg").className = "ok";
+  $("#uMsg").textContent = editing ? `Käyttäjän ${editing} tiedot tallennettu.`
+    : `Käyttäjä ${body.nimi} lisätty. Kerro tunnus ja salasana hänelle turvallista kanavaa pitkin; hän voi vaihtaa salasanan itse.`;
+  resetForm(); loadUsers();
+};
+loadUsers();
 $("#days").onchange = loadFeedback;
 load().then(loadFeedback);
 </script>

@@ -24,6 +24,7 @@ from .llm import describe_error, error_code, get_llm
 from .hanke import load_all
 from .pipeline import MODES, Assistant
 from . import palaute
+from .kayttajat import Registry
 from .tutkimus import EuropePMC
 from .tyokalut.tuo_vastaukset import default_out, import_data
 
@@ -39,23 +40,9 @@ app = FastAPI(title="Neuvontapalvelun vastausapuri", docs_url=None, redoc_url=No
 _SECRET = (os.getenv("APURI_SECRET") or secrets.token_hex(32)).encode()
 
 
-def _users() -> dict[str, tuple[str, set[str] | None]]:
-    """Käyttäjät: APURI_USERS="nimi:salasana[:hanke1|hanke2],nimi2:salasana2".
-
-    Ilman hankeosaa käyttäjä näkee kaikki hankkeet. Käyttäjänimeä käytetään myös
-    vastaajatunnisteena, kun luonnos kirjoitetaan omalla tyylillä.
-    """
-    out: dict[str, tuple[str, set[str] | None]] = {}
-    for entry in filter(None, (os.getenv("APURI_USERS") or "").split(",")):
-        parts = [x.strip() for x in entry.strip().split(":")]
-        if len(parts) >= 2 and parts[0] and parts[1]:
-            projects = {p for p in parts[2].split("|") if p} if len(parts) > 2 and parts[2] not in ("", "*") else None
-            out[parts[0]] = (parts[1], projects)
-    return out
-
-
-def _credentials() -> dict[str, str]:
-    return {u: pw for u, (pw, _) in _users().items()}
+def _reg() -> Registry:
+    s = get_settings()
+    return Registry((s.data_dir or s.hankkeet_dir) / "kayttajat.json")
 
 
 def _sign(user: str, expires: int) -> str:
@@ -72,7 +59,8 @@ def _session_user(request: Request) -> str | None:
             return None
         if not hmac.compare_digest(_sign(user, int(expires)), raw):
             return None
-        return user if user in _credentials() else None
+        u = _reg().get(user)
+        return user if u is not None and u.active else None
     except ValueError:
         return None
 
@@ -90,7 +78,7 @@ async def guard(request: Request, call_next):
     path = request.url.path
     if path in PUBLIC:
         return _security_headers(await call_next(request))
-    if not _credentials():
+    if not _reg().any_users():
         if get_settings().provider != "mock":
             # Bedrock-tilassa palvelu ei ole koskaan auki ilman kirjautumista
             return PlainTextResponse(
@@ -137,8 +125,7 @@ async def login(request: Request):
     form = parse_qs((await request.body()).decode("utf-8", "replace"))
     user = (form.get("username") or [""])[0].strip()
     pw = (form.get("password") or [""])[0]
-    users = _credentials()
-    ok = user in users and secrets.compare_digest(pw.encode(), users[user].encode())
+    ok = _reg().verify(user, pw) is not None
     if not ok:
         await asyncio.sleep(1)  # hidastaa arvailua
         msg = '<div class="err">Väärä käyttäjätunnus tai salasana.</div>'
@@ -176,7 +163,8 @@ def _allowed(request: Request) -> tuple[str | None, list[str]]:
     all_ids = list(assistants())
     if user is None:  # kehitystila ilman käyttäjiä
         return None, all_ids
-    _, projects = _users()[user]
+    u = _reg().get(user)
+    projects = u.projects if u else frozenset()
     return user, [h for h in all_ids if projects is None or h in projects]
 
 
@@ -281,10 +269,11 @@ def _explain(e: Exception) -> str:
 # --- Ylläpito: vanhojen vastausten tuonti -------------------------------------------------
 
 def _is_admin(user: str | None) -> bool:
-    admins = {a.strip() for a in (os.getenv("APURI_ADMINS") or "").split(",") if a.strip()}
-    if not _credentials():  # paikallinen kehitys ilman käyttäjiä
+    reg = _reg()
+    if not reg.any_users():  # paikallinen kehitys ilman käyttäjiä
         return get_settings().provider == "mock"
-    return bool(user) and user in admins
+    u = reg.get(user) if user else None
+    return bool(u and u.active and u.admin)
 
 
 @app.get("/yllapito")
@@ -372,3 +361,94 @@ def feedback_summary(request: Request, paivat: int | None = None) -> dict:
         raise HTTPException(status_code=403, detail="Vain ylläpitäjille.")
     s = get_settings()
     return {"hankkeet": palaute.summary(palaute.load(palaute.path(s.data_dir, s.hankkeet_dir)), paivat)}
+
+
+# --- Käyttäjähallinta ------------------------------------------------------------------
+
+class UserBody(BaseModel):
+    nimi: str = Field(max_length=40)
+    salasana: str | None = Field(default=None, max_length=200)
+    hankkeet: list[str] | None = None  # None = kaikki hankkeet
+    admin: bool = False
+    aktiivinen: bool = True
+
+
+def _require_admin(request: Request) -> str:
+    user = _session_user(request)
+    if not _is_admin(user):
+        raise HTTPException(status_code=403, detail="Vain ylläpitäjille.")
+    return user or ""
+
+
+def _check_projects(projects: list[str] | None) -> None:
+    if projects is not None:
+        unknown = set(projects) - set(assistants())
+        if unknown:
+            raise HTTPException(status_code=400, detail=f"Tuntematon hanke: {', '.join(sorted(unknown))}")
+
+
+@app.get("/api/yllapito/kayttajat")
+def users_list(request: Request) -> dict:
+    me = _require_admin(request)
+    return {"kayttajat": _reg().list(), "minä": me,
+            "hankkeet": [{"id": h, "nimi": a.h.nimi} for h, a in assistants().items()]}
+
+
+@app.post("/api/yllapito/kayttajat")
+def users_create(body: UserBody, request: Request) -> dict:
+    _require_admin(request)
+    _check_projects(body.hankkeet)
+    try:
+        _reg().upsert(body.nimi.strip().lower(), password=body.salasana, projects=body.hankkeet,
+                      admin=body.admin, active=body.aktiivinen, create=True)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}
+
+
+@app.put("/api/yllapito/kayttajat/{nimi}")
+def users_update(nimi: str, body: UserBody, request: Request) -> dict:
+    me = _require_admin(request)
+    _check_projects(body.hankkeet)
+    if nimi == me and (not body.admin or not body.aktiivinen):
+        raise HTTPException(status_code=400, detail="Et voi poistaa omia ylläpitäjäoikeuksiasi tai sulkea omaa tunnustasi.")
+    try:
+        _reg().upsert(nimi, password=body.salasana or None, projects=body.hankkeet,
+                      admin=body.admin, active=body.aktiivinen)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}
+
+
+@app.delete("/api/yllapito/kayttajat/{nimi}")
+def users_delete(nimi: str, request: Request) -> dict:
+    me = _require_admin(request)
+    if nimi == me:
+        raise HTTPException(status_code=400, detail="Et voi poistaa omaa tunnustasi.")
+    try:
+        _reg().delete(nimi)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}
+
+
+class PasswordBody(BaseModel):
+    vanha: str = Field(max_length=200)
+    uusi: str = Field(max_length=200)
+
+
+@app.post("/api/salasana")
+def change_password(body: PasswordBody, request: Request) -> dict:
+    user = _session_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Kirjaudu ensin.")
+    try:
+        _reg().change_password(user, body.vanha, body.uusi)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}
+
+
+@app.get("/salasana")
+def password_page() -> FileResponse:
+    return FileResponse(STATIC / "salasana.html")

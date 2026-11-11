@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vastausapuri – vaihda salasana</title>
+<style>
+  :root { --bg:#f6f5f2; --panel:#fff; --ink:#1d1d1b; --muted:#5f5e5a; --line:#dddbd4; --accent:#1f5fa8; --warn:#9a3412; --ok:#166534; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#18181a; --panel:#222225; --ink:#ecebe7; --muted:#a3a29c; --line:#3a3a3e; --accent:#7fb0ea; --warn:#f2a37a; --ok:#86d19b; }
+  }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--ink);
+    font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; padding:16px; box-sizing:border-box; }
+  form { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px; width:100%; max-width:360px; }
+  h1 { font-size:18px; margin:0 0 16px; }
+  label { display:block; font-size:13px; margin:12px 0 4px; }
+  input { width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  button { margin-top:20px; width:100%; padding:10px; border:0; border-radius:8px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; }
+  .hint { color:var(--muted); font-size:13px; } .err { color:var(--warn); font-size:13px; } .ok { color:var(--ok); font-size:13px; }
+  a { color:inherit; font-size:13px; }
+</style>
+</head>
+<body>
+<form id="f">
+  <h1>Vaihda salasana</h1>
+  <label for="old">Nykyinen salasana</label><input id="old" type="password" autocomplete="current-password" required>
+  <label for="new">Uusi salasana</label><input id="new" type="password" autocomplete="new-password" minlength="10" required>
+  <label for="new2">Uusi salasana uudelleen</label><input id="new2" type="password" autocomplete="new-password" minlength="10" required>
+  <p class="hint">Vähintään 10 merkkiä. Pitkä salalause on hyvä valinta.</p>
+  <button type="submit">Vaihda salasana</button>
+  <p id="msg"></p>
+  <a href="/">Takaisin apuriin</a>
+</form>
+<script>
+const $ = s => document.querySelector(s);
+$("#f").onsubmit = async e => {
+  e.preventDefault();
+  if ($("#new").value !== $("#new2").value) { $("#msg").className = "err"; $("#msg").textContent = "Uudet salasanat eivät täsmää."; return; }
+  const r = await fetch("/api/salasana", {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({vanha: $("#old").value, uusi: $("#new").value})});
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401) { location.href = "/login"; return; }
+  $("#msg").className = r.ok ? "ok" : "err";
+  $("#msg").textContent = r.ok ? "Salasana vaihdettu." : (typeof d.detail === "string" ? d.detail : "Vaihto ei onnistunut.");
+  if (r.ok) $("#f").reset();
+};
+</script>
+</body>
+</html>

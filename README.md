@@ -70,6 +70,18 @@ Tiivistelmät on tarkistettu 10.11.2026 (kenttä `tarkistettu`). Ne kannattaa k�
 perehtyneen kanssa ja päivittää, kun lakeja muutetaan. Uuden lakikohteen voi lisätä hankkeen tai
 yhteiseen `katalogi.json`-tiedostoon samalla rakenteella.
 
+## Käyttäjät
+
+Ylläpitäjät hallitsevat käyttäjiä ylläpitosivulla: lisäys, hankeoikeudet (valitut tai kaikki hankkeet),
+ylläpitäjärooli, tunnuksen sulkeminen, salasanan asettaminen ja poisto. Muutokset tulevat voimaan heti,
+myös avoimiin istuntoihin. Käyttäjät vaihtavat oman salasanansa yläpalkin **Salasana**-linkistä.
+
+- Rekisteri on levyllä (`<APURI_DATA_DIR>/kayttajat.json`), ja salasanoista tallennetaan vain PBKDF2-tiivisteet.
+- `APURI_USERS` ja `APURI_ADMINS` toimivat edelleen käynnistys- ja varatunnuksina (esim. ensimmäinen
+  ylläpitäjä). Niitä ei voi muokata sivulla. Kun rekisterissä on omat tunnukset, `APURI_USERS`-tunnukset
+  kannattaa vaihtaa pitkiin salasanoihin tai poistaa ylläpitäjää lukuun ottamatta.
+- Salasanan vähimmäispituus on 10 merkkiä. "Luo salasana" ehdottaa muistettavan salalauseen.
+
 ## Palaute
 
 Jokaisen luonnoksen alla kysytään "Oliko luonnoksesta apua?". Vastaaja valitsee Kyllä tai Ei kovin,
