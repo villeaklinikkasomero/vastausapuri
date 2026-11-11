@@ -554,3 +554,35 @@ def test_admin_import_requires_admin(monkeypatch, tmp_path):
     assert tila["hankkeet"][0]["vastauksia"] >= 1
     bad = c2.post("/api/yllapito/tuo", json={"hanke": "dopinglinkki", "palvelu": "Eiole", "data": THREADS})
     assert bad.status_code == 400 and "Viennin palvelut" in bad.json()["detail"]
+
+
+# --- Palaute -------------------------------------------------------------------------
+
+def test_feedback_saved_without_content_and_summarized(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("APURI_ADMINS", "admin")
+    c = client(monkeypatch, "ville:pw:dopinglinkki,admin:pw")
+    login(c, "ville", "pw")
+    assert len(c.get("/api/palaute/syyt").json()["syyt"]) >= 5
+    r = c.post("/api/palaute", json={"hanke": "dopinglinkki", "tila": "luonnos", "arvio": "huono",
+                                     "syyt": ["turvallisuus", "keksitty"], "kommentti": "Pekka 040 123 4567: päivystysohje puuttui",
+                                     "meta": {"issues": 2, "links": 4, "seconds": 31.2, "signals": ["akuutti_terveysriski"]}})
+    assert r.status_code == 200
+    c.post("/api/palaute", json={"hanke": "dopinglinkki", "arvio": "hyva"})
+    rec = [json.loads(l) for l in (tmp_path / "palaute.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert rec[0]["syyt"] == ["turvallisuus"]  # tuntematon syy pudotettu
+    assert "Pekka" not in rec[0]["kommentti"] and "040 123 4567" not in rec[0]["kommentti"]
+    assert "ville" not in json.dumps(rec)  # vastaajan nimeä ei tallenneta
+    assert c.post("/api/palaute", json={"hanke": "dopinglinkki", "arvio": "?"}).status_code == 400
+    assert c.get("/api/yllapito/palaute").status_code == 403
+    a = client(monkeypatch, "ville:pw:dopinglinkki,admin:pw")
+    login(a, "admin", "pw")
+    s = a.get("/api/yllapito/palaute?paivat=30").json()["hankkeet"]["dopinglinkki"]
+    assert s["yhteensa"] == 2 and s["osuus"] == 50 and s["syyt"][0]["maara"] == 1 and s["kommentit"]
+
+
+def test_feedback_denied_for_other_project(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    c = client(monkeypatch, "rajattu:pw:toinen")
+    login(c, "rajattu", "pw")
+    assert c.post("/api/palaute", json={"hanke": "dopinglinkki", "arvio": "hyva"}).status_code == 403

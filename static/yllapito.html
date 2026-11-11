@@ -42,6 +42,12 @@
     <p class="hint" id="datadir"></p>
   </section>
   <section>
+    <h2>Vastaajien palaute luonnoksista</h2>
+    <label for="days">Ajanjakso</label>
+    <select id="days"><option value="30">30 päivää</option><option value="90">90 päivää</option><option value="">Kaikki</option></select>
+    <div id="fb" style="margin-top:12px"><p class="hint">Ladataan…</p></div>
+  </section>
+  <section>
     <h2>Tuo vastaukset neuvontapalvelun viennistä</h2>
     <p class="hint">Valitse säievienti (JSON). Tiedosto luetaan selaimessa ja lähetetään apurille, joka
       pseudonymisoi tekstit ja tallentaa vain vastausindeksin. Alkuperäistä tiedostoa ei tallenneta.
@@ -106,7 +112,27 @@ $("#go").onclick = async () => {
     $("#msg").className = "err"; $("#msg").textContent = "Virhe: " + e.message;
   } finally { $("#go").disabled = false; }
 };
-load();
+async function loadFeedback() {
+  const days = $("#days").value;
+  const r = await fetch("/api/yllapito/palaute" + (days ? `?paivat=${days}` : ""));
+  const d = await r.json();
+  if (!r.ok) { $("#fb").innerHTML = `<p class="err">${esc(d.detail)}</p>`; return; }
+  const entries = Object.entries(d.hankkeet);
+  if (!entries.length) { $("#fb").innerHTML = `<p class="hint">Ei palautetta tältä ajalta.</p>`; return; }
+  $("#fb").innerHTML = entries.map(([id, h]) => {
+    const nimi = (state.hankkeet.find(x => x.id === id) || {}).nimi || id;
+    return `<h2 style="margin-top:8px">${esc(nimi)}</h2>
+      <p>${h.yhteensa} arviota · <strong>${h.osuus} %</strong> hyödyllisiä · luonnos keskimäärin ${h.keskikesto_s} s</p>
+      ${h.syyt.length ? `<table><thead><tr><th>Korjattavaa</th><th>Kertaa</th></tr></thead><tbody>
+        ${h.syyt.map(x => `<tr><td>${esc(x.syy)}</td><td>${x.maara}</td></tr>`).join("")}</tbody></table>` : ""}
+      ${h.kommentit.length ? `<label>Uusimmat kommentit</label><table><tbody>
+        ${h.kommentit.map(c => `<tr><td style="white-space:nowrap">${new Date(c.ts * 1000).toLocaleDateString("fi-FI")}</td>
+          <td>${c.arvio === "hyva" ? "Kyllä" : "Ei kovin"}</td><td>${esc(c.teksti)}${c.syyt.length ? `<br><span class="hint">${esc(c.syyt.join(", "))}</span>` : ""}</td></tr>`).join("")}
+        </tbody></table>` : ""}`;
+  }).join("");
+}
+$("#days").onchange = loadFeedback;
+load().then(loadFeedback);
 </script>
 </body>
 </html>

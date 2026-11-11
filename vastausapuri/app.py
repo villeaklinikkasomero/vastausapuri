@@ -23,6 +23,7 @@ from .config import get_settings
 from .llm import describe_error, error_code, get_llm
 from .hanke import load_all
 from .pipeline import MODES, Assistant
+from . import palaute
 from .tutkimus import EuropePMC
 from .tyokalut.tuo_vastaukset import default_out, import_data
 
@@ -332,3 +333,42 @@ def admin_import(body: ImportBody, request: Request) -> dict:
         raise HTTPException(status_code=400, detail=str(e)) from None
     assistants.cache_clear()  # uusi indeksi käyttöön heti
     return {"raportti": report}
+
+
+# --- Palaute luonnoksista -----------------------------------------------------------------
+
+class FeedbackBody(BaseModel):
+    hanke: str
+    tila: str = "luonnos"
+    arvio: str  # "hyva" | "huono"
+    syyt: list[str] = Field(default_factory=list, max_length=10)
+    kommentti: str = Field(default="", max_length=2000)
+    meta: dict = Field(default_factory=dict)
+
+
+@app.get("/api/palaute/syyt")
+def feedback_reasons() -> dict:
+    return {"syyt": [{"id": k, "teksti": v} for k, v in palaute.REASONS.items()]}
+
+
+@app.post("/api/palaute")
+def feedback(body: FeedbackBody, request: Request) -> dict:
+    _, allowed = _allowed(request)
+    if body.hanke not in allowed:
+        raise HTTPException(status_code=403, detail="Ei oikeutta tähän hankkeeseen.")
+    s = get_settings()
+    try:
+        palaute.save(palaute.path(s.data_dir, s.hankkeet_dir), hanke=body.hanke, mode=body.tila,
+                     rating=body.arvio, reasons=body.syyt, comment=body.kommentti, meta=body.meta,
+                     safe_domains=assistants()[body.hanke].h.safe_domains)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}
+
+
+@app.get("/api/yllapito/palaute")
+def feedback_summary(request: Request, paivat: int | None = None) -> dict:
+    if not _is_admin(_session_user(request)):
+        raise HTTPException(status_code=403, detail="Vain ylläpitäjille.")
+    s = get_settings()
+    return {"hankkeet": palaute.summary(palaute.load(palaute.path(s.data_dir, s.hankkeet_dir)), paivat)}

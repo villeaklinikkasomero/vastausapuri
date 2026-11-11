@@ -70,6 +70,15 @@ Tiivistelmät on tarkistettu 10.11.2026 (kenttä `tarkistettu`). Ne kannattaa k�
 perehtyneen kanssa ja päivittää, kun lakeja muutetaan. Uuden lakikohteen voi lisätä hankkeen tai
 yhteiseen `katalogi.json`-tiedostoon samalla rakenteella.
 
+## Palaute
+
+Jokaisen luonnoksen alla kysytään "Oliko luonnoksesta apua?". Vastaaja valitsee Kyllä tai Ei kovin,
+voi merkitä syitä (asiavirhe, puuttuva ohjaus, turvallisuus, sävy, pituus, ei vastannut, linkit, kieli) ja
+kirjoittaa kommentin. Tallennetaan vain arvio, syyt, pseudonymisoitu kommentti ja tekniset tiedot (hanke,
+tila, mallit, huomioiden ja linkkien määrä, kesto) tiedostoon `<APURI_DATA_DIR>/palaute.jsonl`. Kysymystä,
+luonnosta tai vastaajan nimeä ei tallenneta. Yhteenveto (hyödyllisten osuus, yleisimmät korjattavat ja
+uusimmat kommentit) näkyy ylläpitosivulla.
+
 ## Hankkeet
 
 ```

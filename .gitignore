@@ -10,3 +10,4 @@ raportti*.md
 *threads*.json
 *vienti*.json
 *.jsonl
+palaute.jsonl

@@ -67,6 +67,14 @@
   details { margin-top: 16px; } summary { cursor: pointer; color: var(--muted); }
   footer { color: var(--muted); font-size: 12px; margin-top: 24px; }
   .err { color: var(--warn); }
+  .feedback { margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  .feedback .q { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+  .feedback button.choice { background: var(--panel); color: var(--ink); border: 1px solid var(--line); padding: 6px 12px; }
+  .feedback button.choice.on { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .chips label { font-size: 13px; border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; cursor: pointer;
+    display: inline-flex; gap: 6px; align-items: center; background: var(--panel); }
+  .feedback textarea { min-height: 60px; font-size: 14px; }
   .progress { padding: 8px 0; }
   .progress h2 { display: flex; align-items: center; gap: 10px; }
   .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line);
@@ -125,6 +133,7 @@ let state = {mode: "luonnos", status: null};
 
 function store(k, v) { try { v === undefined ? null : localStorage.setItem(k, v); return localStorage.getItem(k); } catch { return null; } }
 
+fetch("/api/palaute/syyt").then(r => r.json()).then(d => state.reasons = d.syyt).catch(() => state.reasons = []);
 fetch("/api/status").then(r => r.json()).then(s => {
   state.status = s;
   $("#status").textContent = `${s.user ? s.user + " · " : ""}${s.provider} · ${s.drafter.replace(/^eu\.anthropic\./, "")} + ${s.checker.replace(/^eu\.anthropic\./, "")}`;
@@ -231,6 +240,43 @@ async function run() {
   } finally { $("#go").disabled = false; }
 }
 
+function renderFeedback(d) {
+  const box = $("#feedback"); if (!box) return;
+  const seconds = (performance.now() - (state.started || performance.now())) / 1000;
+  const meta = {followup: d.followup, models: d.models, issues: (d.issues || []).length,
+    checks: (d.draft.match(/\[TARKISTA:[^\]]*\]/g) || []).length, links: d.links.length,
+    research: (d.research || []).length, signals: [...new Set(d.signals.map(x => x.kind))], seconds};
+  let rating = null;
+  box.innerHTML = `<div class="feedback">
+    <div class="q"><span>Oliko ${d.mode === "luonnos" ? "luonnoksesta" : "ehdotuksista"} apua?</span>
+      <button type="button" class="choice" data-r="hyva">Kyllä</button>
+      <button type="button" class="choice" data-r="huono">Ei kovin</button></div>
+    <div id="fbMore" hidden>
+      <div class="chips">${(state.reasons || []).map(x => `<label><input type="checkbox" value="${esc(x.id)}">${esc(x.teksti)}</label>`).join("")}</div>
+      <textarea id="fbText" maxlength="1000" placeholder="Mitä korjasit tai mitä puuttui? (valinnainen) Älä kirjoita kysyjän tietoja."></textarea>
+      <div class="row"><button type="button" id="fbSend">Lähetä palaute</button><span class="hint">Kysymystä tai luonnosta ei tallenneta.</span></div>
+    </div></div>`;
+  box.querySelectorAll("button.choice").forEach(b => b.onclick = () => {
+    rating = b.dataset.r;
+    box.querySelectorAll("button.choice").forEach(x => x.classList.toggle("on", x === b));
+    $("#fbMore").hidden = false;
+  });
+  $("#fbSend").onclick = async () => {
+    const reasons = [...box.querySelectorAll(".chips input:checked")].map(x => x.value);
+    $("#fbSend").disabled = true;
+    try {
+      const r = await fetch("/api/palaute", {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({hanke: d.hanke, tila: d.mode, arvio: rating, syyt: reasons,
+                              kommentti: $("#fbText").value, meta})});
+      if (!r.ok) throw new Error((await r.json()).detail || r.status);
+      box.innerHTML = `<div class="feedback"><span class="hint">Kiitos palautteesta! Sen avulla apuria parannetaan.</span></div>`;
+    } catch (e) {
+      $("#fbSend").disabled = false;
+      box.querySelector(".row .hint").textContent = "Lähetys ei onnistunut: " + e.message;
+    }
+  };
+}
+
 async function copy(text, el) {
   try { await navigator.clipboard.writeText(text); el.textContent = "Kopioitu"; }
   catch { el.textContent = "Kopiointi ei onnistunut"; }
@@ -251,6 +297,7 @@ function render(d) {
     h += `<h3>Vastausluonnos</h3><textarea id="draft">${esc(d.draft)}</textarea>
       <div class="row"><button id="copyDraft">Kopioi luonnos</button><span class="hint" id="copyDraftMsg"></span>
       ${checks.length ? `<span class="hint">· ${checks.length} [TARKISTA]-kohtaa poistettava ennen lähetystä</span>` : ""}</div>`;
+    h += `<div id="feedback"></div>`;
     h += `<h3>Tarkastajan huomiot</h3>`;
     h += d.issues.length ? d.issues.map(i => `<div class="issue ${esc(i.vakavuus)}"><strong>${esc(i.vakavuus || "")}</strong> · ${esc(i.kuvaus)}
         ${i.kohta ? `<br><q>${esc(i.kohta)}</q>` : ""}${i.ehdotus ? `<br>Ehdotus: ${esc(i.ehdotus)}` : ""}</div>`).join("")
@@ -279,6 +326,7 @@ function render(d) {
     </label>`;
   });
   h += `<div class="row"><button class="ghost" id="copyLinks">Kopioi valitut linkit</button><span class="hint" id="copyLinksMsg"></span></div>`;
+  if (d.mode !== "luonnos") h += `<div id="feedback"></div>`;
   if (d.outline.length) h += `<h3>Ehdotettu runko</h3><ol>${d.outline.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
   if (d.notes.length) h += `<h3>Muut huomiot</h3><ul>${d.notes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
   if (d.rejected.length) h += `<details><summary>Tarkastajan hylkäämät linkit (${d.rejected.length})</summary><ul>${
@@ -293,6 +341,7 @@ function render(d) {
   h += `<footer>${esc(d.models.provider)} · ${d.timings_ms.tutkimushaku ? `tutkimushaku ${(d.timings_ms.tutkimushaku / 1000).toFixed(1)} s · ` : ""}luonnostelija ${(d.timings_ms.luonnostelija / 1000).toFixed(1)} s · tarkastaja ${(d.timings_ms.tarkastaja / 1000).toFixed(1)} s</footer>`;
   $("#out").innerHTML = h;
   if ($("#copyDraft")) $("#copyDraft").onclick = () => copy($("#draft").value, $("#copyDraftMsg"));
+  renderFeedback(d);
   $("#copyLinks").onclick = () => {
     const sel = [...document.querySelectorAll(".link input:checked")].map(c => d.links[+c.dataset.i]);
     copy(sel.map(l => `${l.title}: ${l.url}`).join("\n"), $("#copyLinksMsg"));
