@@ -211,7 +211,13 @@ def format_examples(examples: list[Answer], own: str | None) -> str:
     for i, a in enumerate(examples, 1):
         tag = "OMA" if own and a.vastaaja == own else "MUU VASTAAJA"
         head = f"Esimerkki {i} ({tag})" + (f", aihe: {a.aihe}" if a.aihe else "")
-        out.append(f"{head}\n{a.text.strip()}")
+        body = ""
+        if a.konteksti:
+            body += f"Aiempi keskustelu (lyhennetty):\n{a.konteksti[-800:].strip()}\n\n"
+        if a.kysymys:
+            body += f"Kysymys:\n{a.kysymys[:1500].strip()}\n\nVastaus:\n"
+        body += a.text.strip()[:3500]
+        out.append(f"{head}\n{body}")
     return "\n\n---\n\n".join(out)
 
 
@@ -252,7 +258,9 @@ def draft_user(question: str, candidates: list[CatalogItem], sources: list[Catal
     if research:
         parts.append(f"TUTKIMUSLÄHTEET (Europe PMC, englanninkieliset tiivistelmät):\n{research}")
     if examples:
-        parts.append(f"ESIMERKKIVASTAUKSIA (pseudonymisoituja):\n{format_examples(examples, own)}")
+        parts.append("ESIMERKKEJÄ TYÖRYHMÄN AIEMMISTA VASTAUKSISTA (pseudonymisoituja; ota mallia sävystä, "
+                     "rakenteesta ja ohjauksista, älä kopioi tietoja sellaisenaan):\n"
+                     + format_examples(examples, own))
     return "\n\n".join(parts)
 
 

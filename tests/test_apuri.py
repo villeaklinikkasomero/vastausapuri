@@ -479,3 +479,78 @@ def test_expert_list_and_rules_reach_models_and_greeting_is_added(doping):
     checker_sys, checker_user = next(c for c in llm.calls if "TARKASTAJA" in c[0] and "ongelmat" in c[0])
     assert "aikarajan" in checker_sys and "Asiantuntijalista" in checker_user
     assert res.draft.startswith("Hei, kiitos kysymyksestäsi.")
+
+
+# --- Säieviennin tuonti ja ylläpito ---------------------------------------------------
+
+THREADS = [
+    {"thread_id": 1, "service_name": "Doping", "service_type": 3, "created_on": "2026-01-01T10:00:00Z",
+     "questions": [
+         {"id": 11, "title": "x", "created_on": "2026-01-01T10:00:00Z", "classifications": ["1 Haittavaikutukset"],
+          "question": "<p>Olen Pekka, 30v. Saako testoa k&auml;ytt&auml;&auml; jos on rytmih&auml;iri&ouml;it&auml;?</p>",
+          "answers": [{"status": "READ_BY_CUSTOMER", "published_on": "2026-01-02T10:00:00Z",
+                       "answer": "<p>Hei, kiitos kysymyksest&auml;si.</p><p>Syd&auml;nterveys kannattaa tutkituttaa "
+                                 "ennen kuin mit&auml;&auml;n aloittaa. Lue lis&auml;&auml; "
+                                 "<a href=\"https://dopinglinkki.fi/tietopankki/dopingaineet/anaboliset-steroidit-ja-testosteroni\">t&auml;&auml;lt&auml;</a>.</p>"
+                                 "<p>Terveisin,</p><p>Dopinglinkin ty&ouml;ryhm&auml;</p>"
+                                 "<p>Meille on todella t&auml;rke&auml;&auml; saada palautetta ty&ouml;st&auml;mme.</p>"
+                                 "<p>Palautteesi on t&auml;ysin anonyymi.</p>"}]},
+         {"id": 12, "title": "x", "created_on": "2026-01-02T12:00:00Z", "classifications": None,
+          "question": "<p>Kiitos! Ent&auml; jos ultra on ok?</p>",
+          "answers": [{"status": "READ", "published_on": "2026-01-03T10:00:00Z",
+                       "answer": "<p>Hei.</p><p>Hyv&auml; ett&auml; ultra on tehty, silti rytmih&auml;iri&ouml;t kannattaa "
+                                 "kertoa l&auml;&auml;k&auml;rille ja seurata.</p><p>Terveisin, Dopinglinkin ty&ouml;ryhm&auml;</p>"}]}]},
+    {"thread_id": 2, "service_name": "Nuoret", "service_type": 4, "created_on": "2026-01-01T10:00:00Z",
+     "questions": [{"id": 21, "title": "y", "created_on": "x", "classifications": [], "question": "<p>Moi</p>",
+                    "answers": [{"answer": "<p>Moikka! " + "Tekstiä. " * 20 + "</p><p>Tuuli - Varjomaailman aikuinen</p>",
+                                 "published_on": "2026-01-01", "status": "READ"}]}]},
+]
+
+
+def test_thread_import(tmp_path):
+    from vastausapuri.tyokalut.tuo_vastaukset import import_data, thread_records
+    out = tmp_path / "v.jsonl"
+    report = import_data("dopinglinkki", THREADS, out, with_questions=True, min_len=20)
+    recs = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines()]
+    assert len(recs) == 2  # vain Doping-palvelu (hanke.toml: palvelu = "Doping")
+    first, second = recs
+    assert "palautetta" not in first["text"] and first["text"].endswith("Dopinglinkin työryhmä")
+    assert "Pekka" not in first["kysymys"] and "rytmihäiriöitä" in first["kysymys"]
+    assert first["aihe"] == "Haittavaikutukset" and first["links"]
+    assert second["jatko"] and "Kysyjä:" in second["konteksti"] and "Pekka" not in second["konteksti"]
+    assert "Tuotu 2 vastausta (1 jatkokysymyksiin)" in report and "| kyllä |" in report
+    # Ilman --kysymykset kysymyksiä ei tallenneta
+    import_data("dopinglinkki", THREADS, out, with_questions=False, min_len=20)
+    assert all(not json.loads(l)["kysymys"] for l in out.read_text(encoding="utf-8").splitlines())
+    # Allekirjoituksesta tunnistetaan vastaaja
+    assert thread_records(THREADS, "Nuoret", True)[0]["vastaaja"] == "tuuli"
+
+
+def test_imported_examples_reach_drafter(tmp_path):
+    from vastausapuri.tyokalut.tuo_vastaukset import import_data
+    import_data("dopinglinkki", THREADS, tmp_path / "dopinglinkki" / "vastaukset.jsonl", with_questions=True, min_len=20)
+    h = load_hanke(HANKKEET, "dopinglinkki", data_dir=tmp_path)
+    llm = CapturingLLM()
+    res, _ = make(h, llm).run("Voiko testosteronia käyttää, jos on rytmihäiriöitä?", mode="luonnos")
+    draft_user = next(c[1] for c in llm.calls if "<luonnos>" in c[0])
+    assert "ESIMERKKEJÄ TYÖRYHMÄN" in draft_user and "Kysymys:" in draft_user
+    assert res.examples_used
+
+
+def test_admin_import_requires_admin(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("APURI_ADMINS", "ville")
+    c = client(monkeypatch, "ville:pw,muu:pw")
+    login(c, "muu", "pw")
+    assert c.get("/api/yllapito/tila").status_code == 403
+    c2 = client(monkeypatch, "ville:pw,muu:pw")
+    login(c2, "ville", "pw")
+    assert c2.get("/api/status").json()["admin"] is True
+    assert c2.get("/yllapito").status_code == 200
+    r = c2.post("/api/yllapito/tuo", json={"hanke": "dopinglinkki", "kysymykset": True, "data": THREADS})
+    assert r.status_code == 200 and "Tuotu" in r.json()["raportti"]
+    assert (tmp_path / "dopinglinkki" / "vastaukset.jsonl").exists()
+    tila = c2.get("/api/yllapito/tila").json()
+    assert tila["hankkeet"][0]["vastauksia"] >= 1
+    bad = c2.post("/api/yllapito/tuo", json={"hanke": "dopinglinkki", "palvelu": "Eiole", "data": THREADS})
+    assert bad.status_code == 400 and "Viennin palvelut" in bad.json()["detail"]

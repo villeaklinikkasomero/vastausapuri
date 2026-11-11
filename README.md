@@ -98,19 +98,25 @@ Renderissä katalogi päivitetään sivustolta jokaisen julkaisun yhteydessä. K
 
 ## Vanhat vastaukset (vastaajan ääni ja ohjausmallit)
 
+**Ylläpitosivulla** (`/yllapito`, vain `APURI_ADMINS`-käyttäjille) ladataan neuvontapalvelun säievienti
+(JSON). Apuri poimii hankkeen palvelun säikeet (`hanke.toml`: `[vastaukset] palvelu = "Doping"`), siistii
+HTML:n, poistaa palautepyynnöt, pseudonymisoi tekstit ja tallentaa indeksin levylle (`APURI_DATA_DIR`).
+Alkuperäistä tiedostoa ei tallenneta, ja uusi tuonti korvaa vanhan indeksin. Raportissa näkyvät määrät,
+aiheet, vastaajat ja ohjaukset sekä linkit, joita ei vielä ole katalogissa.
+
+- Kysymykset tuodaan vain, jos "Kysymykset on siistitty tunnisteista" on valittu. Silloin haku vertaa uutta
+  kysymystä vanhoihin, ja esimerkit annetaan mallille muodossa kysymys + vastaus (+ aiempi keskustelu
+  jatkokysymyksissä).
+- Vastaaja tunnistetaan allekirjoituksesta (esim. "Tuuli - Varjomaailman aikuinen"), jos sellainen on.
+
+Komentorivillä sama onnistuu näin:
+
 ```bash
-python -m vastausapuri.tyokalut.tuo_vastaukset dopinglinkki vienti.csv \
-  --vastaus-sarake vastaus --vastaaja-sarake vastaaja --aihe-sarake kategoria \
-  --vastaajakartta "Ville S.=ville,Liisa K.=liisa" --raportti raportti.md
+python -m vastausapuri.tyokalut.tuo_vastaukset dopinglinkki neuvonta-threads.json --kysymykset --raportti raportti.md
 ```
 
-- Kysymyksiä ei tuoda. Vastaukset pseudonymisoidaan, ja palvelun omat linkit säilyvät.
-- `--vastaajakartta` yhdistää kannan vastaajatunnisteen kirjautumistunnukseen ("minun tyylilläni").
-- Raportti näyttää vastaajakohtaiset määrät ja yleisimmät ohjaukset. Mukana ovat myös linkit, joita ei
-  vielä ole katalogissa.
-- **Tulos `vastaukset.jsonl` ei kuulu Gitiin** (se on `.gitignore`-listalla). Renderissä se sijoitetaan
-  levylle (`APURI_DATA_DIR`, ks. `render.yaml`).
-- Aja tuonti vain säätiön omassa ympäristössä, esim. Renderin Shell-välilehdellä.
+Myös CSV- ja JSON-taulukot toimivat (`--vastaus-sarake`, `--vastaaja-sarake` ...). **Tulos `vastaukset.jsonl`
+ei kuulu Gitiin** (`.gitignore`).
 
 ## Käynnistys paikallisesti
 
@@ -144,7 +150,8 @@ Huomioita:
 | `APURI_CHECKER_MODEL` | `eu.anthropic.claude-sonnet-4-6` | Tarkastaja |
 | `APURI_USERS` | – | `nimi:salasana[:hanke1\|hanke2],...`; ilman hankeosaa kaikki hankkeet. Pakollinen Bedrock-tilassa |
 | `APURI_SECRET` | arvottu | Istuntojen allekirjoitusavain (Render arpoo) |
-| `APURI_DATA_DIR` | – | Vanhojen vastausten kansio (`<kansio>/<hanke>/vastaukset.jsonl`) |
+| `APURI_DATA_DIR` | `/var/data` (Render) | Vanhojen vastausten kansio (`<kansio>/<hanke>/vastaukset.jsonl`), Renderin levy |
+| `APURI_ADMINS` | – | Ylläpitäjät (pilkuin eroteltuina), pääsy `/yllapito`-sivulle |
 | `APURI_TUTKIMUS` | `europepmc` (Bedrock), `pois` (mock) | Tutkimushaku päälle/pois koko palvelussa |
 | `APURI_HANKKEET` | `hankkeet` | Hankekansio |
 | `APURI_MAX_LINKS` | `5` | Linkkien enimmäismäärä (kriisipalvelut tulevat lisäksi) |

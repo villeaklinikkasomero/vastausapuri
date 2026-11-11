@@ -1,8 +1,10 @@
 """Vanhat vastaukset hakuindeksinä: esimerkit sisällöstä, sävystä ja ohjauksista.
 
-Tiedosto hankkeet/<id>/vastaukset.jsonl syntyy tuontityökalulla
-(vastausapuri/tyokalut/tuo_vastaukset.py), joka pseudonymisoi tekstit.
-Raakoja kysymyksiä indeksiin ei tallenneta.
+Tiedosto <APURI_DATA_DIR tai hankkeet>/<hanke>/vastaukset.jsonl syntyy tuontityökalulla
+(vastausapuri/tyokalut/tuo_vastaukset.py tai apurin ylläpitosivu), joka pseudonymisoi tekstit.
+
+Jos aineiston kysymykset on siistitty tunnisteista, ne voidaan tuoda mukaan (kenttä "kysymys").
+Silloin uutta kysymystä verrataan vanhoihin kysymyksiin, mikä löytää osuvimmat esimerkit.
 """
 from __future__ import annotations
 
@@ -18,9 +20,11 @@ class Answer:
     id: str
     text: str  # pseudonymisoitu vastaus
     vastaaja: str = ""  # vastaajan tunniste (vastaa kirjautumistunnusta, jos oma tyyli halutaan)
-    aihe: str = ""  # valinnainen yleistetty aihe/tiivistelmä kysymyksestä
+    aihe: str = ""  # luokittelu tai yleistetty aihe
     pvm: str = ""
     links: tuple[str, ...] = field(default_factory=tuple)
+    kysymys: str = ""  # pseudonymisoitu kysymys (vain jos aineisto on siistitty)
+    konteksti: str = ""  # aiempi keskustelu, jos vastaus on jatkokysymykseen
 
 
 def load_answers(path: str | Path) -> list[Answer]:
@@ -40,6 +44,8 @@ def load_answers(path: str | Path) -> list[Answer]:
                 aihe=r.get("aihe", ""),
                 pvm=r.get("pvm", ""),
                 links=tuple(r.get("links", [])),
+                kysymys=r.get("kysymys", ""),
+                konteksti=r.get("konteksti", ""),
             )
         )
     return out
@@ -47,7 +53,8 @@ def load_answers(path: str | Path) -> list[Answer]:
 
 class AnswerIndex(TextIndex[Answer]):
     def __init__(self, answers: list[Answer]):
-        super().__init__(answers, [f"{a.aihe} {a.aihe} {a.text}" for a in answers])
+        # Kysymys painaa eniten (samankaltainen kysymys = hyödyllisin esimerkki), sitten aihe, sitten vastaus
+        super().__init__(answers, [f"{a.kysymys} {a.kysymys} {a.aihe} {a.aihe} {a.text}" for a in answers])
         self.answers = self.objects
 
     def respondents(self) -> set[str]:

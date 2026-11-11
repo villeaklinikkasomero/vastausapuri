@@ -24,6 +24,7 @@ from .llm import describe_error, error_code, get_llm
 from .hanke import load_all
 from .pipeline import MODES, Assistant
 from .tutkimus import EuropePMC
+from .tyokalut.tuo_vastaukset import default_out, import_data
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 COOKIE = "apuri_session"
@@ -198,7 +199,7 @@ def status(request: Request) -> dict:
     a = assistants()
     s = get_settings()
     return {"provider": s.provider, "drafter": s.drafter_model, "checker": s.checker_model,
-            "user": user, "modes": list(MODES), "research": s.research,
+            "user": user, "modes": list(MODES), "research": s.research, "admin": _is_admin(user),
             "hankkeet": [a[h].h.summary() for h in allowed]}
 
 
@@ -274,3 +275,60 @@ def _explain(e: Exception) -> str:
     s = get_settings()
     return (f"{describe_error(e)} (luonnostelija {s.drafter_model}, tarkastaja {s.checker_model}, "
             f"alue {s.aws_region}) {hint}").strip()
+
+
+# --- Ylläpito: vanhojen vastausten tuonti -------------------------------------------------
+
+def _is_admin(user: str | None) -> bool:
+    admins = {a.strip() for a in (os.getenv("APURI_ADMINS") or "").split(",") if a.strip()}
+    if not _credentials():  # paikallinen kehitys ilman käyttäjiä
+        return get_settings().provider == "mock"
+    return bool(user) and user in admins
+
+
+@app.get("/yllapito")
+def admin_page(request: Request):
+    if not _is_admin(_session_user(request)):
+        raise HTTPException(status_code=403, detail="Vain ylläpitäjille (APURI_ADMINS).")
+    return FileResponse(STATIC / "yllapito.html")
+
+
+@app.get("/api/yllapito/tila")
+def admin_status(request: Request) -> dict:
+    if not _is_admin(_session_user(request)):
+        raise HTTPException(status_code=403, detail="Vain ylläpitäjille.")
+    s = get_settings()
+    out = []
+    for hid, a in assistants().items():
+        path = default_out(hid)
+        out.append({
+            "id": hid, "nimi": a.h.nimi, "vastauksia": len(a.h.answers.answers),
+            "palvelu": a.h.config.get("vastaukset", {}).get("palvelu", ""),
+            "paivitetty": int(path.stat().st_mtime) if path.exists() else None,
+        })
+    return {"data_dir": str(s.data_dir) if s.data_dir else None, "hankkeet": out}
+
+
+class ImportBody(BaseModel):
+    hanke: str
+    palvelu: str | None = None
+    kysymykset: bool = False
+    data: list = Field(max_length=200000)
+
+
+@app.post("/api/yllapito/tuo")
+def admin_import(body: ImportBody, request: Request) -> dict:
+    """Pseudonymisoi ja tallentaa vastausindeksin palvelimelle. Alkuperäistä tiedostoa ei tallenneta."""
+    if not _is_admin(_session_user(request)):
+        raise HTTPException(status_code=403, detail="Vain ylläpitäjille.")
+    s = get_settings()
+    if s.provider == "bedrock" and not s.data_dir:
+        raise HTTPException(status_code=400, detail="APURI_DATA_DIR puuttuu: ota Renderin levy käyttöön ensin.")
+    if body.hanke not in assistants():
+        raise HTTPException(status_code=404, detail="Tuntematon hanke.")
+    try:
+        report = import_data(body.hanke, body.data, default_out(body.hanke), body.palvelu, body.kysymykset)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    assistants.cache_clear()  # uusi indeksi käyttöön heti
+    return {"raportti": report}

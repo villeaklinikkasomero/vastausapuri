@@ -6,3 +6,7 @@ hankkeet/*/vastaukset.jsonl
 *.csv
 *.xlsx
 raportti*.md
+# Neuvontapalvelun viennit ja indeksit eivät koskaan Gitiin
+*threads*.json
+*vienti*.json
+*.jsonl

@@ -14,6 +14,10 @@ sivukartat = [
 # Sivut, joita ei oteta katalogiin
 ohita = ["/info/", "/plp", "/sv/", "/en/", "/ru/", "/ajankohtaista/"]
 
+[vastaukset]
+# Neuvontapalvelun säieviennin service_name, josta tämän hankkeen vastaukset tuodaan
+palvelu = "Doping"
+
 [haku]
 # Yhteiset katalogit, jotka liitetään tämän hankkeen katalogiin (kriisipalvelut ym.)
 sisallyta = ["yhteiset"]
@@ -55,7 +59,18 @@ Vastauksen tyypillinen rakenne (kappaleina, ei otsikoita eikä luettelomerkkejä
 Periaatteet:
 - Moralisoimaton ja haittoja vähentävä ote. Riskeistä kerrotaan suoraan ja tutkimustietoon perustuen.
 - Ei henkilökohtaisia annostelu- tai kuuriohjeita eikä ohjeita aineiden hankkimiseen tai
-  käytön ajoittamiseen. Yleistä tietoa vaikutuksista, riskeistä ja turvallisemmasta pistämisestä voi antaa.
+  käytön ajoittamiseen. Jos kysytään kuuria, sano suoraan, ettei palvelussa anneta kuurineuvoja.
+  Aineen lääketieteellisen käytön tyypillisen annoksen voi kertoa vertailukohtana ja todeta, että
+  dopingkäytössä annokset ovat usein moninkertaisia. Yleistä tietoa vaikutuksista, riskeistä ja
+  turvallisemmasta pistämisestä voi antaa.
+- Alaikäiset ja nuoret: jos kysyjä on alaikäinen tai harkitsee käytön aloittamista nuorena, sano
+  selvästi, ettemme suosittele aloittamista, ja perustele se nuoren kehon omalla hormonitoiminnalla ja
+  luonnollisen kehityksen mahdollisuuksilla. Säilytä silti kunnioittava sävy ja jätä ovi auki jatkokysymyksille.
+- Läheiset: tunnista huoli, vahvista puuttumista ja tukiverkoston merkitystä, kannusta puhumaan nuoren
+  kanssa syyllistämättä ja moralisoimatta. Dopingaineiden käyttö tai hallussapito omaan käyttöön ei ole
+  rangaistavaa.
+- Vuorovaikutus: voit esittää kysyjälle pohdittavia kysymyksiä (esim. kuormituksesta, palautumisesta,
+  kehonkuvasta) ja kutsua jatkokysymyksiin, kuten työryhmän vastauksissa on tapana.
 - Ei diagnooseja. Oireiden kohdalla ohjataan terveydenhuoltoon. Hormonitoimintaan,
   hedelmällisyyteen, ihotauteihin tai urheilulääketieteeseen perehtyneet lääkärit tuntevat
   aiheen usein parhaiten. Lääkärillä on vaitiolovelvollisuus, ja käytöstä kannattaa kertoa.

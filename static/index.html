@@ -86,7 +86,7 @@
 <body>
 <header>
   <h1>Vastausapuri</h1>
-  <small><span id="status">…</span> · <a href="/logout">Kirjaudu ulos</a></small>
+  <small><span id="status">…</span><span id="adminLink"></span> · <a href="/logout">Kirjaudu ulos</a></small>
 </header>
 <main>
   <section>
@@ -128,6 +128,7 @@ function store(k, v) { try { v === undefined ? null : localStorage.setItem(k, v)
 fetch("/api/status").then(r => r.json()).then(s => {
   state.status = s;
   $("#status").textContent = `${s.user ? s.user + " · " : ""}${s.provider} · ${s.drafter.replace(/^eu\.anthropic\./, "")} + ${s.checker.replace(/^eu\.anthropic\./, "")}`;
+  if (s.admin) $("#adminLink").innerHTML = ' · <a href="/yllapito">Ylläpito</a>';
   $("#hanke").innerHTML = s.hankkeet.map(h => `<option value="${esc(h.id)}">${esc(h.nimi)}</option>`).join("");
   const saved = store("apuri.hanke");
   if (saved && s.hankkeet.some(h => h.id === saved)) $("#hanke").value = saved;
