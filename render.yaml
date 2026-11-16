@@ -12,7 +12,7 @@ services:
     # käytetään repossa olevaa katalogia (julkaisu ei kaadu).
     buildCommand: >-
       pip install -r requirements.txt &&
-      (python -m vastausapuri.tyokalut.rakenna_katalogi --kaikki --kirjoita || echo "Katalogin päivitys ohitettiin")
+      (timeout 900 python -m vastausapuri.tyokalut.rakenna_katalogi --kaikki --kirjoita --viive 0.2 || echo "Katalogin päivitys ohitettiin")
     startCommand: uvicorn vastausapuri.app:app --host 0.0.0.0 --port $PORT --proxy-headers --no-access-log
     healthCheckPath: /healthz
     disk:                      # vanhojen vastausten indeksi (pseudonymisoitu), ei Gitissä

@@ -780,3 +780,23 @@ def test_missing_pages_are_not_offered(tmp_path):
 def test_personal_signature_with_own_closing_is_kept(paihde):
     sig = "Ystävällisin terveisin,\n\nLotta Esimerkki\nproviisori"
     assert paihde.signature_for(sig) == sig
+
+
+def test_catalog_build_stops_on_errors_and_keeps_catalog(monkeypatch, tmp_path):
+    import shutil
+    from vastausapuri.tyokalut import rakenna_katalogi as rk
+    shutil.copytree(HANKKEET / "paihdelinkki", tmp_path / "paihdelinkki")
+    before = (tmp_path / "paihdelinkki" / "katalogi.json").read_text(encoding="utf-8")
+    monkeypatch.setattr(rk, "ROOT", tmp_path)
+    monkeypatch.setattr(rk, "sitemap_urls", lambda url, depth=0: [f"https://paihdelinkki.fi/s{i}/" for i in range(300)])
+    calls = []
+
+    def slow_fail(url, timeout=10):
+        calls.append(url)
+        raise TimeoutError("timed out")
+    monkeypatch.setattr(rk, "fetch", slow_fail)
+    assert rk.build("paihdelinkki", write=True, delay=0) is False
+    assert len(calls) == 15  # keskeytyy peräkkäisten virheiden jälkeen
+    assert (tmp_path / "paihdelinkki" / "katalogi.json").read_text(encoding="utf-8") == before
+    calls.clear()
+    assert rk.build("paihdelinkki", write=True, delay=0, time_limit=0) is False and calls == []

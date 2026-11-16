@@ -37,7 +37,7 @@ BLOCK_TAGS = {"p", "h1", "h2", "h3", "h4", "li", "br", "div", "section", "articl
 MAX_CONTENT = 4000
 
 
-def fetch(url: str, timeout: int = 20) -> str:
+def fetch(url: str, timeout: int = 10) -> str:
     url = quote(url, safe=":/?&=%#+,;@!$'()*~")  # ääkköset osoitteessa
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "fi"})
     with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 (omat sivustot)
@@ -148,7 +148,7 @@ def norm(url: str) -> str:
     return unquote(url).lower().rstrip("/")
 
 
-def build(hanke_id: str, write: bool, delay: float) -> bool:
+def build(hanke_id: str, write: bool, delay: float, time_limit: float = 240, max_errors: int = 15) -> bool:
     d = ROOT / hanke_id
     cfg = tomllib.loads((d / "hanke.toml").read_text(encoding="utf-8"))
     h = cfg.get("hanke", {})
@@ -173,14 +173,28 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
     for it in existing:
         if urlparse(it["url"]).netloc.lower().removeprefix("www.") == site_host and it["url"] not in urls:
             urls.append(it["url"])
+    print(f"[{hanke_id}] haetaan {len(urls)} sivua (aikaraja {time_limit:.0f} s)", flush=True)
     if not urls:
         print(f"[{hanke_id}] ei sivuja haettavaksi", file=sys.stderr)
         return False
 
     ok = 0
+    attempted = 0
+    errors_in_row = 0
+    deadline = time.monotonic() + time_limit
     seen: set[str] = set()
     stats = {"päivitetty": 0, "uusi": 0, "puuttuu": 0}
     for url in urls:
+        # Build ei saa jumittua hitaan tai hakuja estävän sivuston takia
+        if time.monotonic() > deadline:
+            print(f"[{hanke_id}] aikaraja ({time_limit:.0f} s) täyttyi, loput sivut ohitetaan", file=sys.stderr)
+            break
+        if errors_in_row >= max_errors:
+            print(f"[{hanke_id}] {max_errors} virhettä peräkkäin, haku keskeytetään", file=sys.stderr)
+            break
+        attempted += 1
+        if attempted == 1 or attempted % 25 == 0:
+            print(f"[{hanke_id}] {attempted}/{len(urls)} sivua, onnistuneita {ok}", flush=True)
         key = norm(url)
         seen.add(key)
         try:
@@ -190,11 +204,14 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
                 by_url[key]["puuttuu"] = True
                 stats["puuttuu"] += 1
             print(f"  {e.code} {url}", file=sys.stderr)
+            errors_in_row = 0 if e.code in (404, 410) else errors_in_row + 1
             continue
         except Exception as e:  # noqa: BLE001
             print(f"  virhe {url}: {e}", file=sys.stderr)
+            errors_in_row += 1
             continue
         ok += 1
+        errors_in_row = 0
         p = PageParser()
         p.feed(html)
         page = p.result(site_name)
@@ -228,12 +245,15 @@ def build(hanke_id: str, write: bool, delay: float) -> bool:
             stats["uusi"] += 1
         time.sleep(delay)
 
-    print(f"[{hanke_id}] haettu {ok}/{len(urls)} · {stats}")
-    if ok < len(urls) / 2:
+    print(f"[{hanke_id}] haettu {ok}/{attempted} (sivuja yhteensä {len(urls)}) · {stats}")
+    # Haun ulkopuolelle jääneet kohteet säilyvät ennallaan; kirjoitetaan, jos yritetyistä onnistui yli puolet
+    if not attempted or ok < attempted / 2:
         print(f"[{hanke_id}] alle puolet sivuista saatiin haettua, katalogia ei kirjoiteta", file=sys.stderr)
         return False
     if write:
-        cat_path.write_text(json.dumps(existing, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        tmp = cat_path.with_suffix(".tmp")  # atominen kirjoitus: keskeytys ei riko katalogia
+        tmp.write_text(json.dumps(existing, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        tmp.replace(cat_path)
         print(f"[{hanke_id}] kirjoitettu {cat_path}")
     return True
 
@@ -244,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--kaikki", action="store_true", help="kaikki hankkeet, joilla on sivukartat")
     ap.add_argument("--kirjoita", action="store_true", help="kirjoita katalogi.json (muuten vain raportti)")
     ap.add_argument("--viive", type=float, default=0.3, help="viive sivuhakujen välillä (s)")
+    ap.add_argument("--aikaraja", type=float, default=240, help="enimmäisaika hanketta kohden (s)")
     args = ap.parse_args(argv)
     if args.kaikki:
         ids = [p.name for p in ROOT.iterdir() if (p / "hanke.toml").exists()]
@@ -251,7 +272,7 @@ def main(argv: list[str] | None = None) -> int:
         ids = [args.hanke]
     else:
         ap.error("anna hankkeen id tai --kaikki")
-    results = [build(i, args.kirjoita, args.viive) for i in ids]
+    results = [build(i, args.kirjoita, args.viive, args.aikaraja) for i in ids]
     return 0 if all(results) else 1
 
 
