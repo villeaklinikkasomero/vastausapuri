@@ -154,7 +154,8 @@ class Assistant:
 
     def run(self, question: str, mode: str = "linkit", vastaaja: str | None = None,
             own_style: bool = False, thread: str | None = None,
-            use_research: bool = True, progress=None) -> tuple[Result, Pseudonymized]:
+            use_research: bool = True, progress=None,
+            signature: str | None = None) -> tuple[Result, Pseudonymized]:
         """thread: aiempi keskustelu (kysymys, vastaus, ...) jatkokysymystä varten.
         progress: valinnainen funktio, jota kutsutaan vaiheen alkaessa (ks. steps())."""
         step = progress or (lambda _id: None)
@@ -199,7 +200,7 @@ class Assistant:
             raw = self.llm.complete(
                 model=self.s.drafter_model,
                 system=prompts.draft_system(self.h, self.s.max_links, own_style=own is not None,
-                                            followup=followup),
+                                            followup=followup, signature=self.h.signature_for(signature)),
                 user=prompts.draft_user(p_question, candidates, sources, examples, own, p_thread,
                                         research_text, self.h.asiantuntijat),
                 max_tokens=3000,

@@ -53,6 +53,7 @@ def load_catalog(path: str | Path) -> list[CatalogItem]:
             content=r.get("content", ""),
         )
         for r in raw
+        if not r.get("puuttuu")  # katalogityökalu merkitsee poistuneet sivut (404), ei tarjota linkkinä
     ]
 
 

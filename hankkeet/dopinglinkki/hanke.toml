@@ -17,6 +17,8 @@ ohita = ["/info/", "/plp", "/sv/", "/en/", "/ru/", "/ajankohtaista/"]
 [vastaukset]
 # Neuvontapalvelun säieviennin service_name, josta tämän hankkeen vastaukset tuodaan
 palvelu = "Doping"
+# Taulukkomuotoisen viennin palvelutyyppi (type-kenttä)
+tyyppi = 3
 
 [haku]
 # Yhteiset katalogit, jotka liitetään tämän hankkeen katalogiin (kriisipalvelut ym.)

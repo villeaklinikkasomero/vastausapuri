@@ -61,6 +61,19 @@ class Hanke:
     def allekirjoitus(self) -> str:
         return self.vastaus.get("allekirjoitus", "")
 
+    def signature_for(self, personal: str | None) -> str:
+        """Hankkeen allekirjoitus. Jos siinä on {allekirjoitus}, siihen tulee vastaajan oma allekirjoitus
+        (käyttäjäprofiilista) tai hankkeen oletus."""
+        tpl = self.allekirjoitus
+        if "{allekirjoitus}" not in tpl:
+            return tpl
+        personal = (personal or "").strip()
+        # Oma allekirjoitus voi sisältää jo lopputervehdyksen ("Ystävällisin terveisin, ..."): käytetään sellaisenaan
+        if re.match(r"(?i)\S*\s*(?:terveisin|tervehtien|terveiset)\b", personal):
+            return personal
+        fill = personal or self.vastaus.get("allekirjoitus_oletus", "")
+        return tpl.replace("{allekirjoitus}", fill).strip()
+
     def summary(self) -> dict:
         return {
             "id": self.id,

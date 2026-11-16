@@ -72,11 +72,32 @@
   ]
  },
  {
-  "id": "kriisipuhelin",
-  "title": "MIELI ry:n Kriisipuhelin (tarkista yhteystiedot)",
-  "url": "https://mieli.fi/",
+  "id": "nollalinja",
+  "title": "Nollalinja 116 016 (24/7)",
+  "url": "https://www.nollalinja.fi/",
   "type": "kriisi",
-  "description": "Keskusteluapua kriisissä oleville ja itsetuhoisille sekä heidän läheisilleen.",
+  "description": "Maksuton auttava puhelin lähisuhdeväkivaltaa tai sen uhkaa kokeneille, heidän läheisilleen ja ammattilaisille. Suomeksi, ruotsiksi ja englanniksi.",
+  "topics": [
+   "väkivalta",
+   "lähisuhdeväkivalta",
+   "uhka",
+   "turvakoti"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "signals": [
+   "väkivalta"
+  ]
+ },
+ {
+  "id": "kriisipuhelin",
+  "title": "MIELI ry:n Kriisipuhelin 09 2525 0111 (24/7)",
+  "url": "https://mieli.fi/mieli-ry/organisaatio/tietoakriisipuhelimesta/",
+  "type": "kriisi",
+  "description": "Keskusteluapua kriisissä oleville ja itsetuhoisille sekä heidän läheisilleen, 24/7. (Päihdelinkin auttavien puhelinten listan mukaan, tarkistettu 16.11.2026.)",
   "topics": [
    "kriisi",
    "itsetuhoisuus",

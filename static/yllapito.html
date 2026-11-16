@@ -64,6 +64,8 @@
       <label>Hankkeet</label>
       <div class="projects" id="uProjects"></div>
       <label class="check"><input type="checkbox" id="uAll"> <span>Kaikki hankkeet (myös tulevat)</span></label>
+      <label for="uSig">Allekirjoitus (valinnainen; käyttäjä voi muokata itse Omat tiedot -sivulla)</label>
+      <textarea id="uSig" maxlength="300" rows="3" style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit" placeholder="Etunimi Sukunimi&#10;Neuvontapalvelun vastaaja, sosionomi"></textarea>
       <label class="check"><input type="checkbox" id="uAdmin"> <span>Ylläpitäjä (käyttäjät, vastausten tuonti, palaute)</span></label>
       <label class="check"><input type="checkbox" id="uActive" checked> <span>Tunnus käytössä</span></label>
       <div class="row"><button type="submit" id="uSave">Lisää käyttäjä</button>
@@ -80,15 +82,17 @@
   </section>
   <section>
     <h2>Tuo vastaukset neuvontapalvelun viennistä</h2>
-    <p class="hint">Valitse säievienti (JSON). Tiedosto luetaan selaimessa ja lähetetään apurille, joka
-      pseudonymisoi tekstit ja tallentaa vain vastausindeksin. Alkuperäistä tiedostoa ei tallenneta.
-      Uusi tuonti korvaa hankkeen aiemman indeksin.</p>
+    <p class="hint">Valitse JSON-tiedosto: säievienti (keskustelut ja jatkokysymykset) tai taulukko
+      (<code>{"rows": [{"question", "answer", "type"}]}</code>). Tiedosto luetaan selaimessa ja lähetetään apurille,
+      joka pseudonymisoi tekstit ja tallentaa vain vastausindeksin. Alkuperäistä tiedostoa ei tallenneta.</p>
     <label for="hanke">Hanke</label><select id="hanke"></select>
-    <label for="palvelu">Palvelu viennissä (service_name)</label><input type="text" id="palvelu" placeholder="esim. Doping">
+    <label for="palvelu">Palvelu viennissä (säieviennissä service_name, taulukossa type-numero; tyhjä = hankkeen oletus)</label><input type="text" id="palvelu" placeholder="esim. Doping tai 3">
     <label for="file">Tiedosto</label><input type="file" id="file" accept=".json,application/json">
     <label class="check"><input type="checkbox" id="kysymykset">
       <span>Kysymykset on siistitty tunnisteista: tuo myös kysymykset. Haku vertaa silloin uutta kysymystä vanhoihin
       kysymyksiin, mikä parantaa esimerkkien osuvuutta. Jätä valitsematta, jos kysymyksissä voi olla henkilötietoja.</span></label>
+    <label class="check"><input type="checkbox" id="lisaa" checked>
+      <span>Lisää nykyiseen indeksiin (samat vastaukset ohitetaan). Jätä valitsematta, jos haluat korvata koko indeksin.</span></label>
     <button id="go">Tuo vastaukset</button>
     <p id="msg" class="hint"></p>
     <pre id="report" hidden></pre>
@@ -132,7 +136,7 @@ $("#go").onclick = async () => {
     $("#msg").textContent = "Pseudonymisoidaan ja rakennetaan indeksiä…";
     const r = await fetch("/api/yllapito/tuo", {method: "POST", headers: {"Content-Type": "application/json"},
       body: JSON.stringify({hanke: $("#hanke").value, palvelu: $("#palvelu").value.trim() || null,
-                            kysymykset: $("#kysymykset").checked, data})});
+                            kysymykset: $("#kysymykset").checked, lisaa: $("#lisaa").checked, data})});
     const d = await r.json();
     if (!r.ok) throw new Error(typeof d.detail === "string" ? d.detail : JSON.stringify(d.detail));
     $("#msg").className = "ok"; $("#msg").textContent = "Valmis. Uusi indeksi on käytössä heti.";
@@ -191,7 +195,7 @@ function editUser(name) {
   users.editing = name; $("#uName").value = name; $("#uName").disabled = true; $("#uPass").value = "";
   $("#uAll").checked = u.hankkeet === null;
   document.querySelectorAll("#uProjects input").forEach(c => c.checked = u.hankkeet === null || u.hankkeet.includes(c.value));
-  $("#uAdmin").checked = u.admin; $("#uActive").checked = u.aktiivinen;
+  $("#uAdmin").checked = u.admin; $("#uActive").checked = u.aktiivinen; $("#uSig").value = u.allekirjoitus || "";
   $("#uFormTitle").textContent = `Muokkaa: ${name}`; $("#uSave").textContent = "Tallenna muutokset";
   $("#uPassHint").textContent = "(jätä tyhjäksi, jos ei vaihdeta)"; $("#uCancel").hidden = false; syncAll();
   $("#uFormTitle").scrollIntoView({behavior: "smooth"});
@@ -215,7 +219,8 @@ $("#uForm").onsubmit = async e => {
   e.preventDefault();
   const projects = $("#uAll").checked ? null : [...document.querySelectorAll("#uProjects input:checked")].map(c => c.value);
   const body = {nimi: $("#uName").value.trim().toLowerCase(), salasana: $("#uPass").value || null,
-                hankkeet: projects, admin: $("#uAdmin").checked, aktiivinen: $("#uActive").checked};
+                hankkeet: projects, admin: $("#uAdmin").checked, aktiivinen: $("#uActive").checked,
+                allekirjoitus: $("#uSig").value};
   const editing = users.editing;
   const r = await fetch(editing ? `/api/yllapito/kayttajat/${encodeURIComponent(editing)}` : "/api/yllapito/kayttajat",
     {method: editing ? "PUT" : "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});

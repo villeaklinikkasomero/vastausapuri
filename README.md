@@ -74,13 +74,18 @@ yhteiseen `katalogi.json`-tiedostoon samalla rakenteella.
 
 Ylläpitäjät hallitsevat käyttäjiä ylläpitosivulla: lisäys, hankeoikeudet (valitut tai kaikki hankkeet),
 ylläpitäjärooli, tunnuksen sulkeminen, salasanan asettaminen ja poisto. Muutokset tulevat voimaan heti,
-myös avoimiin istuntoihin. Käyttäjät vaihtavat oman salasanansa yläpalkin **Salasana**-linkistä.
+myös avoimiin istuntoihin. Käyttäjät vaihtavat oman salasanansa ja allekirjoituksensa yläpalkin **Omat tiedot** -linkistä.
 
 - Rekisteri on levyllä (`<APURI_DATA_DIR>/kayttajat.json`), ja salasanoista tallennetaan vain PBKDF2-tiivisteet.
 - `APURI_USERS` ja `APURI_ADMINS` toimivat edelleen käynnistys- ja varatunnuksina (esim. ensimmäinen
   ylläpitäjä). Niitä ei voi muokata sivulla. Kun rekisterissä on omat tunnukset, `APURI_USERS`-tunnukset
   kannattaa vaihtaa pitkiin salasanoihin tai poistaa ylläpitäjää lukuun ottamatta.
 - Salasanan vähimmäispituus on 10 merkkiä. "Luo salasana" ehdottaa muistettavan salalauseen.
+- **Henkilökohtainen allekirjoitus**: hankkeissa, joissa vastaukset allekirjoitetaan omalla nimellä
+  (Päihdelinkki: `allekirjoitus = "Terveisin\n\n{allekirjoitus}"`), luonnoksen loppuun tulee käyttäjän
+  tallentama allekirjoitus tai hankkeen `allekirjoitus_oletus`. Dopinglinkin työryhmäallekirjoitus ei muutu.
+- **Tunnuksen muoto**: käytä muotoa `etunimi.sukunimi` ilman ääkkösiä (esim. `paivi.ahtari`). Sama tunniste
+  poimitaan vanhojen vastausten allekirjoituksista, joten "Kirjoita minun tyylilläni" löytää omat vastaukset.
 
 ## Palaute
 
@@ -98,7 +103,16 @@ hankkeet/
   yhteiset/katalogi.json        kaikille yhteiset (kriisipalvelut)
   dopinglinkki/hanke.toml       nimi, sivusto, sivukartat, ohjeet mallille, tervehdys, allekirjoitus, kriisisignaalit
   dopinglinkki/katalogi.json    sisällöt ja ohjauskohteet (Dopinglinkin sivut + SUEK, Tulli, Fimea, terveysneuvontapisteet ...)
+  paihdelinkki/hanke.toml       Päihdelinkin ääni (minä-muoto, heijastava tiivistys, MI), ohjeet, vieroitussignaalit
+  paihdelinkki/katalogi.json    Päihdelinkin sivut, testit, oma-apu, vertaistuki, auttavat puhelimet, lakitiivistelmät
 ```
+
+**Päihdelinkki** (`[vastaukset] palvelu = "Anonyymi"`, `tyyppi = 1`): vastaukset alkavat "Hyvä kysyjä,
+kiitos viestistäsi.", vastaaja puhuu omalla äänellään ja allekirjoittaa omalla nimellään. Ohjeissa ovat mm.
+moralisoimaton motivoiva ote, haittojen vähentäminen, vieroituksen turvallisuus (alkoholi, bentsot, GHB),
+läheisten tuki ja lastensuojelu. Hankkeen kriisisignaalit tunnistavat deliriumin, kouristukset, harhat ja
+yliannostuksen merkit. Puhelinnumerot ja lakitiivistelmät (käyttörikos, rattijuopumus) on merkitty
+tarkistettaviksi: käy ne läpi tiimin kanssa ennen pilottia.
 
 **Uusi hanke:** kopioi `hankkeet/dopinglinkki` uudeksi kansioksi, muokkaa `hanke.toml` (erityisesti
 `[ohjeet]` ja `sivukartat`) ja rakenna katalogi:
@@ -114,13 +128,13 @@ rajataan käyttäjäkohtaisesti (ks. `APURI_USERS`).
 
 `katalogi.json`-kohteessa on `id`, `title`, `url`, `type` (`artikkeli`, `testi`, `palvelu`, `kriisi`),
 `description`, `topics`, `audience` ja `content` (sivun tekstiote, jonka katalogityökalu täyttää).
-Renderissä katalogi päivitetään sivustolta jokaisen julkaisun yhteydessä. Käsin kuratoidut tiedot
+Renderissä katalogi päivitetään sivustolta jokaisen julkaisun yhteydessä. Sivustolta poistuneet sivut (404) merkitään `puuttuu`-tiedolla, eikä niitä tarjota linkkeinä. Käsin kuratoidut tiedot
 (id, tyyppi, aiheet, kohderyhmä) säilyvät.
 
 ## Vanhat vastaukset (vastaajan ääni ja ohjausmallit)
 
 **Ylläpitosivulla** (`/yllapito`, vain `APURI_ADMINS`-käyttäjille) ladataan neuvontapalvelun säievienti
-(JSON). Apuri poimii hankkeen palvelun säikeet (`hanke.toml`: `[vastaukset] palvelu = "Doping"`), siistii
+(JSON). Apuri poimii hankkeen palvelun säikeet (`hanke.toml`: `[vastaukset] palvelu`, esim. `"Doping"` tai `"Anonyymi"`), siistii
 HTML:n, poistaa palautepyynnöt, pseudonymisoi tekstit ja tallentaa indeksin levylle (`APURI_DATA_DIR`).
 Alkuperäistä tiedostoa ei tallenneta, ja uusi tuonti korvaa vanhan indeksin. Raportissa näkyvät määrät,
 aiheet, vastaajat ja ohjaukset sekä linkit, joita ei vielä ole katalogissa.
@@ -128,7 +142,9 @@ aiheet, vastaajat ja ohjaukset sekä linkit, joita ei vielä ole katalogissa.
 - Kysymykset tuodaan vain, jos "Kysymykset on siistitty tunnisteista" on valittu. Silloin haku vertaa uutta
   kysymystä vanhoihin, ja esimerkit annetaan mallille muodossa kysymys + vastaus (+ aiempi keskustelu
   jatkokysymyksissä).
-- Vastaaja tunnistetaan allekirjoituksesta (esim. "Tuuli - Varjomaailman aikuinen"), jos sellainen on.
+- Vastaaja tunnistetaan allekirjoituksesta: "Tuuli - Varjomaailman aikuinen" → `tuuli`, ja nimi + rooli
+  ("Päivi Ähtäri / neuvontapalvelun vastaaja, sosionomi") → `paivi.ahtari`.
+- Päihdelinkin vastaukset tuodaan samasta säieviennistä valitsemalla hankkeeksi Päihdelinkki.
 
 Komentorivillä sama onnistuu näin:
 

@@ -1,0 +1,2047 @@
+[
+ {
+  "id": "alkoholi",
+  "title": "Alkoholi ja alkoholin käyttö",
+  "url": "https://paihdelinkki.fi/alkoholi-ja-alkoholin-kaytto/",
+  "type": "artikkeli",
+  "description": "Koottua tietoa alkoholista, käytön riskeistä ja avun hakemisesta.",
+  "topics": [
+   "alkoholi",
+   "juominen",
+   "riskikäyttö"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholin-itsehallinta",
+  "title": "Alkoholinkäytön itsehallinta",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholinkayton-itsehallinta/",
+  "type": "artikkeli",
+  "description": "Keinoja hallita omaa juomista ja vähentää käyttöä.",
+  "topics": [
+   "alkoholi",
+   "vähentäminen",
+   "itsehallinta",
+   "kohtuukäyttö"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-aivot",
+  "title": "Alkoholi ja aivot",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholi-ja-aivot/",
+  "type": "artikkeli",
+  "description": "Alkoholin vaikutukset aivoihin ja muistiin.",
+  "topics": [
+   "alkoholi",
+   "aivot",
+   "muisti"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-uni",
+  "title": "Alkoholi ja uni",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholi-ja-uni/",
+  "type": "artikkeli",
+  "description": "Miten alkoholi vaikuttaa uneen ja unettomuuteen.",
+  "topics": [
+   "alkoholi",
+   "uni",
+   "unettomuus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-raskaus",
+  "title": "Alkoholi ja raskaus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholi-ja-raskaus/",
+  "type": "artikkeli",
+  "description": "Alkoholin käytön riskit raskauden aikana.",
+  "topics": [
+   "raskaus",
+   "alkoholi",
+   "sikiö"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholimaksa",
+  "title": "Alkoholimaksasairaus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholimaksasairaus/",
+  "type": "artikkeli",
+  "description": "Alkoholin aiheuttamat maksavauriot, oireet ja maksa-arvot.",
+  "topics": [
+   "maksa",
+   "maksa-arvot",
+   "GT",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-syopa",
+  "title": "Alkoholi ja syöpä",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholi-ja-syopa/",
+  "type": "artikkeli",
+  "description": "Alkoholin yhteys syöpäriskiin.",
+  "topics": [
+   "alkoholi",
+   "syöpä"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "peth",
+  "title": "PEth-tutkimus alkoholinkäytön osoittimena",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/tietopankki-tietoiskut-alkoholi-peth-tutkimus-alkoholinkayton-osoittimena/",
+  "type": "artikkeli",
+  "description": "Mitä PEth-verikoe kertoo alkoholinkäytöstä ja kuinka kauan se näkyy.",
+  "topics": [
+   "PEth",
+   "verikoe",
+   "ajokortti",
+   "seuranta"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tunne-elama",
+  "title": "Tunne-elämä ja päihderiippuvuus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/tunne-elama-ja-paihderiippuvuus/",
+  "type": "artikkeli",
+  "description": "Tunteiden säätely ja päihteiden käyttö.",
+  "topics": [
+   "tunteet",
+   "ahdistus",
+   "riippuvuus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-perinnollisyys",
+  "title": "Alkoholiriippuvuuden perinnöllisyys",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/alkoholi/alkoholiiippuvuuden-perinnollisyys/",
+  "type": "artikkeli",
+  "description": "Perimän ja ympäristön osuus alkoholiriippuvuudessa.",
+  "topics": [
+   "perinnöllisyys",
+   "riippuvuus",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huumeet",
+  "title": "Huumeet ja huumeiden käyttö",
+  "url": "https://paihdelinkki.fi/huumeet-ja-huumeiden-kaytto/",
+  "type": "artikkeli",
+  "description": "Koottua tietoa huumeista, riskeistä ja avusta.",
+  "topics": [
+   "huumeet",
+   "käyttö"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kannabis-haitat",
+  "title": "Kannabiksen käytön haittavaikutuksia",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/kannabiksen-kayton-haittavaikutuksia/",
+  "type": "artikkeli",
+  "description": "Kannabiksen haitat mielenterveydelle, muistille ja riippuvuus.",
+  "topics": [
+   "kannabis",
+   "pilvi",
+   "THC",
+   "psykoosi",
+   "riippuvuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "amfetamiini",
+  "title": "Amfetamiini, metamfetamiini ja muut piristeet",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/amfetamiini-metamfetamiini-ja-muut-piristeet/",
+  "type": "artikkeli",
+  "description": "Piristeiden vaikutukset ja riskit.",
+  "topics": [
+   "amfetamiini",
+   "piri",
+   "metamfetamiini",
+   "piristeet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "amfetamiinipsykoosi",
+  "title": "Amfetamiinipsykoosi",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/amfetamiinipsykoosi/",
+  "type": "artikkeli",
+  "description": "Amfetamiinin aiheuttama psykoosi: oireet ja hoito.",
+  "topics": [
+   "psykoosi",
+   "harhat",
+   "amfetamiini",
+   "vainoharha"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ekstaasi",
+  "title": "Ekstaasi",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/ekstaasi/",
+  "type": "artikkeli",
+  "description": "Ekstaasin (MDMA) vaikutukset ja riskit.",
+  "topics": [
+   "ekstaasi",
+   "MDMA"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "hallusinogeenit",
+  "title": "Hallusinogeenit",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/hallusinogeenit/",
+  "type": "artikkeli",
+  "description": "LSD, sienet ja muut hallusinogeenit.",
+  "topics": [
+   "hallusinogeenit",
+   "LSD",
+   "sienet",
+   "psilosybiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "muuntohuumeet",
+  "title": "Muuntohuumeet",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/muuntohuumeet/",
+  "type": "artikkeli",
+  "description": "Uudet psykoaktiiviset aineet ja niiden arvaamattomuus.",
+  "topics": [
+   "muuntohuumeet",
+   "NPS",
+   "alfa-PVP",
+   "synteettiset kannabinoidit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "sekakaytto",
+  "title": "Päihteiden sekakäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/paihteiden-sekakaytto/",
+  "type": "artikkeli",
+  "description": "Eri päihteiden ja lääkkeiden yhteiskäytön vaarat.",
+  "topics": [
+   "sekakäyttö",
+   "yhteisvaikutukset",
+   "bentsot",
+   "alkoholi",
+   "opioidit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "yliannostukset",
+  "title": "Huumeyliannostusten ehkäiseminen",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/huumeyliannostusten-ehkaiseminen/",
+  "type": "artikkeli",
+  "description": "Miten yliannostuksia ehkäistään ja miten toimia yliannostustilanteessa.",
+  "topics": [
+   "yliannostus",
+   "myrkytys",
+   "naloksoni",
+   "opioidit",
+   "ensiapu"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huumekuolemat",
+  "title": "Huumekuolemat Suomessa",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/huumekuolemat-suomessa/",
+  "type": "artikkeli",
+  "description": "Tietoa huumekuolemista ja niiden taustoista.",
+  "topics": [
+   "huumekuolemat",
+   "yliannostus",
+   "tilastot"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huumeet-suu",
+  "title": "Huumeet ja suun terveys",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/huumeet-ja-suun-terveys/",
+  "type": "artikkeli",
+  "description": "Huumeiden vaikutukset hampaisiin ja suuhun.",
+  "topics": [
+   "hampaat",
+   "suu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "viihdekaytto",
+  "title": "Huumeiden viihdekäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteet-ja-yhteiskunta/huumeiden-viihdekaytto/",
+  "type": "artikkeli",
+  "description": "Huumeiden viihdekäyttö ilmiönä ja sen riskit.",
+  "topics": [
+   "viihdekäyttö",
+   "juhlat",
+   "festarit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kayttorikos",
+  "title": "Huumausaineen käyttörikos",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteet-ja-yhteiskunta/huumausaineen-kayttorikos/",
+  "type": "artikkeli",
+  "description": "Mitä huumausaineen käytöstä seuraa rikosoikeudellisesti.",
+  "topics": [
+   "laki",
+   "käyttörikos",
+   "sakko",
+   "poliisi",
+   "huumetesti"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "haittojen-vahentaminen",
+  "title": "Tietoa huumehaittojen vähentämisestä",
+  "url": "https://paihdelinkki.fi/tietopankki/huumehaittojen-vahentaminen/",
+  "type": "artikkeli",
+  "description": "Haittojen vähentäminen: turvallisempi käyttö, tartuntataudit, terveysneuvonta.",
+  "topics": [
+   "haittojen vähentäminen",
+   "neulat",
+   "pistäminen",
+   "tartuntataudit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "neulanvaihto",
+  "title": "Neulanvaihtopisteet",
+  "url": "https://paihdelinkki.fi/tietopankki/huumehaittojen-vahentaminen/neulanvaihtopisteet/",
+  "type": "palvelu",
+  "description": "Mistä saa puhtaita välineitä ja terveysneuvontaa.",
+  "topics": [
+   "neulat",
+   "ruiskut",
+   "terveysneuvonta",
+   "neulanvaihto"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "hepatiitti-b",
+  "title": "B-hepatiitti ja siltä suojautuminen",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumehaittojen-vahentaminen-ja-tartuntataudit/b-hepatiitti-ja-silta-suojautuminen/",
+  "type": "artikkeli",
+  "description": "B-hepatiitti, rokotus ja tartunnan ehkäisy.",
+  "topics": [
+   "hepatiitti",
+   "rokotus",
+   "tartuntataudit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "chemsex",
+  "title": "Chemsex",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/chemsex/",
+  "type": "artikkeli",
+  "description": "Päihteiden käyttö seksin yhteydessä ja sen riskit.",
+  "topics": [
+   "chemsex",
+   "seksi",
+   "GHB",
+   "metamfetamiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "bentsot",
+  "title": "Bentsodiatsepiinit",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/bentsodiatsepiinit/",
+  "type": "artikkeli",
+  "description": "Bentsodiatsepiinien vaikutukset, riippuvuus ja vieroitus.",
+  "topics": [
+   "bentsot",
+   "bentsodiatsepiinit",
+   "alpratsolaami",
+   "diatsepaami",
+   "rauhoittavat"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "bentsoriippuvuus",
+  "title": "Bentsodiatsepiiniriippuvuus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihdeongelmien-hoito/bentsodiatsepiiniriippuvuus/",
+  "type": "artikkeli",
+  "description": "Bentsoriippuvuuden hoito ja asteittainen annoksen vähentäminen lääkärin kanssa.",
+  "topics": [
+   "bentsot",
+   "vieroitus",
+   "annoksen vähentäminen",
+   "riippuvuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "opioidit",
+  "title": "Opioidit",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/opioidit/",
+  "type": "artikkeli",
+  "description": "Opioidien vaikutukset, riippuvuus ja yliannostusvaara.",
+  "topics": [
+   "opioidit",
+   "oksikodoni",
+   "buprenorfiini",
+   "heroiini",
+   "kipulääkkeet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "korvaushoito",
+  "title": "Opioidiriippuvuuden lääkkeellinen vieroitus ja korvaushoito",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihdeongelmien-hoito/opioidiriippuvuuden-laakkeellinen-vieroitus-ja-korvaushoito/",
+  "type": "artikkeli",
+  "description": "Korvaushoito (buprenorfiini, metadoni): mitä se on ja miten siihen pääsee.",
+  "topics": [
+   "korvaushoito",
+   "buprenorfiini",
+   "metadoni",
+   "subutex",
+   "vieroitus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "fentanyyli",
+  "title": "Fentanyyli",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/fentanyyli/",
+  "type": "artikkeli",
+  "description": "Fentanyylin vaarat ja yliannostusriski.",
+  "topics": [
+   "fentanyyli",
+   "opioidit",
+   "yliannostus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "pregabaliini",
+  "title": "Pregabaliini (Lyrica)",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/pregabaliini-lyrica/",
+  "type": "artikkeli",
+  "description": "Pregabaliinin väärinkäyttö ja riskit.",
+  "topics": [
+   "pregabaliini",
+   "lyrica",
+   "gabapentiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laakkeet-alkoholi",
+  "title": "Yleisimpien lääkkeiden ja alkoholin yhteiskäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/yleisimpien-laakkeiden-ja-alkoholin-yhteiskaytto/",
+  "type": "artikkeli",
+  "description": "Mitkä lääkkeet ja alkoholi eivät sovi yhteen.",
+  "topics": [
+   "lääkkeet",
+   "alkoholi",
+   "yhteisvaikutukset",
+   "masennuslääkkeet",
+   "antibiootit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laakkeiden-vaarinkaytto",
+  "title": "Lääkkeiden väärinkäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/laakkeiden-vaarinkaytto/",
+  "type": "artikkeli",
+  "description": "Lääkkeiden päihdekäyttö ja sen tunnistaminen.",
+  "topics": [
+   "lääkkeet",
+   "väärinkäyttö"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "unilaakkeet",
+  "title": "Unilääkkeet",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/unilaakkeet/",
+  "type": "artikkeli",
+  "description": "Unilääkkeiden käyttö, riippuvuus ja lopettaminen.",
+  "topics": [
+   "unilääkkeet",
+   "tsopikloni",
+   "tsolpideemi",
+   "unettomuus"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "adhd-laakkeet",
+  "title": "Amfetamiinijohdokset (Elvanse, Attentin) päihdekäytössä",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/amfetamiinijohdokset-elvanse-attentin-paihdekaytossa/",
+  "type": "artikkeli",
+  "description": "ADHD-lääkkeiden väärinkäyttö ja riskit.",
+  "topics": [
+   "ADHD",
+   "elvanse",
+   "attentin",
+   "metyylifenidaatti"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "naltreksoni",
+  "title": "Naltreksoni",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/naltreksoni/",
+  "type": "artikkeli",
+  "description": "Naltreksoni alkoholin käytön vähentämisen tukena.",
+  "topics": [
+   "naltreksoni",
+   "nalmefeeni",
+   "alkoholi",
+   "lääkehoito",
+   "tukilääkitys"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "antabus",
+  "title": "Disulfiraami (Antabus)",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/disulfiraami-antabus/",
+  "type": "artikkeli",
+  "description": "Antabus alkoholin käytön lopettamisen tukena.",
+  "topics": [
+   "antabus",
+   "disulfiraami",
+   "tukilääkitys"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ketamiini",
+  "title": "Ketamiini",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/ketamiini/",
+  "type": "artikkeli",
+  "description": "Ketamiinin vaikutukset ja riskit.",
+  "topics": [
+   "ketamiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ilokaasu",
+  "title": "Ilokaasu",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/ilokaasu/",
+  "type": "artikkeli",
+  "description": "Ilokaasun päihdekäytön riskit.",
+  "topics": [
+   "ilokaasu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "mista-apua",
+  "title": "Hae apua",
+  "url": "https://paihdelinkki.fi/mista-apua/",
+  "type": "palvelu",
+  "description": "Mistä saa apua päihdeongelmiin: palvelut, chat, neuvonta, puhelimet.",
+  "topics": [
+   "apu",
+   "hoito",
+   "palvelut"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "miten-hoidetaan",
+  "title": "Miten päihdeongelmia hoidetaan?",
+  "url": "https://paihdelinkki.fi/mista-apua/tietoa-paihdehoidosta/miten-paihdeongelmia-hoidetaan/",
+  "type": "palvelu",
+  "description": "Päihdehoidon muodot: avohoito, katkaisuhoito, kuntoutus, vertaistuki.",
+  "topics": [
+   "hoito",
+   "katkaisuhoito",
+   "avohoito",
+   "kuntoutus",
+   "vieroitus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "hyvinvointialueet",
+  "title": "Päihde- ja riippuvuuspalvelut hyvinvointialueilla",
+  "url": "https://paihdelinkki.fi/mista-apua/tietoa-paihdehoidosta/paihde-ja-riippuvuuspalvelut-hyvinvointialueilla/",
+  "type": "palvelu",
+  "description": "Miten päihdepalvelut on järjestetty hyvinvointialueilla.",
+  "topics": [
+   "hyvinvointialue",
+   "päihdepalvelut",
+   "A-klinikka",
+   "katko"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "oikeus-palveluihin",
+  "title": "Kenellä on oikeus päihdepalveluihin?",
+  "url": "https://paihdelinkki.fi/mista-apua/tietoa-paihdehoidosta/kenella-on-oikeus-paihdepalveluihin/",
+  "type": "palvelu",
+  "description": "Oikeus päihdepalveluihin ja hoitoon pääsy.",
+  "topics": [
+   "oikeudet",
+   "hoitoon pääsy",
+   "lähete"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kuka-maksaa",
+  "title": "Kuka päihdehoidon maksaa?",
+  "url": "https://paihdelinkki.fi/mista-apua/tietoa-paihdehoidosta/kuka-paihdehoidon-maksaa/",
+  "type": "palvelu",
+  "description": "Päihdehoidon kustannukset ja maksusitoumukset.",
+  "topics": [
+   "maksut",
+   "maksusitoumus",
+   "kuntoutus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ongelmia-palveluissa",
+  "title": "Ongelmia palveluissa tai niiden saamisessa",
+  "url": "https://paihdelinkki.fi/mista-apua/tietoa-paihdehoidosta/ongelmia-palveluissa-tai-niiden-saamisessa/",
+  "type": "palvelu",
+  "description": "Mitä tehdä, jos ei saa apua: muistutus, kantelu, potilasasiavastaava.",
+  "topics": [
+   "muistutus",
+   "kantelu",
+   "potilasasiavastaava",
+   "hoitoon pääsy"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "hoitopaikat",
+  "title": "Päihdehoitopaikat",
+  "url": "https://paihdelinkki.fi/mista-apua/hoitopaikat/",
+  "type": "palvelu",
+  "description": "Hakemisto päihdehoitopaikoista.",
+  "topics": [
+   "hoitopaikat",
+   "laitoskuntoutus",
+   "katkaisuhoito"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "auttavat-puhelimet",
+  "title": "Auttavat puhelimet",
+  "url": "https://paihdelinkki.fi/mista-apua/auttavat-puhelimet/",
+  "type": "palvelu",
+  "description": "Auttavien puhelinten yhteystiedot (päihdeneuvonta, AA, NA, Peluuri, kriisipuhelin ym.).",
+  "topics": [
+   "puhelin",
+   "auttava puhelin",
+   "neuvonta"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "chat",
+  "title": "Päihdelinkki-chat",
+  "url": "https://paihdelinkki.fi/mista-apua/paihdelinkki-chat/",
+  "type": "palvelu",
+  "description": "Anonyymi chat ma–ti klo 15–17 ja ke–to klo 13–15 sekä ajanvarauksella.",
+  "topics": [
+   "chat",
+   "keskustelu",
+   "anonyymi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "vertaistukiryhmat",
+  "title": "Vertaistukiryhmiä ja tukihenkilötoimintaa",
+  "url": "https://paihdelinkki.fi/mista-apua/vertaistukiryhmat/",
+  "type": "palvelu",
+  "description": "AA, NA, Al-Anon ja muut vertaistukiryhmät.",
+  "topics": [
+   "vertaistuki",
+   "AA",
+   "NA",
+   "Al-Anon",
+   "ryhmä"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "tahdosta-riippumaton",
+  "title": "Päihteitä käyttävän tahdosta riippumaton hoito",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihdeongelmien-hoito/paihteita-kayttavan-tahdosta-riippumaton-hoito/",
+  "type": "artikkeli",
+  "description": "Milloin päihteitä käyttävää voidaan hoitaa tahdosta riippumatta.",
+  "topics": [
+   "tahdosta riippumaton hoito",
+   "pakkohoito",
+   "läheinen"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kaksoisdiagnoosi",
+  "title": "Kaksoisdiagnoosipotilaiden hoito",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihdeongelmien-hoito/kaksoisdiagnoosipotilaiden-hoito/",
+  "type": "artikkeli",
+  "description": "Päihde- ja mielenterveysongelmien yhtäaikainen hoito.",
+  "topics": [
+   "kaksoisdiagnoosi",
+   "mielenterveys",
+   "masennus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "masennus",
+  "title": "Masennus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/mielenterveys/masennus/",
+  "type": "artikkeli",
+  "description": "Masennus ja päihteiden käyttö.",
+  "topics": [
+   "masennus",
+   "mieliala",
+   "mielenterveys"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "riippuvuus",
+  "title": "Riippuvuus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/mielenterveys/riippuvuus/",
+  "type": "artikkeli",
+  "description": "Mitä riippuvuus on ja miten se syntyy.",
+  "topics": [
+   "riippuvuus",
+   "addiktio"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-audit",
+  "title": "Alkoholin käytön riskit (AUDIT)",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/alkoholi/alkoholin-kayton-riskit-audit/",
+  "type": "testi",
+  "description": "Testi alkoholinkäytön riskien arviointiin.",
+  "topics": [
+   "testi",
+   "AUDIT",
+   "alkoholi",
+   "riskikäyttö"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-sadd",
+  "title": "Alkoholiriippuvuustesti (SADD)",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/alkoholi/alkoholiriippuvuustesti-sadd/",
+  "type": "testi",
+  "description": "Testi alkoholiriippuvuuden arviointiin.",
+  "topics": [
+   "testi",
+   "riippuvuus",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "viikkolaskuri",
+  "title": "Alkoholin viikkolaskuri",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/laskurit/viikkolaskuri/",
+  "type": "testi",
+  "description": "Laske viikoittainen alkoholinkäyttösi annoksina.",
+  "topics": [
+   "laskuri",
+   "annokset",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-dudit",
+  "title": "Huumeiden käytön riskit (DUDIT)",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/huumeet/huumeiden-kayton-riskit-dudit/",
+  "type": "testi",
+  "description": "Testi huumeiden käytön riskien arviointiin.",
+  "topics": [
+   "testi",
+   "DUDIT",
+   "huumeet"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-kannabis",
+  "title": "Kannabiksen käytön riskit",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/huumeet/kannabiksen-kayton-riskit/",
+  "type": "testi",
+  "description": "Testi kannabiksen käytön riskeistä.",
+  "topics": [
+   "testi",
+   "kannabis"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-rahapelit",
+  "title": "Rahapelaamisen haitat",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/rahapelit/rahapelaamisen-haitat/",
+  "type": "testi",
+  "description": "Testi rahapelaamisen haittojen arviointiin.",
+  "topics": [
+   "testi",
+   "rahapelit",
+   "pelaaminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-nikotiini",
+  "title": "Nikotiiniriippuvuustesti",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/nikotiini/nikotiiniriippuvuustesti/",
+  "type": "testi",
+  "description": "Testi nikotiiniriippuvuuden arviointiin.",
+  "topics": [
+   "testi",
+   "nikotiini",
+   "nuuska",
+   "nikotiinipussit"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "testi-mieliala",
+  "title": "Mielialakysely (R-BDI)",
+  "url": "https://paihdelinkki.fi/testit-ja-laskurit/mieliala-ja-toimintakyky/mielialakysely-rbdi/",
+  "type": "testi",
+  "description": "Kysely masennusoireiden arviointiin.",
+  "topics": [
+   "testi",
+   "masennus",
+   "mieliala"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "vahentaminen",
+  "title": "Alkoholin käytön vähentäminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/alkoholi/alkoholin-kayton-vahentaminen/",
+  "type": "oma-apu",
+  "description": "Oma-apuohjelma juomisen vähentämiseen: tavoitteet ja suunnitelma.",
+  "topics": [
+   "vähentäminen",
+   "alkoholi",
+   "oma-apu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "lopettaminen",
+  "title": "Alkoholin käytön lopettaminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/alkoholi/alkoholin-kayton-lopettaminen/",
+  "type": "oma-apu",
+  "description": "Oma-apuohjelma alkoholin käytön lopettamiseen.",
+  "topics": [
+   "lopettaminen",
+   "alkoholi",
+   "oma-apu",
+   "raitistuminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "vaaratilanteet",
+  "title": "Vaaratilanteiden tunnistaminen (lopettaminen)",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/alkoholi/alkoholin-kayton-lopettaminen/vaaratilanteiden-tunnistaminen/",
+  "type": "oma-apu",
+  "description": "Retkahdusriskien ja vaaratilanteiden tunnistaminen.",
+  "topics": [
+   "retkahdus",
+   "vaaratilanteet",
+   "himo"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "uusi-alku",
+  "title": "Uusi alku: 30 päivää ilman alkoholia",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/alkoholi/uusi-alku-30-paivaa-ilman-alkoholia/aloitus-tilanne-nyt/",
+  "type": "oma-apu",
+  "description": "30 päivän ohjelma alkoholitauon tueksi.",
+  "topics": [
+   "tipaton",
+   "tauko",
+   "30 päivää",
+   "oma-apu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "retkahdus",
+  "title": "Laukaisevat tekijät ja toimintasuunnitelmat",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/alkoholi/retkahdus/laukaisevat-tekijat-ja-toimintasuunnitelmat/",
+  "type": "oma-apu",
+  "description": "Retkahduksen ehkäisy: laukaisevat tekijät ja suunnitelma.",
+  "topics": [
+   "retkahdus",
+   "repsahdus",
+   "laukaisevat tekijät"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huumeet-oma-apu",
+  "title": "Huumeiden käytön lopettaminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/huumeet-ja-laakkeet/",
+  "type": "oma-apu",
+  "description": "Oppaat ja ohjelmat huumeiden ja lääkkeiden käytön lopettamiseen.",
+  "topics": [
+   "huumeet",
+   "lopettaminen",
+   "oma-apu"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "amfetamiini-vieroitus",
+  "title": "Amfetamiini: tietoa ja tukea vieroittautujalle",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/huumeet-ja-laakkeet/amfetamiini-tietoa-ja-tukea-vieroittautujalle/vieroitusoireet/",
+  "type": "oma-apu",
+  "description": "Amfetamiinin vieroitusoireet ja miten niistä selviää.",
+  "topics": [
+   "amfetamiini",
+   "vieroitusoireet",
+   "lopettaminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "retkahduksen-ehkaisy",
+  "title": "Retkahduksen ehkäisyn käsikirja",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/huumeet-ja-laakkeet/retkahduksen-ehkaisyn-kasikirja/mita-tehda-jos-ote-lipsuu-retkahtaa/",
+  "type": "oma-apu",
+  "description": "Mitä tehdä, jos ote lipsuu ja retkahtaa.",
+  "topics": [
+   "retkahdus",
+   "huumeet",
+   "toipuminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "rahapelaaminen-oma-apu",
+  "title": "Rahapelaamisen lopettaminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/rahapelaaminen/",
+  "type": "oma-apu",
+  "description": "Rahapelaamisen tehtäväkirja ja keinot lopettaa.",
+  "topics": [
+   "rahapelit",
+   "pelaaminen",
+   "lopettaminen",
+   "velat"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "esto-ohjelmat",
+  "title": "Esto-ohjelmat ja rahapelaamisen rajoittaminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/rahapelaaminen/esto-ohjelmat-ja-rahapelaamisen-rajoittaminen/",
+  "type": "oma-apu",
+  "description": "Pelaamisen estäminen ja rajoittaminen teknisin keinoin.",
+  "topics": [
+   "esto",
+   "pelikielto",
+   "rajoittaminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "seksiriippuvuus",
+  "title": "Apua seksi- ja pornoriippuvuuteen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/seksi-ja-pornoriippuvuus/apua-seksi-ja-pornoriippuvuuteen-opas/",
+  "type": "oma-apu",
+  "description": "Opas seksi- ja pornoriippuvuuteen.",
+  "topics": [
+   "seksiriippuvuus",
+   "porno"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laheiset",
+  "title": "Tukea läheiselle",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/",
+  "type": "oma-apu",
+  "description": "Oppaat ja tuki päihteitä käyttävän läheisille.",
+  "topics": [
+   "läheinen",
+   "puoliso",
+   "vanhempi",
+   "lapsi"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huoneentaulu",
+  "title": "Vinkkejä päihteitä käyttävän läheiselle",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/laheisen-huoneentaulu/",
+  "type": "oma-apu",
+  "description": "Läheisen huoneentaulu: miten tukea ja pitää huolta itsestä.",
+  "topics": [
+   "läheinen",
+   "tuki",
+   "jaksaminen"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "lapsi-huumeet",
+  "title": "Kun lapsi käyttää huumeita: opas vanhemmille",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/kun-lapsi-kayttaa-huumeita-opas-vanhemmille-ja-laheisille/",
+  "type": "oma-apu",
+  "description": "Opas vanhemmille ja läheisille, kun lapsi tai nuori käyttää huumeita.",
+  "topics": [
+   "vanhempi",
+   "nuori",
+   "lapsi",
+   "huumeet"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alaikaisen-hoitoonohjaus",
+  "title": "Alaikäisen hoitoonohjaus",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/kun-lapsi-kayttaa-huumeita-opas-vanhemmille-ja-laheisille/alaikaisen-hoitoonohjaus/",
+  "type": "artikkeli",
+  "description": "Miten alaikäinen saadaan hoitoon.",
+  "topics": [
+   "alaikäinen",
+   "nuori",
+   "hoitoonohjaus",
+   "lastensuojelu"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "taysi-ikaisen-hoitoonohjaus",
+  "title": "Täysi-ikäisen hoitoonohjaus",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/kun-lapsi-kayttaa-huumeita-opas-vanhemmille-ja-laheisille/taysi-ikaisen-hoitoonohjaus/",
+  "type": "artikkeli",
+  "description": "Miten tukea täysi-ikäistä lasta hoitoon.",
+  "topics": [
+   "aikuinen lapsi",
+   "hoitoonohjaus"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laheisriippuvuus",
+  "title": "Läheisriippuvuus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laheiset-ja-paihteiden-kaytto/laheisriippuvuus/",
+  "type": "artikkeli",
+  "description": "Mitä läheisriippuvuus on ja miten siitä voi toipua.",
+  "topics": [
+   "läheisriippuvuus",
+   "läheinen"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "irti-laheisriippuvuudesta",
+  "title": "Irti läheisriippuvuudesta",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/irti-laheisriippuvuudesta/",
+  "type": "oma-apu",
+  "description": "Oma-apuohjelma läheisriippuvuudesta toipumiseen.",
+  "topics": [
+   "läheisriippuvuus",
+   "oma-apu"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "onko-lapsellani",
+  "title": "Onko lapsellani huumeongelma?",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laheiset-ja-paihteiden-kaytto/onko-lapsellani-huumeongelma/",
+  "type": "artikkeli",
+  "description": "Merkkejä nuoren huumeidenkäytöstä ja miten toimia.",
+  "topics": [
+   "nuori",
+   "merkit",
+   "huumeet",
+   "vanhempi"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "nuorten-kokeilut",
+  "title": "Nuorten huumekokeilut",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laheiset-ja-paihteiden-kaytto/nuorten-huumekokeilut/",
+  "type": "artikkeli",
+  "description": "Kun nuori kokeilee huumeita.",
+  "topics": [
+   "nuori",
+   "kokeilu",
+   "huumeet"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "eron-abc",
+  "title": "Päihteet ja ero (Eron ABC)",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/laheisille/eron-abc/",
+  "type": "oma-apu",
+  "description": "Tietoa erosta, kun puolisolla on päihdeongelma.",
+  "topics": [
+   "ero",
+   "puoliso",
+   "lapset"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholiongelmaisen-lapsena",
+  "title": "Alkoholiongelmaisen kanssa lapsuudessaan eläneet aikuiset",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laheiset-ja-paihteiden-kaytto/alkoholiongelmaisen-kanssa-lapsuudessaan-elaneet-aikuiset/",
+  "type": "artikkeli",
+  "description": "Päihdeperheessä kasvaneiden aikuisten kokemukset ja tuki.",
+  "topics": [
+   "lapsuus",
+   "aikuinen lapsi",
+   "päihdeperhe"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "foorumi",
+  "title": "Päihdelinkin keskustelufoorumi",
+  "url": "https://keskustelu.paihdelinkki.fi/",
+  "type": "palvelu",
+  "description": "Anonyymi vertaistukifoorumi (esim. Me lopettajat, Me vähentäjät, läheisten palstat).",
+  "topics": [
+   "vertaistuki",
+   "foorumi",
+   "keskustelu",
+   "Me lopettajat",
+   "Me vähentäjät"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "selva-suunta",
+  "title": "Selvä suunta -ryhmä alkoholin käytön lopettajille",
+  "url": "https://paihdelinkki.fi/selva-suunta-ryhma-alkoholin-kayton-lopettajille/",
+  "type": "palvelu",
+  "description": "Ohjattu verkkoryhmä alkoholin käytön lopettajille.",
+  "topics": [
+   "vertaistuki",
+   "ryhmä",
+   "lopettaminen",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "henkilokohtainen-vertaistuki",
+  "title": "Henkilökohtainen vertaistuki",
+  "url": "https://paihdelinkki.fi/vertaistuki/henkilokohtainen-vertaistuki/",
+  "type": "palvelu",
+  "description": "Anonyymi ja maksuton kahdenkeskinen vertaistuki.",
+  "topics": [
+   "vertaistuki",
+   "kokemusasiantuntija"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kokemuksia-toipumisesta",
+  "title": "Kokemuksia toipumisesta",
+  "url": "https://paihdelinkki.fi/vertaistuki/kokemuksia-toipumisesta/",
+  "type": "artikkeli",
+  "description": "Toipuneiden kertomuksia.",
+  "topics": [
+   "toipuminen",
+   "tarinat"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "nikotiinipussit",
+  "title": "Nikotiinipussit",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/tupakka-ja-muut-nikotiinituotteet/nikotiinipussit/",
+  "type": "artikkeli",
+  "description": "Nikotiinipussien riskit ja riippuvuus.",
+  "topics": [
+   "nikotiinipussit",
+   "nuuska",
+   "nikotiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "sahkosavuke",
+  "title": "Sähkösavuke",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/tupakka-ja-muut-nikotiinituotteet/sahkosavuke/",
+  "type": "artikkeli",
+  "description": "Sähkösavukkeiden riskit.",
+  "topics": [
+   "sähkösavuke",
+   "vape",
+   "nikotiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ongelmapelaaminen",
+  "title": "Ongelmapelaaminen",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/pelaaminen/ongelmapelaaminen/",
+  "type": "artikkeli",
+  "description": "Rahapeliongelman tunnusmerkit ja apu.",
+  "topics": [
+   "rahapelit",
+   "peliongelma"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "raskaus-paihteet",
+  "title": "Raskaus ja päihteet",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/raskaus-ja-paihteet/",
+  "type": "artikkeli",
+  "description": "Päihteiden käyttö raskauden aikana ja tuki.",
+  "topics": [
+   "raskaus",
+   "huumeet",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "imetys",
+  "title": "Päihteet ja imetys",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/paihteet-ja-imetys/",
+  "type": "artikkeli",
+  "description": "Päihteiden siirtyminen äidinmaitoon.",
+  "topics": [
+   "imetys",
+   "alkoholi",
+   "lääkkeet"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ikaantyneet",
+  "title": "Ikääntyneet ja päihteidenkäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/ikaantyneet-ja-paihteidenkaytto/",
+  "type": "artikkeli",
+  "description": "Päihteiden käyttö ikääntyneillä.",
+  "topics": [
+   "ikääntyneet",
+   "vanhukset",
+   "alkoholi",
+   "lääkkeet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "adhd-paihteet",
+  "title": "ADHD ja päihteidenkäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/adhd-ja-paihteidenkaytto/",
+  "type": "artikkeli",
+  "description": "ADHD:n ja päihteiden käytön yhteys.",
+  "topics": [
+   "ADHD",
+   "päihteet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "seksuaalivahemmistot",
+  "title": "Seksuaali- ja sukupuolivähemmistöt ja päihteet",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteiden-kayton-erityisryhmia/seksuaali-ja-sukupuolivahemmistot-ja-paihteet/",
+  "type": "artikkeli",
+  "description": "Vähemmistöstressi ja päihteet.",
+  "topics": [
+   "sateenkaari",
+   "vähemmistöt"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aggressiivisuus",
+  "title": "Päihteet ja aggressiivisuus",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/aggressiivisuus-ja-vakivalta/paihteet-ja-aggressiivisuus/",
+  "type": "artikkeli",
+  "description": "Päihteiden yhteys väkivaltaan ja aggressiivisuuteen.",
+  "topics": [
+   "väkivalta",
+   "aggressiivisuus"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ajokortti",
+  "title": "Ajokorttiseuranta ja päihderiippuvuuden arviointi",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihteet-ja-liikenne/ajokorttiseuranta-ja-paihderiippuvuuden-arviointi/",
+  "type": "artikkeli",
+  "description": "Ajokortti, päihdeseuranta ja rattijuopumus.",
+  "topics": [
+   "ajokortti",
+   "rattijuopumus",
+   "seuranta",
+   "PEth"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "ukk",
+  "title": "Usein kysytyt kysymykset (neuvonta)",
+  "url": "https://paihdelinkki.fi/neuvonta/usein-kysytyt-kysymykset/",
+  "type": "artikkeli",
+  "description": "Vastauksia yleisiin kysymyksiin.",
+  "topics": [
+   "UKK"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "neuvonta",
+  "title": "Kysy nimettömästi (neuvontapalvelu)",
+  "url": "https://paihdelinkki.fi/neuvonta/",
+  "type": "palvelu",
+  "description": "Anonyymi neuvontapalvelu; vastaus yleensä 3–4 päivässä.",
+  "topics": [
+   "neuvonta",
+   "kysymys",
+   "anonyymi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "paihdeneuvonta",
+  "title": "Valtakunnallinen päihdeneuvonta 0800 900 45 (24/7, EHYT ry)",
+  "url": "https://ehyt.fi/",
+  "type": "palvelu",
+  "description": "Maksuton ja anonyymi päihdeneuvonta ympäri vuorokauden.",
+  "topics": [
+   "puhelin",
+   "neuvonta",
+   "päihteet",
+   "yöllä"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "aa",
+  "title": "AA:n auttava puhelin 09 750 200",
+  "url": "https://www.aa.fi/",
+  "type": "palvelu",
+  "description": "AA:n auttava puhelin ja paikalliset ryhmät.",
+  "topics": [
+   "AA",
+   "vertaistuki",
+   "alkoholi"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "na",
+  "title": "NA:n infopuhelin 050 307 7597 (klo 18–20)",
+  "url": "https://www.nasuomi.org/",
+  "type": "palvelu",
+  "description": "NA-ryhmät huumeita käyttäville.",
+  "topics": [
+   "NA",
+   "vertaistuki",
+   "huumeet"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "al-anon",
+  "title": "Al-Anon (läheisille)",
+  "url": "https://www.al-anon.fi/",
+  "type": "palvelu",
+  "description": "Vertaistukiryhmät alkoholistien läheisille.",
+  "topics": [
+   "Al-Anon",
+   "läheinen",
+   "vertaistuki"
+  ],
+  "audience": [
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "irti-huumeista",
+  "title": "Irti huumeista ry, auttava puhelin 0800 98 066",
+  "url": "https://irtihuumeista.fi/",
+  "type": "palvelu",
+  "description": "Tukea huumeita käyttäville ja heidän läheisilleen; arkisin 9–15 ja 18–21 (ei pe-iltaisin).",
+  "topics": [
+   "huumeet",
+   "läheinen",
+   "puhelin"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "peluuri",
+  "title": "Peluuri 0800 100 101 (arkisin 12–18)",
+  "url": "https://peluuri.fi/",
+  "type": "palvelu",
+  "description": "Maksuton ja anonyymi apu rahapeliongelmiin ja läheisille.",
+  "topics": [
+   "rahapelit",
+   "peluuri",
+   "pelaaminen"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "velkalinja",
+  "title": "Takuusäätiön Velkalinja 0800 98 009",
+  "url": "https://www.takuusaatio.fi/palvelumme/velkalinja-ja-chat-neuvonta",
+  "type": "palvelu",
+  "description": "Apua ylivelkaantumiseen.",
+  "topics": [
+   "velat",
+   "raha",
+   "ylivelkaantuminen"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "stumppi",
+  "title": "Stumppi-neuvontapuhelin 0800 148 484",
+  "url": "https://www.hengitysliitto.fi/elamanlaatu-ja-hyvinvointi/savuttomuus/",
+  "type": "palvelu",
+  "description": "Apua tupakoinnin lopettamiseen.",
+  "topics": [
+   "tupakka",
+   "lopettaminen",
+   "nikotiini"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kirkon-keskusteluapu",
+  "title": "Kirkon keskusteluapu 0400 22 11 80 (joka ilta 18–24)",
+  "url": "https://kirkonkeskusteluapua.fi/",
+  "type": "palvelu",
+  "description": "Puhelin-, chat- ja kirjepalvelu.",
+  "topics": [
+   "keskusteluapu",
+   "yksinäisyys",
+   "kriisi"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laki-kayttorikos",
+  "title": "Rikoslaki 50 luku: huumausaineen käyttörikos",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1889/39",
+  "type": "laki",
+  "description": "Huumausaineen käyttö on rangaistavaa (käyttörikos). Tarkista ajantasainen sanamuoto Finlexistä.",
+  "topics": [
+   "laki",
+   "käyttörikos",
+   "huumeet",
+   "sakko"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin",
+  "content": "Huumausaineen käyttörikos (rikoslain 50 luku): huumausaineen käyttö sekä vähäisen määrän hallussapito ja hankkiminen omaa käyttöä varten on rangaistavaa. Rangaistuksena on sakkoa tai enintään kuusi kuukautta vankeutta. Käytännössä seuraamus on yleensä sakko. Viranomaiset voivat jättää syytteen tai rangaistuksen tekemättä, jos henkilö on hakeutunut hoitoon tai sitoutuu hoitoon (toimenpiteistä luopuminen). Hoitoon hakeutuminen ja terveydenhuollossa kertominen eivät johda rikosilmoitukseen: terveydenhuollon henkilöstöllä on vaitiolovelvollisuus.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 16.11.2026 yleistiedon pohjalta: TARKISTETTAVA juristin kanssa. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-16"
+ },
+ {
+  "id": "laki-rattijuopumus",
+  "title": "Rikoslaki 23 luku: rattijuopumus",
+  "url": "https://www.finlex.fi/fi/lainsaadanto/1889/39",
+  "type": "laki",
+  "description": "Rattijuopumuksen rajat ja seuraukset. Tarkista ajantasainen sanamuoto Finlexistä.",
+  "topics": [
+   "laki",
+   "rattijuopumus",
+   "promille",
+   "ajokortti",
+   "huumeet liikenteessä"
+  ],
+  "audience": [
+   "itse"
+  ],
+  "description_source": "käsin",
+  "content": "Rattijuopumus (rikoslain 23 luku): moottorikäyttöisen ajoneuvon kuljettaminen, kun veren alkoholipitoisuus on vähintään 0,5 promillea tai uloshengitysilman pitoisuus vähintään 0,22 mg/l. Törkeän rattijuopumuksen raja on 1,2 promillea (0,53 mg/l). Rattijuopumukseksi katsotaan myös ajaminen, kun veressä on huumausainetta tai sen aineenvaihduntatuotetta (lääkemääräykseen perustuva lääkkeiden käyttö arvioidaan erikseen). Seuraamuksena on sakkoa tai vankeutta sekä ajokielto; toistuvissa tapauksissa voidaan edellyttää päihderiippuvuuden arviointia ja ajokorttiseurantaa.\n\nTiivistelmä, ei virallinen lakiteksti. Tarkistettu 16.11.2026 yleistiedon pohjalta: TARKISTETTAVA juristin kanssa. Ajantasainen sanamuoto: Finlex.",
+  "tarkistettu": "2026-11-16"
+ },
+ {
+  "id": "metadoni",
+  "title": "Metadoni",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/metadoni/",
+  "type": "artikkeli",
+  "description": "Metadonin vaikutukset ja riskit.",
+  "topics": [
+   "metadoni",
+   "korvaushoito",
+   "opioidit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholi-laakkeet-sekakaytto",
+  "title": "Alkoholin ja lääkkeiden sekakäyttö",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laakkeet/alkoholin-ja-laakkeiden-sekakaytto/",
+  "type": "artikkeli",
+  "description": "Alkoholin ja lääkkeiden yhteiskäytön vaarat.",
+  "topics": [
+   "sekakäyttö",
+   "lääkkeet",
+   "alkoholi",
+   "bentsot"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "laheiset-hoito",
+  "title": "Läheiset ja päihdeongelmien hoito",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/laheiset-ja-paihteiden-kaytto/laheiset-ja-paihdeongelmien-hoito/",
+  "type": "artikkeli",
+  "description": "Läheisten rooli ja tuki päihdehoidossa.",
+  "topics": [
+   "läheinen",
+   "hoito",
+   "perhe"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "vertaistukea-laheiselle",
+  "title": "Vertaistukea läheiselle",
+  "url": "https://paihdelinkki.fi/vertaistuki/vertaistukea-läheiselle/",
+  "type": "palvelu",
+  "description": "Vertaistukimuodot päihteitä käyttävän läheisille.",
+  "topics": [
+   "läheinen",
+   "vertaistuki"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "peluuri-opas",
+  "title": "Peluuri: apua rahapelihaittoihin",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/rahapelaaminen/peluuri/",
+  "type": "palvelu",
+  "description": "Peluurin palvelut pelaajille ja läheisille.",
+  "topics": [
+   "peluuri",
+   "rahapelit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "pelitilien-estaminen",
+  "title": "Pelitilien estäminen",
+  "url": "https://paihdelinkki.fi/verkkokurssit-ja-oppaat/rahapelaaminen/pelitilien-estaminen/",
+  "type": "oma-apu",
+  "description": "Miten pelitilit ja rahapelaaminen estetään.",
+  "topics": [
+   "esto",
+   "pelitili",
+   "rahapelit"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "huumeiden-kaytto-suomessa",
+  "title": "Huumeiden käyttö Suomessa",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/huumeet-ja-muut-paihdyttavat-aineet/huumeiden-kaytto-suomessa/",
+  "type": "artikkeli",
+  "description": "Tilastotietoa huumeiden käytöstä Suomessa.",
+  "topics": [
+   "tilastot",
+   "huumeet"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "alkoholiriippuvuus-laakehoito",
+  "title": "Alkoholiriippuvuuden lääkkeellinen hoito",
+  "url": "https://paihdelinkki.fi/tietopankki/tietoiskut/paihdeongelmien-hoito/alkoholiriippuvuuden-laakkeellinen-hoito/",
+  "type": "artikkeli",
+  "description": "Lääkkeet alkoholinkäytön vähentämisen ja lopettamisen tukena.",
+  "topics": [
+   "tukilääkitys",
+   "naltreksoni",
+   "nalmefeeni",
+   "antabus",
+   "akamprosaatti",
+   "lääkehoito"
+  ],
+  "audience": [
+   "itse",
+   "läheinen"
+  ],
+  "description_source": "käsin"
+ },
+ {
+  "id": "kaypa-hoito-alkoholi",
+  "title": "Käypä hoito: Alkoholiongelmat",
+  "url": "https://www.kaypahoito.fi/hoi50067",
+  "type": "artikkeli",
+  "description": "Alkoholiongelmien hoitosuositus (myös potilasversio).",
+  "topics": [
+   "hoitosuositus",
+   "alkoholi",
+   "vieroitus",
+   "lääkehoito"
+  ],
+  "audience": [
+   "itse",
+   "läheinen",
+   "ammattilainen"
+  ],
+  "description_source": "käsin"
+ }
+]

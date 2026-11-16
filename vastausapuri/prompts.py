@@ -57,7 +57,8 @@ Vastaa VAIN JSON-oliona:
 
 # --- Luonnostila (vaihe 2) -------------------------------------------------------
 
-def draft_system(h: Hanke, max_links: int, own_style: bool, followup: bool = False) -> str:
+def draft_system(h: Hanke, max_links: int, own_style: bool, followup: bool = False,
+                 signature: str | None = None) -> str:
     v = h.vastaus
     style = (
         "Esimerkeistä osa on merkitty OMA: ne ovat tämän vastaajan omia vastauksia. Jäljittele niiden "
@@ -93,17 +94,17 @@ KIRJOITUSOHJEET:
   "Kaiken kaikkiaan".
 - Aloita tervehdyksellä "{greeting}"{f' ja päätä ennen allekirjoitusta lauseeseen: "{closing}"' if closing else ""}.
 - Allekirjoitus:
-{h.allekirjoitus or "(ei allekirjoitusta)"}
+{(signature if signature is not None else h.allekirjoitus) or "(ei allekirjoitusta)"}
 - Perusta tieto LÄHDEOTTEISIIN ja ehdokkaiden kuvauksiin. Yleisesti tunnettu lääketieteellinen perustieto
   on sallittu. Merkitse muodossa [TARKISTA: lyhyt syy] erityisesti luvut, ajat, annokset, lakiasiat ja
   muut täsmälliset väitteet, jotka eivät perustu lähteisiin, jotta vastaaja tarkistaa ne.
 - Lakiasiat (laillisuus, rangaistukset, maahantuonti, potilastiedot, vaitiolovelvollisuus, vakuutukset):
   perusta ne tyypin "laki" lähdeotteisiin, jotka ovat tarkistettuja tiivistelmiä. Mainitse laki nimeltä, kun
   se auttaa kysyjää, mutta älä anna oikeudellista arviota yksittäistapauksesta (esim. "saisitko tuomion").
-  Jos lakiasiaa ei löydy lähteistä, merkitse se [TARKISTA: lakiasia] ja ohjaa tarvittaessa juristille,
-  Tulliin tai Fimeaan.
+  Jos lakiasiaa ei löydy lähteistä, merkitse se [TARKISTA: lakiasia] ja ohjaa tarvittaessa juristille tai
+  asiasta vastaavalle viranomaiselle.
 - Linkitä enintään {max_links} ehdokasta kirjoittamalla tekstiin [[id]] siihen kohtaan, jossa sisältöön viitataan
-  (esim. "Lue lisää turvallisemmasta pistämisestä: [[turvallisempi-pistaminen]]"). Linkki ei ole pakollinen,
+  (esim. "Lue lisää aiheesta: [[aiheen-id]]"). Linkki ei ole pakollinen,
   jos mikään ehdokas ei aidosti auta kysyjää.
 - {style}
 - Älä toista esimerkkien henkilöihin liittyviä yksityiskohtia.
@@ -162,7 +163,7 @@ Tarkista:
    pyörtyily, tulehdusoireet) tai kriisisignaaleja, onko luonnoksessa SELKEÄ toimintaohje aikarajan kanssa
    (esim. "samana päivänä päivystykseen", 116117, 112)? Jos ei ole, vakavuus korkea.
    kriisi.havaittu = true, jos akuutteja oireita tai kriisisignaaleja on.
-   Selitetäänkö oireita pelkillä dopingaineilla, vaikka muut syyt (sairaudet, lääkitys, ylikuormitus)
+   Selitetäänkö oireita pelkillä päihteillä tai dopingaineilla, vaikka muut syyt (sairaudet, lääkitys, ylikuormitus)
    ovat mahdollisia? Ehdotetaanko jotain, mitä kysyjä kertoo jo kokeilleensa, ilman perustelua?
    Mainitaanko nimeltä lääkäri, joka ei ole asiantuntijalistalla? (vakavuus korkea)
 6. Linkit: sopivatko luonnoksen [[id]]-viittaukset? Puuttuuko tärkeä ohjaus ehdokkaista?

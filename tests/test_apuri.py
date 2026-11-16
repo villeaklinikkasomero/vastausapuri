@@ -642,3 +642,141 @@ def test_user_admin_flow(monkeypatch, tmp_path):
     assert u2.get("/api/status").status_code == 401
     # Ympäristökäyttäjän salasanaa ei voi vaihtaa sivulla
     assert c.post("/api/salasana", json={"vanha": "alkusalasana1", "uusi": "uusi-salasana-33"}).status_code == 400
+
+
+def test_table_format_import_and_append(tmp_path):
+    from vastausapuri.tyokalut.tuo_vastaukset import import_data
+    out = tmp_path / "v.jsonl"
+    import_data("dopinglinkki", THREADS, out, with_questions=True, min_len=20)
+    table = {"table": "TuntematonTaulu", "rows": [
+        {"question": "Mistä saa PCT-lääkkeitä? Olen [NIMI1].", "type": "3",
+         "answer": "Hei.\n\nKiitos kysymyksestäsi. PCT-lääkkeillä tarkoitetaan SERM-lääkkeitä ja aromataasin estäjiä.\n\n"
+                   "Ystävällisin terveisin,\nDopinglinkin työryhmä\n\nPalautteesi on täysin anonyymi eikä vastaustasi voida yhdistää."},
+        {"question": "Nuorten kysymys", "type": "4", "answer": "Toisen palvelun vastaus, joka on riittävän pitkä tähän testiin."},
+        {"question": "Lyhyt", "type": "3", "answer": "Kiitos!"},
+    ]}
+    report = import_data("dopinglinkki", table, out, with_questions=True, min_len=20, append=True)
+    recs = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines()]
+    assert len(recs) == 3  # 2 säikeestä + 1 taulukosta (tyyppi 4 ja lyhyt pois)
+    new = recs[-1]
+    assert new["kysymys"].startswith("Mistä saa PCT") and "Palautteesi" not in new["text"]
+    assert "Indeksissä nyt yhteensä 3" in report
+    # Sama tuonti uudelleen: duplikaatit ohitetaan
+    report2 = import_data("dopinglinkki", table, out, with_questions=True, min_len=20, append=True)
+    assert "1 jo indeksissä olevaa" in report2 and len(out.read_text(encoding="utf-8").splitlines()) == 3
+    with pytest.raises(ValueError):
+        import_data("dopinglinkki", {"rows": [{"foo": 1}]}, out)
+
+
+def test_admin_accepts_table_format(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("APURI_ADMINS", "ville")
+    c = client(monkeypatch, "ville:pw")
+    login(c, "ville", "pw")
+    table = {"table": "x", "rows": [{"question": "Q?", "type": 3, "answer": "Vastaus " * 30}]}
+    r = c.post("/api/yllapito/tuo", json={"hanke": "dopinglinkki", "kysymykset": True, "lisaa": True, "data": table})
+    assert r.status_code == 200 and "Tuotu 1 vastausta" in r.json()["raportti"]
+
+
+# --- Päihdelinkki ja henkilökohtaiset allekirjoitukset --------------------------------
+
+@pytest.fixture(scope="module")
+def paihde():
+    return load_hanke(HANKKEET, "paihdelinkki")
+
+
+def test_paihdelinkki_loads_with_own_voice(paihde):
+    assert paihde.nimi == "Päihdelinkki" and paihde.tervehdys.startswith("Hyvä kysyjä")
+    ids = [it.id for it in paihde.index.items]
+    assert len(ids) == len(set(ids))
+    assert {"nollalinja", "kriisipuhelin", "hata-112"} <= set(ids)  # yhteiset mukana
+    assert "minä-muodossa" in paihde.vastaus["puhuttelu"]
+    assert "neuvonta2026" in paihde.vastaus["palaute"]
+
+
+@pytest.mark.parametrize("query,expected", [
+    ("Haluaisin vähentää juomista, miten pääsen alkuun?", {"vahentaminen", "alkoholin-itsehallinta", "testi-audit"}),
+    ("Mieheni juo joka ilta ja olen aivan uupunut, miten voin tukea häntä", {"laheiset", "huoneentaulu", "al-anon", "laheisriippuvuus"}),
+    ("Pelaan rahapelejä ja velkaa on kertynyt", {"peluuri", "rahapelaaminen-oma-apu", "ongelmapelaaminen", "velkalinja", "testi-rahapelit"}),
+    ("Miten bentsoista pääsee eroon", {"bentsoriippuvuus", "bentsot"}),
+    ("Saako huumeiden käytöstä sakot jos menen hoitoon", {"kayttorikos", "laki-kayttorikos"}),
+])
+def test_search_paihdelinkki(paihde, query, expected):
+    found = {it.id for it, _ in paihde.index.search(query, k=8)}
+    assert found & expected, (query, found)
+
+
+@pytest.mark.parametrize("text,kind", [
+    ("Isä on juonut viikkoja ja nyt hän näkee ötököitä seinillä", "akuutti_terveysriski"),
+    ("Lopetin kaljan eilen ja sain kouristuskohtauksen", "akuutti_terveysriski"),
+    ("Kaverin hengitys katkeilee ja hän ei herää", "akuutti_myrkytys"),
+])
+def test_paihdelinkki_crisis_signals(paihde, text, kind):
+    assert kind in {s.kind for s in detect_signals(text, paihde.signal_patterns)}
+
+
+def test_paihdelinkki_neutral_question_has_no_signal(paihde):
+    assert detect_signals("Miten maksa-arvot ja gamma-GT palautuvat, kun lopetan juomisen?",
+                          paihde.signal_patterns) == []
+
+
+def test_violence_brings_nollalinja(paihde):
+    r, _ = make(paihde).run("Puoliso lyö minua humalassa enkä uskalla mennä kotiin", mode="linkit")
+    assert "nollalinja" in {l.id for l in r.links}
+
+
+def test_signature_template(paihde, doping):
+    assert paihde.signature_for("Liisa Esimerkki\nneuvontapalvelun vastaaja, sosionomi") == \
+        "Terveisin\n\nLiisa Esimerkki\nneuvontapalvelun vastaaja, sosionomi"
+    assert paihde.signature_for("") == "Terveisin\n\nPäihdelinkin neuvontapalvelun vastaaja"
+    assert doping.signature_for("Liisa") == doping.allekirjoitus  # työryhmän allekirjoitus pysyy
+
+
+def test_paihdelinkki_draft_has_personal_signature_and_feedback(paihde):
+    r, _ = make(paihde).run("Juon liikaa viikonloppuisin, miten voisin vähentää?", mode="luonnos",
+              signature="Liisa Esimerkki\nsosionomi")
+    assert "Liisa Esimerkki" in r.draft and "neuvonta2026" in r.draft
+    assert r.draft.startswith("Hyvä kysyjä") or r.draft.startswith("Hei")
+
+
+def test_signature_name_from_full_name_and_role():
+    from vastausapuri.tyokalut.tuo_vastaukset import signature_name
+    txt = "Kiitos viestistä.\n\nTerveisin\n\nPäivi Ähtäri\n\nneuvontapalvelun vastaaja,\nsosionomi"
+    assert signature_name(txt) == "paivi.ahtari"
+    assert signature_name("Hei\n\nTuuli - Varjomaailman aikuinen") == "tuuli"
+
+
+def test_profile_signature_api(monkeypatch, tmp_path):
+    monkeypatch.setenv("APURI_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("APURI_ADMINS", "admin")
+    c = client(monkeypatch, "admin:alkusalasana1")
+    login(c, "admin", "alkusalasana1")
+    r = c.post("/api/yllapito/kayttajat", json={"nimi": "liisa.esimerkki", "salasana": "liisan-salasana-1",
+                                                "hankkeet": ["paihdelinkki"], "allekirjoitus": "Liisa E."})
+    assert r.status_code == 200
+    # Ympäristötunnuksen allekirjoitusta ei voi muokata
+    assert c.get("/api/omat-tiedot").json()["muokattavissa"] is False
+    assert c.post("/api/omat-tiedot", json={"allekirjoitus": "x"}).status_code == 400
+    u = client(monkeypatch, "admin:alkusalasana1")
+    login(u, "liisa.esimerkki", "liisan-salasana-1")
+    assert u.get("/api/omat-tiedot").json() == {"nimi": "liisa.esimerkki", "allekirjoitus": "Liisa E.",
+                                                "muokattavissa": True}
+    assert u.post("/api/omat-tiedot", json={"allekirjoitus": "Liisa Esimerkki\nsosionomi"}).status_code == 200
+    d = u.post("/api/suggest", json={"question": "Miten voisin vähentää juomista?", "hanke": "paihdelinkki",
+                                     "mode": "luonnos"}).json()
+    assert "Terveisin\n\nLiisa Esimerkki\nsosionomi" in d["draft"]
+    lst = {x["nimi"]: x for x in c.get("/api/yllapito/kayttajat").json()["kayttajat"]}
+    assert lst["liisa.esimerkki"]["allekirjoitus"] == "Liisa Esimerkki\nsosionomi"
+
+
+def test_missing_pages_are_not_offered(tmp_path):
+    from vastausapuri.catalog import load_catalog
+    p = tmp_path / "k.json"
+    p.write_text(json.dumps([{"id": "a", "title": "A", "url": "https://x.fi/a"},
+                             {"id": "b", "title": "B", "url": "https://x.fi/b", "puuttuu": True}]), encoding="utf-8")
+    assert [it.id for it in load_catalog(p)] == ["a"]
+
+
+def test_personal_signature_with_own_closing_is_kept(paihde):
+    sig = "Ystävällisin terveisin,\n\nLotta Esimerkki\nproviisori"
+    assert paihde.signature_for(sig) == sig

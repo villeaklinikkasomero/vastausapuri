@@ -203,6 +203,7 @@ def suggest(body: Ask, request: Request) -> dict:
     try:
         result, ps = assistants()[body.hanke].run(body.question, mode=body.mode,
                                                  vastaaja=user, own_style=body.own_style,
+                                                 signature=_signature(user),
                                                  thread=body.thread, use_research=body.research)
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Ehdotusta ei saatu: {_explain(e)}") from None
@@ -228,6 +229,7 @@ def suggest_stream(body: Ask, request: Request):
         try:
             result, ps = assistant.run(body.question, mode=body.mode, vastaaja=user,
                                        own_style=body.own_style, thread=body.thread,
+                                       signature=_signature(user),
                                        use_research=body.research,
                                        progress=lambda sid: events.put({"type": "step", "id": sid}))
             events.put({"type": "result", "data": result.to_dict(restore=ps)})
@@ -268,6 +270,11 @@ def _explain(e: Exception) -> str:
 
 # --- Ylläpito: vanhojen vastausten tuonti -------------------------------------------------
 
+def _signature(user: str | None) -> str:
+    u = _reg().get(user) if user else None
+    return u.signature if u else ""
+
+
 def _is_admin(user: str | None) -> bool:
     reg = _reg()
     if not reg.any_users():  # paikallinen kehitys ilman käyttäjiä
@@ -303,7 +310,8 @@ class ImportBody(BaseModel):
     hanke: str
     palvelu: str | None = None
     kysymykset: bool = False
-    data: list = Field(max_length=200000)
+    lisaa: bool = False  # lisää nykyiseen indeksiin (muuten korvaa)
+    data: list | dict
 
 
 @app.post("/api/yllapito/tuo")
@@ -317,7 +325,8 @@ def admin_import(body: ImportBody, request: Request) -> dict:
     if body.hanke not in assistants():
         raise HTTPException(status_code=404, detail="Tuntematon hanke.")
     try:
-        report = import_data(body.hanke, body.data, default_out(body.hanke), body.palvelu, body.kysymykset)
+        report = import_data(body.hanke, body.data, default_out(body.hanke), body.palvelu, body.kysymykset,
+                             append=body.lisaa)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from None
     assistants.cache_clear()  # uusi indeksi käyttöön heti
@@ -371,6 +380,7 @@ class UserBody(BaseModel):
     hankkeet: list[str] | None = None  # None = kaikki hankkeet
     admin: bool = False
     aktiivinen: bool = True
+    allekirjoitus: str | None = Field(default=None, max_length=300)
 
 
 def _require_admin(request: Request) -> str:
@@ -400,7 +410,7 @@ def users_create(body: UserBody, request: Request) -> dict:
     _check_projects(body.hankkeet)
     try:
         _reg().upsert(body.nimi.strip().lower(), password=body.salasana, projects=body.hankkeet,
-                      admin=body.admin, active=body.aktiivinen, create=True)
+                      admin=body.admin, active=body.aktiivinen, create=True, signature=body.allekirjoitus)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from None
     return {"ok": True}
@@ -414,7 +424,7 @@ def users_update(nimi: str, body: UserBody, request: Request) -> dict:
         raise HTTPException(status_code=400, detail="Et voi poistaa omia ylläpitäjäoikeuksiasi tai sulkea omaa tunnustasi.")
     try:
         _reg().upsert(nimi, password=body.salasana or None, projects=body.hankkeet,
-                      admin=body.admin, active=body.aktiivinen)
+                      admin=body.admin, active=body.aktiivinen, signature=body.allekirjoitus)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from None
     return {"ok": True}
@@ -452,3 +462,28 @@ def change_password(body: PasswordBody, request: Request) -> dict:
 @app.get("/salasana")
 def password_page() -> FileResponse:
     return FileResponse(STATIC / "salasana.html")
+
+
+
+class ProfileBody(BaseModel):
+    allekirjoitus: str = Field(default="", max_length=300)
+
+
+@app.get("/api/omat-tiedot")
+def profile_get(request: Request) -> dict:
+    user = _session_user(request)
+    u = _reg().get(user) if user else None
+    return {"nimi": user, "allekirjoitus": u.signature if u else "",
+            "muokattavissa": bool(u and u.source == "rekisteri")}
+
+
+@app.post("/api/omat-tiedot")
+def profile_set(body: ProfileBody, request: Request) -> dict:
+    user = _session_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Kirjaudu ensin.")
+    try:
+        _reg().set_signature(user, body.allekirjoitus)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"ok": True}

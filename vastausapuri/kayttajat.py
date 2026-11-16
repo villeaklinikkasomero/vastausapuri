@@ -32,6 +32,7 @@ class User:
     admin: bool
     active: bool = True
     source: str = "rekisteri"  # "rekisteri" | "ympäristö"
+    signature: str = ""  # oma allekirjoitus luonnoksiin (esim. nimi ja nimike)
 
 
 def _hash(password: str, salt: str) -> str:
@@ -80,7 +81,8 @@ class Registry:
         if rec is not None:
             proj = rec.get("hankkeet")
             return User(name, frozenset(proj) if proj is not None else None,
-                        bool(rec.get("admin")) or name in self._env_admins(), bool(rec.get("aktiivinen", True)))
+                        bool(rec.get("admin")) or name in self._env_admins(), bool(rec.get("aktiivinen", True)),
+                        "rekisteri", rec.get("allekirjoitus", ""))
         env = self._env().get(name)
         if env is not None:
             return User(name, env[1], name in self._env_admins(), True, "ympäristö")
@@ -103,17 +105,18 @@ class Registry:
         for name, rec in sorted(data.items()):
             out.append({"nimi": name, "hankkeet": rec.get("hankkeet"), "admin": bool(rec.get("admin")),
                         "aktiivinen": bool(rec.get("aktiivinen", True)), "lahde": "rekisteri",
-                        "muokattu": rec.get("muokattu")})
+                        "allekirjoitus": rec.get("allekirjoitus", ""), "muokattu": rec.get("muokattu")})
         for name, (_, proj) in sorted(self._env().items()):
             if name not in data:
                 out.append({"nimi": name, "hankkeet": sorted(proj) if proj is not None else None,
                             "admin": name in self._env_admins(), "aktiivinen": True, "lahde": "ympäristö",
-                            "muokattu": None})
+                            "allekirjoitus": "", "muokattu": None})
         return out
 
     # --- muutokset --------------------------------------------------------------------
     def upsert(self, name: str, *, password: str | None = None, projects: list[str] | None = None,
-               admin: bool = False, active: bool = True, create: bool = False) -> None:
+               admin: bool = False, active: bool = True, create: bool = False,
+               signature: str | None = None) -> None:
         if not USERNAME.match(name):
             raise ValueError("Käyttäjätunnus: 2–40 merkkiä, pienet kirjaimet, numerot sekä . _ -")
         if password is not None and len(password) < MIN_PASSWORD:
@@ -133,6 +136,8 @@ class Registry:
             rec["hankkeet"] = sorted(set(projects)) if projects is not None else None
             rec["admin"] = bool(admin)
             rec["aktiivinen"] = bool(active)
+            if signature is not None:
+                rec["allekirjoitus"] = signature.strip()[:300]
             rec["muokattu"] = int(time.time())
             data[name] = rec
             self._write(data)
@@ -153,4 +158,14 @@ class Registry:
             if name not in data:
                 raise ValueError("Käyttäjää ei löydy rekisteristä.")
             del data[name]
+            self._write(data)
+
+    def set_signature(self, name: str, signature: str) -> None:
+        with _lock:
+            data = self._read()
+            if name not in data:
+                raise ValueError("Tämä tunnus on asetettu Renderin ympäristömuuttujissa, eikä sille voi "
+                                 "tallentaa allekirjoitusta. Pyydä ylläpitäjää luomaan sinulle oma tunnus.")
+            data[name]["allekirjoitus"] = signature.strip()[:300]
+            data[name]["muokattu"] = int(time.time())
             self._write(data)

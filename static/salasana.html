@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vastausapuri – vaihda salasana</title>
+<title>Vastausapuri – omat tiedot</title>
 <style>
   :root { --bg:#f6f5f2; --panel:#fff; --ink:#1d1d1b; --muted:#5f5e5a; --line:#dddbd4; --accent:#1f5fa8; --warn:#9a3412; --ok:#166534; }
   @media (prefers-color-scheme: dark) {
@@ -11,7 +11,9 @@
   }
   body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--ink);
     font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; padding:16px; box-sizing:border-box; }
-  form { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px; width:100%; max-width:360px; }
+  .wrap { display:grid; gap:16px; width:100%; max-width:420px; }
+  textarea { width:100%; box-sizing:border-box; min-height:90px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  form { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:28px; width:100%; max-width:420px; box-sizing:border-box; }
   h1 { font-size:18px; margin:0 0 16px; }
   label { display:block; font-size:13px; margin:12px 0 4px; }
   input { width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
@@ -21,6 +23,16 @@
 </style>
 </head>
 <body>
+<div class="wrap">
+<form id="sig">
+  <h1>Oma allekirjoitus</h1>
+  <p class="hint">Apuri käyttää tätä luonnosten lopussa niissä palveluissa, joissa vastaukset allekirjoitetaan
+    omalla nimellä (esim. Päihdelinkki). Luonnokseen tulee "Terveisin" ja sen alle tämä teksti, esimerkiksi:<br>Etunimi Sukunimi<br>neuvontapalvelun vastaaja, sosionomi<br>
+    Jos aloitat oman lopputervehdyksen sanalla (esim. "Ystävällisin terveisin,"), sitä käytetään sellaisenaan.</p>
+  <textarea id="sigText" maxlength="300"></textarea>
+  <button type="submit">Tallenna allekirjoitus</button>
+  <p id="sigMsg"></p>
+</form>
 <form id="f">
   <h1>Vaihda salasana</h1>
   <label for="old">Nykyinen salasana</label><input id="old" type="password" autocomplete="current-password" required>
@@ -29,10 +41,24 @@
   <p class="hint">Vähintään 10 merkkiä. Pitkä salalause on hyvä valinta.</p>
   <button type="submit">Vaihda salasana</button>
   <p id="msg"></p>
-  <a href="/">Takaisin apuriin</a>
 </form>
+<a href="/">Takaisin apuriin</a>
+</div>
 <script>
 const $ = s => document.querySelector(s);
+fetch("/api/omat-tiedot").then(r => r.json()).then(d => {
+  $("#sigText").value = d.allekirjoitus || "";
+  if (!d.muokattavissa) { $("#sigText").disabled = true; $("#sig button").disabled = true;
+    $("#sigMsg").className = "hint"; $("#sigMsg").textContent = "Tunnuksesi on Renderin ympäristömuuttujissa, joten allekirjoitusta ja salasanaa ei voi muuttaa täällä."; }
+});
+$("#sig").onsubmit = async e => {
+  e.preventDefault();
+  const r = await fetch("/api/omat-tiedot", {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({allekirjoitus: $("#sigText").value})});
+  const d = await r.json().catch(() => ({}));
+  $("#sigMsg").className = r.ok ? "ok" : "err";
+  $("#sigMsg").textContent = r.ok ? "Allekirjoitus tallennettu." : (d.detail || "Tallennus ei onnistunut.");
+};
 $("#f").onsubmit = async e => {
   e.preventDefault();
   if ($("#new").value !== $("#new2").value) { $("#msg").className = "err"; $("#msg").textContent = "Uudet salasanat eivät täsmää."; return; }

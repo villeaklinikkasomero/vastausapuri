@@ -72,10 +72,12 @@ class MockLLM:
         if "<luonnos>" not in system:
             return json.dumps(meta, ensure_ascii=False)
         refs = "\n".join(f"- [[{i}]]" for i in ids)
+        sig = re.search(r"- Allekirjoitus:\n(.*?)\n- Perusta", system, re.S)
+        sig_text = sig.group(1).strip() if sig else "Neuvontapalvelu"
         body = (
             "Hei,\n\nkiitos kysymyksestäsi. (Mock-luonnos: oikea malli kirjoittaa tähän vastauksen.)\n\n"
             "Tässä on tietoa aiheesta [TARKISTA: mock-väite]. Lisää luettavaa:\n"
-            f"{refs}\n\nYstävällisin terveisin,\nNeuvontapalvelu"
+            f"{refs}\n\n{sig_text}"
         )
         return f"<meta>\n{json.dumps(meta, ensure_ascii=False)}\n</meta>\n<luonnos>\n{body}\n</luonnos>"
 
