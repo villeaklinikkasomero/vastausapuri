@@ -9,6 +9,9 @@ raportti*.md
 # Neuvontapalvelun viennit ja indeksit eivät koskaan Gitiin
 *threads*.json
 *vienti*.json
+*pseudo*.json
+neuvonta*.json
+*.tmp
 *.jsonl
 palaute.jsonl
 kayttajat.json
