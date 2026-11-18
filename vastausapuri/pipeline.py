@@ -321,6 +321,12 @@ class Assistant:
         if n_fixed:
             notes.append(f"Luonnoksesta korjattiin {n_fixed} ajatusviivaa tai muotoilumerkintää. "
                          "Lue korjatut lauseet läpi.")
+        # Kysyjän paikkakunta ei kuulu luonnokseen: paikkamerkit ja kunnan nimi merkitään tarkistettaviksi
+        draft_out, n_ph = re.subn(r"\[PAIKKA_\d+\][:\wåäö]*", "[TARKISTA: kysyjän paikkakunta]", draft_out)
+        draft_out, n_k = alueet.mark_municipalities(draft_out, {a.kunta for a in areas})
+        if n_ph or n_k:
+            notes.append("Luonnoksessa mainittiin kysyjän paikkakunta. Kohta on merkitty [TARKISTA]: "
+                         "poista paikkakunta tai muotoile lause hyvinvointialueen nimellä.")
         # Tervehdys alkuun, jos malli unohti sen (esim. aloitti "Ymmärrämme hyvin...")
         greeting = (self.h.vastaus.get("jatko_tervehdys") if followup else None) or self.h.tervehdys
         if draft_out and greeting and not draft_out.lstrip().lower().startswith(greeting.split()[0].lower().strip(",.")):

@@ -877,3 +877,16 @@ def test_municipality_never_reaches_model(paihde):
     assert all("pori" not in t.lower().replace("pomarkku", "") for t in sent)
     assert r.areas[0]["nimi"] == "Satakunnan hyvinvointialue"
     assert ps.restore(r.pseudonymized_question) == q  # vastaaja näkee alkuperäisen
+
+
+def test_municipality_in_draft_is_marked(paihde):
+    from vastausapuri.llm import MockLLM as M
+
+    class Leaky(M):
+        def complete(self, *, model, system, user, max_tokens=2000):
+            out = super().complete(model=model, system=system, user=user, max_tokens=max_tokens)
+            return out.replace("(Mock-luonnos",
+                                                                    "Porissa voit soittaa. [PAIKKA_1]:ssa myös. (Mock-luonnos")
+    r, _ = make(paihde, Leaky()).run("Asun Porissa ja juon liikaa, mistä apua?", mode="luonnos")
+    assert "Porissa [TARKISTA: kysyjän paikkakunta]" in r.draft
+    assert "[PAIKKA_" not in r.draft and any("paikkakunta" in n for n in r.notes)

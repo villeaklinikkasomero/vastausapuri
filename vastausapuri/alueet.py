@@ -167,3 +167,15 @@ def spans(text: str) -> list[tuple[int, int]]:
             continue
         merged.append((a, b))
     return merged
+
+
+def mark_municipalities(text: str, kunnat: set[str], marker: str = " [TARKISTA: kysyjän paikkakunta]") -> tuple[str, int]:
+    """Merkitsee luonnoksesta kysyjän kunnan maininnat tarkistettaviksi (malli ei saa mainita paikkakuntaa)."""
+    _, rules = _load()
+    hits: list[tuple[int, int]] = []
+    for pat, kunta, _alue, _amb in rules:
+        if kunta in kunnat:
+            hits += [(m.start(), m.end()) for m in pat.finditer(text)]
+    for _a, b in sorted(set(hits), reverse=True):
+        text = text[:b] + marker + text[b:]
+    return text, len(set(hits))
