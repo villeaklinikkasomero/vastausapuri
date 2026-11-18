@@ -800,3 +800,62 @@ def test_catalog_build_stops_on_errors_and_keeps_catalog(monkeypatch, tmp_path):
     assert (tmp_path / "paihdelinkki" / "katalogi.json").read_text(encoding="utf-8") == before
     calls.clear()
     assert rk.build("paihdelinkki", write=True, delay=0, time_limit=0) is False and calls == []
+
+
+# --- Kunta -> hyvinvointialue ----------------------------------------------------------
+
+@pytest.mark.parametrize("text,kunta,alue", [
+    ("Asun Tampereella ja juon liikaa", "Tampere", "Pirkanmaan hyvinvointialue"),
+    ("Olen Turusta kotoisin", "Turku", "Varsinais-Suomen hyvinvointialue"),
+    ("Helsingissä ei ole jonoa?", "Helsinki", "Helsingin kaupunki"),
+    ("Mieheni on Lahdessa katkolla", "Lahti", "Päijät-Hämeen hyvinvointialue"),
+    ("Seinäjoella A-klinikka", "Seinäjoki", "Etelä-Pohjanmaan hyvinvointialue"),
+    ("Asumme Joroisissa", "Joroinen", "Pohjois-Savon hyvinvointialue"),
+    ("Varkaudessa terveysasemalla", "Varkaus", "Pohjois-Savon hyvinvointialue"),
+    ("Rovaniemellä", "Rovaniemi", "Lapin hyvinvointialue"),
+    ("Muutin Espooseen", "Espoo", "Länsi-Uudenmaan hyvinvointialue"),
+    ("Keravalla", "Kerava", "Vantaan ja Keravan hyvinvointialue"),
+    ("Uudessakaupungissa", "Uusikaupunki", "Varsinais-Suomen hyvinvointialue"),
+    ("Kangasalla", "Kangasala", "Pirkanmaan hyvinvointialue"),
+    ("Asun Nokialla", "Nokia", "Pirkanmaan hyvinvointialue"),
+    ("Keski-Suomessa", "(maakunta)", "Keski-Suomen hyvinvointialue"),
+])
+def test_municipality_to_welfare_area(text, kunta, alue):
+    from vastausapuri.alueet import detect
+    found = detect(text)
+    assert found and found[0].kunta == kunta and found[0].nimi == alue
+
+
+@pytest.mark.parametrize("text", [
+    "Sain kolarissa ruhjeita", "Kemikaaleja", "Nokia-puhelimeni hajosi", "Salon metsässä", "lieto juoma",
+    "Uudellamaalla", "Katso https://www.helsinki.fi/ohje", "Turhaa juoksemista", "Lapset ovat pieniä",
+])
+def test_no_false_welfare_area(text):
+    from vastausapuri.alueet import detect
+    assert detect(text) == []
+
+
+def test_welfare_area_data_complete():
+    from vastausapuri.alueet import _load
+    data, _ = _load()
+    assert len(data["kunnat"]) == 308 and len(data["alueet"]) == 23
+    assert all(a["paihdepalvelut"].startswith("https://") for a in data["alueet"].values())
+    assert {k["alue"] for k in data["kunnat"]} == set(data["alueet"])
+
+
+def test_area_link_added_and_offered_to_drafter(paihde):
+    llm = MockLLM()
+    seen = {}
+    orig = llm.complete
+
+    def spy(**kw):
+        seen.setdefault("user", kw["user"])
+        return orig(**kw)
+    llm.complete = spy
+    r, _ = make(paihde, llm).run("Asun Jyväskylässä. Mistä saan apua juomiseen?", mode="luonnos")
+    ids = [l.id for l in r.links]
+    assert "hyvinvointialue-15" in ids
+    assert "Keski-Suomen hyvinvointialue" in seen["user"] and "Jyväskylä" not in seen["user"].split("EHDOKKAAT")[1]
+    assert r.areas[0]["kunta"] == "Jyväskylä" and any("Jyväskylä kuuluu" in n for n in r.notes)
+    r2, _ = make(paihde).run("Mistä saan apua juomiseen?", mode="linkit")
+    assert not r2.areas and not any(l.id.startswith("hyvinvointialue-") for l in r2.links)

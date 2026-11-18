@@ -31,6 +31,21 @@ luonnostelija saa esimerkeiksi ensisijaisesti hänen omiaan ja jäljittelee hän
 6. **Koodin tarkistukset** (`pipeline.py`): `[[id]]`-viittaukset muutetaan katalogin osoitteiksi. Malli ei voi
    keksiä osoitteita: tuntematon viittaus muuttuu `[TARKISTA]`-merkinnäksi. Kriisipalvelut nostetaan ensimmäisiksi.
 
+## Kysyjän hyvinvointialue
+
+Jos kysyjä mainitsee kuntansa (esim. "asun Kangasalla", "Turusta", "Rovaniemellä") tai maakuntansa
+("Keski-Suomessa"), apuri päättelee hyvinvointialueen ja lisää ehdokkaisiin sekä linkkeihin alueen
+päihde- ja mielenterveyspalvelujen sivun. Luonnostelija ohjaa silloin oman alueen palveluihin.
+
+- Tunnistus tehdään paikallisesti alkuperäisestä kysymyksestä. Mallille kerrotaan vain alue, ei kuntaa.
+  Vastaaja näkee huomioissa, mikä kunta tunnistettiin, ja tarkistaa ohjauksen.
+- Taivutusmuodot tunnistetaan (Turussa, Lahdessa, Seinäjoella, Joroisissa, Varkaudessa, Uudessakaupungissa).
+  Monitulkintaiset nimet (esim. Salo, Kolari, Nokia, Lieto, Koski) tunnistetaan vain, jos lähellä on
+  asuinpaikkaan viittaava sana (asun, kunta, kaupunki, paikkakunta ...).
+- Data: `hankkeet/yhteiset/hyvinvointialueet.json` (Tilastokeskuksen kunta–hyvinvointialue-luokitus 2026 ja
+  Päihdelinkin lista alueiden päihdepalvelusivuista). Päivitä vuosittain tai kun palvelusivujen osoitteet muuttuvat.
+- Toiminnon voi kytkeä hankkeelta pois: `[haku] alueet = false`.
+
 ## Tutkimustieto
 
 Luonnokselle haetaan tutkimustietoa kahdesta lähteestä:

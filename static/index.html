@@ -128,7 +128,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const SIGNAL = {itsetuhoisuus: "itsetuhoisuus", "väkivalta": "väkivalta", lapsen_turvallisuus: "lapsen turvallisuus",
   akuutti_myrkytys: "akuutti myrkytys", akuutti_terveysriski: "akuutti terveysriski"};
-const SOURCE = {luonnostelija: "luonnostelija", tarkastaja: "lisätty tarkastuksessa", "kriisi-automaatti": "kriisisignaali"};
+const SOURCE = {luonnostelija: "luonnostelija", tarkastaja: "lisätty tarkastuksessa", "kriisi-automaatti": "kriisisignaali", "alue-automaatti": "kysyjän hyvinvointialue"};
 let state = {mode: "luonnos", status: null};
 
 function store(k, v) { try { v === undefined ? null : localStorage.setItem(k, v); return localStorage.getItem(k); } catch { return null; } }

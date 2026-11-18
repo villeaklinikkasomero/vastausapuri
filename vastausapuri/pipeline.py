@@ -12,7 +12,7 @@ import re
 import time
 from dataclasses import asdict, dataclass, field
 
-from . import prompts
+from . import alueet, prompts
 from .catalog import CatalogItem
 from .config import Settings
 from .hanke import Hanke
@@ -79,6 +79,7 @@ class Result:
     research_query: str = ""
     research: list[dict] = field(default_factory=list)
     sources_used: list[str] = field(default_factory=list)
+    areas: list[dict] = field(default_factory=list)  # tunnistettu hyvinvointialue (ja kunta vastaajan nähtäväksi)
     timings_ms: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self, restore: Pseudonymized | None = None) -> dict:
@@ -174,6 +175,17 @@ class Assistant:
         query = f"{p_question}\n{p_question}\n{p_thread[-1000:]}" if followup else p_question
         step("haku")
         candidates = self._candidates(query)
+        # Kysyjän kunta -> hyvinvointialue (paikallisesti alkuperäisestä; mallille vain alue)
+        areas = alueet.detect(f"{thread or ''}\n{question}") if self.h.config.get("haku", {}).get("alueet", True) else []
+        area_items = [CatalogItem(
+            id=f"hyvinvointialue-{a.koodi}", title=f"{a.nimi}: päihde- ja mielenterveyspalvelut", url=a.url,
+            type="palvelu", topics=("hyvinvointialue", "päihdepalvelut", "hoitoon hakeutuminen"),
+            audience=("itse", "läheinen"),
+            description=(f"KYSYJÄN OMA HYVINVOINTIALUE: kysyjän mainitsema paikkakunta kuuluu alueeseen {a.nimi}. "
+                         "Kun ohjaat päihde-, riippuvuus- tai mielenterveyspalveluihin, ohjaa tämän alueen "
+                         "palveluihin ja linkitä tämä sivu. Älä mainitse kuntaa, alueen nimen voi mainita."),
+        ) for a in areas]
+        candidates = area_items + [c for c in candidates if c.id not in {i.id for i in area_items}]
         cand_by_id = {c.id: c for c in candidates}
         sources = [c for c in candidates if c.type != "kriisi"][: self.s.sources]
         # Lakitiivistelmät mukaan lähteiksi, jos ne ovat kärkiosumissa (lakiasiat perustetaan niihin)
@@ -282,6 +294,16 @@ class Assistant:
         links.sort(key=lambda l: l.type != "kriisi")  # kriisipalvelut ensin
         n_crisis = sum(1 for l in links if l.type == "kriisi")
         links = links[: self.s.max_links + n_crisis]
+        # Kysyjän hyvinvointialueen palvelut ovat aina mukana, kun alue tunnistettiin
+        for it in reversed(area_items):
+            if it.id not in {l.id for l in links}:
+                links.insert(n_crisis, LinkSuggestion(it.id, it.title, it.url, it.type,
+                                                      "Kysyjän mainitseman paikkakunnan hyvinvointialue.",
+                                                      "alue-automaatti"))
+        if areas:
+            notes.insert(0, "Paikkakunta tunnistettiin: " + "; ".join(
+                f"{a.kunta} kuuluu alueeseen {a.nimi}" if a.kunta != "(maakunta)" else f"maakunta: {a.nimi}"
+                for a in areas) + ". Tarkista, että ohjaus osuu oikealle alueelle.")
 
         # Luonnoksen [[id]]-viittaukset osoitteiksi; tuntemattomat ja hylätyt merkitään tarkistettaviksi
         rejected_ids = {r["id"] for r in rejected}
@@ -335,6 +357,7 @@ class Assistant:
             draft=draft_out,
             issues=issues,
             examples_used=[{"id": e.id, "oma": bool(own and e.vastaaja == own)} for e in examples],
+            areas=[{"nimi": a.nimi, "url": a.url, "kunta": a.kunta} for a in areas],
             sources_used=[s.id for s in sources] if draft_mode else [],
             research_query=research_query,
             research=[{**p.to_dict(), "abstract": p.abstract[:800], "used": p.id in used_research,
