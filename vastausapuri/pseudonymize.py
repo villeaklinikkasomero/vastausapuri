@@ -115,7 +115,8 @@ def _domain(url: str) -> str:
     return host
 
 
-def pseudonymize(text: str, keep_domains: frozenset[str] | set[str] = frozenset()) -> Pseudonymized:
+def pseudonymize(text: str, keep_domains: frozenset[str] | set[str] = frozenset(),
+                 place_spans=None) -> Pseudonymized:
     """Korvaa tunnisteet paikkamerkeillä.
 
     keep_domains: verkkotunnukset, joiden linkit säilytetään (esim. palvelun omat sisällöt),
@@ -136,6 +137,10 @@ def pseudonymize(text: str, keep_domains: frozenset[str] | set[str] = frozenset(
 
     out = text
     kept: list[str] = []
+    # Paikkakunnat kaikissa taivutusmuodoissa (alueet.spans), ennen muita sääntöjä
+    if place_spans is not None:
+        for a, b in sorted(place_spans(out), reverse=True):
+            out = out[:a] + placeholder("PAIKKA", out[a:b]) + out[b:]
 
     def protect(m: re.Match) -> str:
         url = m.group(0)

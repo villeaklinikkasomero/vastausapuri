@@ -108,6 +108,8 @@ KIRJOITUSOHJEET:
   jos mikään ehdokas ei aidosti auta kysyjää.
 - {style}
 - Älä toista esimerkkien henkilöihin liittyviä yksityiskohtia.
+- Älä mainitse kysyjän paikkakuntaa (merkitty [PAIKKA_n]). Jos ehdokkaissa on kysyjän hyvinvointialue,
+  puhu alueesta nimeltä (esim. "Satakunnan hyvinvointialueen päihdepalvelut").
 - Älä kirjoita palautepyyntöä: se lisätään automaattisesti.
 - Jos mukana on TUTKIMUSLÄHTEITÄ (englanninkielisiä tiivistelmiä), voit käyttää niitä tukemaan
   väitteitä. Kirjoita silti suomeksi yleistajuisesti, älä lisää viitteitä tai tutkimusten nimiä

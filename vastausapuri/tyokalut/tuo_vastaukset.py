@@ -31,6 +31,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from .. import alueet
 from ..config import ROOT
 from ..hanke import Hanke, load_hanke
 from ..pseudonymize import pseudonymize
@@ -270,7 +271,7 @@ def build_index(hanke: Hanke, records: list[dict], out_path: Path, min_len: int 
             rec = dict(r)
             for key in ("text", "kysymys", "konteksti"):
                 if rec.get(key):
-                    ps = pseudonymize(rec[key], safe)
+                    ps = pseudonymize(rec[key], safe, place_spans=alueet.spans)
                     ph.update(ps.counts)
                     rec[key] = ps.text
             rec["vastaaja"] = vmap.get(r["vastaaja"], r["vastaaja"].lower())

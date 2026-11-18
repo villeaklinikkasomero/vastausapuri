@@ -147,3 +147,23 @@ def detect(text: str) -> list[Alue]:
                 seen.add(alue)
             break
     return [a for _, a in sorted(found, key=lambda x: x[0])]
+
+
+def spans(text: str) -> list[tuple[int, int]]:
+    """Kunta- ja maakuntamainintojen sijainnit pseudonymisointia varten (samat säännöt kuin detect())."""
+    _, rules = _load()
+    masked = re.sub(r"https?://\S+|www\.\S+|\S+@\S+", lambda m: " " * len(m.group(0)), text)
+    out: list[tuple[int, int]] = []
+    for pat, _kunta, _alue, ambiguous in rules:
+        for m in pat.finditer(masked):
+            if ambiguous and not _has_cue(masked, m.start()):
+                continue
+            out.append((m.start(), m.end()))
+    # päällekkäiset pois, pisin voittaa
+    out.sort(key=lambda x: (x[0], -x[1]))
+    merged: list[tuple[int, int]] = []
+    for a, b in out:
+        if merged and a < merged[-1][1]:
+            continue
+        merged.append((a, b))
+    return merged

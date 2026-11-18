@@ -169,7 +169,8 @@ class Assistant:
         followup = thread is not None
         # Keskustelu ja kysymys pseudonymisoidaan yhdessä, jotta sama nimi saa saman paikkamerkin
         step("suojaus")
-        ps = pseudonymize(f"{thread}{_SEP}{question}" if followup else question, self.h.safe_domains)
+        ps = pseudonymize(f"{thread}{_SEP}{question}" if followup else question, self.h.safe_domains,
+                         place_spans=alueet.spans)
         p_thread, p_question = ps.text.split(_SEP, 1) if followup else (None, ps.text)
         signals = detect_signals(question, self.h.signal_patterns)  # paikallinen, alkuperäisestä
         query = f"{p_question}\n{p_question}\n{p_thread[-1000:]}" if followup else p_question

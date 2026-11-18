@@ -859,3 +859,21 @@ def test_area_link_added_and_offered_to_drafter(paihde):
     assert r.areas[0]["kunta"] == "Jyväskylä" and any("Jyväskylä kuuluu" in n for n in r.notes)
     r2, _ = make(paihde).run("Mistä saan apua juomiseen?", mode="linkit")
     assert not r2.areas and not any(l.id.startswith("hyvinvointialue-") for l in r2.links)
+
+
+def test_municipality_never_reaches_model(paihde):
+    llm = MockLLM()
+    sent = []
+    orig = llm.complete
+
+    def spy(**kw):
+        sent.append(kw["system"] + kw["user"])
+        return orig(**kw)
+    llm.complete = spy
+    q = ("moikka asun porissa, olen nyt muutaman viikon ryypiskellyt ja nyt on alkanut tuntumaan, että keho "
+         "alkaa vetelemään. Tullut outoa tärinää aamulla.")
+    r, ps = make(paihde, llm).run(q, mode="luonnos")
+    assert "porissa" not in r.pseudonymized_question.lower() and "[PAIKKA_" in r.pseudonymized_question
+    assert all("pori" not in t.lower().replace("pomarkku", "") for t in sent)
+    assert r.areas[0]["nimi"] == "Satakunnan hyvinvointialue"
+    assert ps.restore(r.pseudonymized_question) == q  # vastaaja näkee alkuperäisen
